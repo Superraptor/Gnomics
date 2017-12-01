@@ -84,7 +84,7 @@ from gnomics.objects.interaction_objects.compound_pathway import get_pathways
 
 #   MAIN
 def main():
-    compound_unit_tests("6918092", "33510", "fd4ce40f-23e5-44be-91f5-a40b92ab1580")
+    compound_unit_tests("6918092", "33510", "")
 
 #   COMPOUND CLASS
 class Compound(object):
