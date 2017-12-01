@@ -1,0 +1,125 @@
+<div ng-controller="objectCtrl" ng-init="init()" class="container" id="obj-container">
+    <h3 id="page-title">{{page_title}}</h3>
+    
+    <ul class="nav nav-tabs" id="border-nav-tabs-obj">
+        <li class="active"><a href data-target="#1a" data-toggle="tab">Identifiers</a></li>
+        <li><a href data-target="#2a" data-toggle="tab">Properties</a></li>
+        <li ng-repeat="int_object in interaction_objects"><a href data-target="#3{{int_object.type}}" data-toggle="tab">{{int_object.type}}</a></li>
+        <li><a href data-target="#5a" data-toggle="tab">Links</a></li>
+        <li><a href data-target="#6a" data-toggle="tab">Downloads</a></li>
+    </ul>
+    
+    <div class="panel panel-default" id="panel-nav-tabs-obj">
+        <div class="tab-content clearfix">
+            <div class="tab-pane active" id="1a">
+                <div id="table-obj-padding">
+                    <div class="col-xs-6">
+                        <label for="searchIden">Search:</label>
+                        <input ng-model="qAllIden" id="searchIden" class="form-control" placeholder="Search...">
+                    </div>
+                    <div class="col-xs-6">
+                        <label for="searchIden">Items Per Page:</label>
+                        <input type="number" min="1" max="100" class="form-control" ng-model="pageSizeIden">
+                    </div>
+
+                    <div align="center">
+                       <dir-pagination-controls
+                            pagination-id="identifier_table"
+                            max-size="100"
+                            direction-links="true"
+                            boundary-links="true" >
+                       </dir-pagination-controls>
+                    </div>
+                </div>
+
+                <table class="table table-condensed" id="obj-content-table" show-filter="true">
+                    <tr>
+                        <th ng-click="sortByIden('identifier_type')">Identifier Type <span class="sortorder" ng-show="propertyNameIden === 'identifier_type'" ng-class="{reverseIden: reverseIden}"></span></th>
+                        <th ng-click="sortByIden('identifier')">Identifier <span class="sortorder" ng-show="propertyNameIden === 'identifier'" ng-class="{reverseIden: reverseIden}"></span></th>
+                        <th ng-click="sortByIden('language')">Language <span class="sortorder" ng-show="propertyNameIden === 'language'" ng-class="{reverseIden: reverseIden}"></span></th>
+                        <th ng-click="sortByIden('source')">Source <span class="sortorder" ng-show="propertyNameIden === 'source'" ng-class="{reverseIden: reverseIden}"></span></th>
+                    </tr>
+                    <tr dir-paginate="iden in identifiers | filter: qAllIden | orderBy:propertyNameIden:reverseIden | itemsPerPage: pageSizeIden" pagination-id="identifier_table" current-page="currentPageIden">
+                        <td>{{iden.identifier_type}}</td>
+                        <td id="obj-identifer"><a href="#/object?identifier={{iden.identifier}}&identifier_type={{iden.identifier_type}}&language={{iden.language}}&source={{iden.source}}&object={{object_type}}">{{iden.identifier}}</a></td>
+                        <td>{{iden.language}}</td>
+                        <td>{{iden.source}}</td>
+                    </tr>
+                </table>
+
+            </div>
+            <div class="tab-pane" id="2a">
+                <div id="table-obj-padding">
+                    <div class="col-xs-6">
+                        <label for="searchProp">Search:</label>
+                        <input ng-model="qAllProp" id="searchProp" class="form-control" placeholder="Search...">
+                    </div>
+                    <div class="col-xs-6">
+                        <label for="searchProp">Items Per Page:</label>
+                        <input type="number" min="1" max="100" class="form-control" ng-model="pageSizeProp">
+                    </div>
+
+                    <div align="center">
+                       <dir-pagination-controls
+                            pagination-id="property_table"
+                            max-size="100"
+                            direction-links="true"
+                            boundary-links="true" >
+                       </dir-pagination-controls>
+                    </div>
+                </div>
+            
+                <table class="table table-condensed" id="obj-content-table" show-filter="true">
+                    <tr>
+                        <th ng-click="sortByProp('property')">Property <span class="sortorder" ng-show="propertyNameProp === 'property'" ng-class="{reverseProp: reverseProp}"></span></th>
+                        <th ng-click="sortByProp('value')">Value <span class="sortorder" ng-show="propertyNameProp === 'value'" ng-class="{reverseProp: reverseProp}"></span></th>
+                    </tr>
+                    <tr dir-paginate="property in properties | filter: qAllProp | orderBy:propertyNameProp:reverseProp | itemsPerPage: pageSizeProp" pagination-id="property_table" current-page="currentPageProp">
+                        <td>{{property.property}}</td>
+                        <td id="obj-identifer">{{property.value}}</td>
+                    </tr>
+                </table>
+            
+            </div>
+            <div ng-repeat="int_object in interaction_objects" class="tab-pane" id="3{{int_object.type}}">
+                <div id="table-obj-padding">
+                    <div class="col-xs-6">
+                        <label for="search{{int_object.type}}">Search:</label>
+                        <input ng-model="interaction_obj_sort_dict[int_object.type].q" id="search{{int_object.type}}" class="form-control" placeholder="Search...">
+                    </div>
+                    <div class="col-xs-6">
+                        <label for="search{{int_object.type}}">Items Per Page:</label>
+                        <input type="number" min="1" max="100" class="form-control" ng-model="interaction_obj_sort_dict[int_object.type].pageSize">
+                    </div>
+
+                    <div align="center">
+                       <dir-pagination-controls
+                            pagination-id="int_object.type"
+                            max-size="100"
+                            direction-links="true"
+                            boundary-links="true" >
+                       </dir-pagination-controls>
+                    </div>
+                </div>
+
+                <table class="table table-condensed" id="obj-content-table" show-filter="true">
+                    <tr>
+                        <th ng-click="interaction_obj_sort_dict[int_object.type].sortBy('identifier_type')">Identifier Type <span class="sortorder" ng-show="interaction_obj_sort_dict[int_object.type].propertyName === 'identifier_type'" ng-class="{reverse{{int_object.type}}: interaction_obj_sort_dict[int_object.type].reverse}"></span></th>
+                        <th ng-click="interaction_obj_sort_dict[int_object.type].sortBy('identifier')">Identifier <span class="sortorder" ng-show="interaction_obj_sort_dict[int_object.type].propertyName === 'identifier'" ng-class="{reverse{{int_object.type}}: interaction_obj_sort_dict[int_object.type].reverse}"></span></th>
+                        <th ng-click="interaction_obj_sort_dict[int_object.type].sortBy('language')">Language <span class="sortorder" ng-show="interaction_obj_sort_dict[int_object.type].propertyName === 'language'" ng-class="{reverse{{int_object.type}}: interaction_obj_sort_dict[int_object.type].reverse}"></span></th>
+                        <th ng-click="interaction_obj_sort_dict[int_object.type].sortBy('source')">Source <span class="sortorder" ng-show="interaction_obj_sort_dict[int_object.type].propertyName === 'source'" ng-class="{reverse{{int_object.type}}: interaction_obj_sort_dict[int_object.type].reverse}"></span></th>
+                    </tr>
+                    <tr dir-paginate="iden in int_object.identifier_array | filter: interaction_obj_sort_dict[int_object.type].q | orderBy:interaction_obj_sort_dict[int_object.type].propertyName:interaction_obj_sort_dict[int_object.type].reverse | itemsPerPage: interaction_obj_sort_dict[int_object.type].pageSize" pagination-id="int_object.type" current-page="interaction_obj_sort_dict[int_object.type].currentPage">
+                        <td>{{iden.identifier_type}}</td>
+                        <td id="obj-identifer"><a href="#/object?identifier={{iden.identifier}}&identifier_type={{iden.identifier_type}}&language={{iden.language}}&source={{iden.source}}&object={{int_object.type}}">{{iden.identifier}}</a></td>
+                        <td>{{iden.language}}</td>
+                        <td>{{iden.source}}</td>
+                    </tr>
+                </table>
+            
+            </div>
+            <div class="tab-pane" id="5a">Links</div>
+            <div class="tab-pane" id="5a">Downloads</div>
+        </div>
+    </div>
+</div>

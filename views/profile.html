@@ -1,0 +1,81 @@
+<div ng-controller="profileCtrl" class="container" id="controller-container" ng-init="init()">
+    
+    <div class="container" id="modal-container"><span id="deleteModal" data-animation="am-fade-and-slide-top" data-placement="center" data-template-url="./views/modals/delete_profile.html" bs-modal="modal"></span></div>
+    
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div id="profile-buttons">
+                <button type="button" class="btn btn-primary" ng-click='editProfile()'>Edit Profile</button>
+                <button type="button" class="btn btn-danger" ng-click='deleteModal()'>Delete Profile</button>
+            </div>
+        </div>
+    </div>
+    
+    <ul class="list-group">
+        <li class="list-group-item active">GNOMICS Profile</li>
+        <li class="list-group-item">
+            <b>Email</b> <i class="fa fa-info-circle" title="This is the email associated with your GNOMICS account, as well as other accounts requiring email for API access."></i>
+            <span class="profile-justify">{{email}}</span>
+        </li>
+        <li class="list-group-item">
+            <b>Username</b> <i class="fa fa-info-circle" title="This is your GNOMICS username, used only internally in GNOMICS."></i>
+            <span class="profile-justify">{{user_name}}</span>
+        </li>
+    </ul>
+
+    <ul class="list-group">
+        <li class="list-group-item active">API Keys</li>
+        <li class="list-group-item">
+            <b>ChemSpider API Key</b> <i class="fa fa-info-circle" title="This is your ChemSpider API key."></i>
+            <span class="profile-justify">{{chemspider_api_key}}</span>
+        </li>
+        <li class="list-group-item">
+            <b>DPLA API Key</b> <i class="fa fa-info-circle" title="This is your DPLA API key."></i>
+            <span class="profile-justify">{{dpla_api_key}}</span>
+        </li>
+        <li class="list-group-item">
+            <b>EOL API Key</b> <i class="fa fa-info-circle" title="This is your EOL API key."></i>
+            <span class="profile-justify">{{eol_api_key}}</span>
+        </li>
+        <li class="list-group-item">
+            <b>Elsevier API Key</b> <i class="fa fa-info-circle" title="This is your Elsevier API key."></i>
+            <span class="profile-justify">{{elsevier_api_key}}</span>
+        </li>
+        <li class="list-group-item">
+            <b>FDA API Key</b> <i class="fa fa-info-circle" title="This is your FDA API key."></i>
+            <span class="profile-justify">{{fda_api_key}}</span>
+        </li>
+        <li class="list-group-item">
+            <b>ISBNdb API Key</b> <i class="fa fa-info-circle" title="This is your ISBNdb API key."></i>
+            <span class="profile-justify">{{isbndb_api_key}}</span>
+        </li>
+        <li class="list-group-item">
+            <b>NCBO API Key</b> <i class="fa fa-info-circle" title="This is your NCBO API key."></i>
+            <span class="profile-justify">{{ncbo_api_key}}</span>
+        </li>
+        <li class="list-group-item">
+            <b>OMIM API Key</b> <i class="fa fa-info-circle" title="This is your OMIM API key."></i>
+            <span class="profile-justify">{{omim_api_key}}</span>
+        </li>
+        <li class="list-group-item">
+            <b>OpenPHACTS App ID</b> <i class="fa fa-info-circle" title="This is your OpenPHACTS App ID."></i>
+            <span class="profile-justify">{{openphacts_app_id}}</span>
+        </li>
+        <li class="list-group-item">
+            <b>OpenPHACTS App Key</b> <i class="fa fa-info-circle" title="This is your OpenPHACTS App Key."></i>
+            <span class="profile-justify">{{openphacts_app_key}}</span>
+        </li>
+        <li class="list-group-item">
+            <b>Springer API Key</b> <i class="fa fa-info-circle" title="This is your Springer API key."></i>
+            <span class="profile-justify">{{springer_api_key}}</span>
+        </li>
+        <li class="list-group-item">
+            <b>UMLS Password</b> <i class="fa fa-info-circle" title="This is your UMLS password."></i>
+            <span class="profile-justify">{{umls_password}}</span>
+        </li>
+        <li class="list-group-item">
+            <b>UMLS Username</b> <i class="fa fa-info-circle" title="This is your UMLS username."></i>
+            <span class="profile-justify">{{umls_username}}</span>
+        </li>
+    </ul>
+</div>

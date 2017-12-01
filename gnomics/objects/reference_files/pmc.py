@@ -1,0 +1,78 @@
+#
+#
+#
+#
+#
+
+#
+#   IMPORT SOURCES:
+#       
+#
+
+#
+#   Get PMC ID.
+#
+
+#   PRE-CODE
+import faulthandler
+faulthandler.enable()
+
+#   IMPORTS
+
+#   Imports for recognizing modules.
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
+
+#   Import modules.
+from gnomics.objects.user import User
+import gnomics.objects.reference
+
+#   Other imports.
+import json
+import pdfx
+import re
+import requests
+import shutil
+import subprocess
+import tempfile
+import xml.etree.ElementTree
+
+#   MAIN
+def main():
+    pmc_unit_tests("28723805")
+
+#   Get PMC ID.
+def get_pmc_id(ref): 
+    pmc_array = []
+    for ident in ref.identifiers:
+        if ident["identifier_type"].lower() == "pmc" or ident["identifier_type"].lower() == "pmc id" or ident["identifier_type"].lower() == "pmc identifier":
+            pii_array.append(ident["identifier"])
+    for ident in ref.identifiers:
+        if ident["identifier_type"].lower() == "pmid" or ident["identifier_type"].lower() == "pubmed id" or ident["identifier_type"].lower() == "pubmed identifier":
+            base = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?"
+            ext = "db=pubmed&id=" + str(ident["identifier"]) + "&retmode=xml"
+            r = requests.get(base+ext, headers={"Content-Type": "application/xml"})
+            if not r.ok:
+                r.raise_for_status()
+                sys.exit()
+            e = xml.etree.ElementTree.fromstring(r.text)
+            for child in e.findall("PubmedArticle"):
+                for subchild in child.findall("PubmedData"):
+                    for infrachild in subchild.findall("ArticleIdList"):
+                        for subinfrachild in infrachild.findall("ArticleId"):
+                            if subinfrachild.attrib["IdType"] == "pmc":
+                                if subinfrachild.text not in pmc_array:
+                                    pmc_array.append(subinfrachild.text)
+                                    gnomics.objects.reference.Reference.add_identifier(ref, identifier=subinfrachild.text, identifier_type="PMC ID", source="PubMed")
+    return pmc_array
+        
+#   UNIT TESTS
+def pmc_unit_tests(pmid):
+    print("Getting DOI from PubMed ID (%s):" % pmid)
+    pubmed_ref = gnomics.objects.reference.Reference(identifier = pmid, identifier_type = "PMID", language = None, source = "PubMed")
+    for pmc in get_pmc_id(pubmed_ref):
+        print("- %s" % pmc)
+
+#   MAIN
+if __name__ == "__main__": main()

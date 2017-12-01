@@ -1,0 +1,904 @@
+<div ng-controller="homeCtrl" class="container" id="controller-container" ng-init="init()">
+    <div class="container" id="controller-container">
+        <div class="input-group" style="border: 1px solid #32cd32 !important;">
+            <div class="input-group-btn">
+                <div class="btn btn-default" id="search-button" type="button">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true" id="search-icon"></span>
+                </div>
+                <button type="button" class="btn btn-inverse dropdown-toggle" id="search-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" tabindex="1"><span class="caret" id="search-icon"></span></button>
+                <ul class="dropdown-menu" ng-model="searchType">
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'all')">All</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'adverse_event')">Adverse Event</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'anatomical_structure')">Anatomical Structure</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'assay')">Assay</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'cell_line')">Cell Line</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'clinical_trial')">Clinical Trial</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'compound')">Compound</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'disease')">Disease</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'drug')">Drug</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'enzyme')">Enzyme</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'gene')">Gene</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'genotype')">Genotype</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'mutation')">Mutation</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'patent')">Patent</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'pathway')">Pathway</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'phenotype')">Phenotype</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'procedure')">Procedure</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'protein')">Protein</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'reference')">Reference</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'symptom')">Symptom</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'taxon')">Taxon</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'tissue')">Tissue</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'transcript')">Transcript</a></li>
+                </ul>
+            </div>
+            
+            <input type="text" class="form-control" id="search-bar" placeholder="Search..." aria-describedby="basic-addon1" ng-model="searchQuery" ng-keyup="$event.keyCode == 13 ? searchFunction(searchQuery, searchType = 'all') : null">
+        </div>
+        
+        <div>
+            <a data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" class="btn btn-inverse" role="button" id="advanced-search">
+                Advanced Search
+            </a>
+            <div id="collapseExample" class="collapse" role="tabpanel" style="border: 0px; border-radius: 0;">
+                <div class="panel" id="search-drawer" style="border: 0px; border-radius: 0;">
+                    <ul class="nav nav-tabs" id="border-nav-tabs-obj">
+                        <li class="active"><a href data-target="#1a" data-toggle="tab">All</a></li>
+                        <li><a href data-target="#2a" data-toggle="tab">Adverse Event</a></li>
+                        <li><a href data-target="#3a" data-toggle="tab">Anatomical Structure</a></li>
+                        <li><a href data-target="#4a" data-toggle="tab">Assay</a></li>
+                        <li><a href data-target="#5a" data-toggle="tab">Cell Line</a></li>
+                        <li><a href data-target="#6a" data-toggle="tab">Clinical Trial</a></li>
+                        <li><a href data-target="#7a" data-toggle="tab">Compound</a></li>
+                        <li><a href data-target="#8a" data-toggle="tab">Disease</a></li>
+                        <li><a href data-target="#9a" data-toggle="tab">Drug</a></li>
+                        <li><a href data-target="#10a" data-toggle="tab">Enzyme</a></li>
+                        <li><a href data-target="#11a" data-toggle="tab">Gene</a></li>
+                        <li><a href data-target="#12a" data-toggle="tab">Genotype</a></li>
+                        <li><a href data-target="#13a" data-toggle="tab">Mutation</a></li>
+                        <li><a href data-target="#14a" data-toggle="tab">Pathway</a></li>
+                        <li><a href data-target="#15a" data-toggle="tab">Phenotype</a></li>
+                        <li><a href data-target="#16a" data-toggle="tab">Procedure</a></li>
+                        <li><a href data-target="#17a" data-toggle="tab">Protein</a></li>
+                        <li><a href data-target="#18a" data-toggle="tab">Reference</a></li>
+                        <li><a href data-target="#19a" data-toggle="tab">Symptom</a></li>
+                        <li><a href data-target="#20a" data-toggle="tab">Taxon</a></li>
+                        <li><a href data-target="#21a" data-toggle="tab">Tissue</a></li>
+                        <li><a href data-target="#22a" data-toggle="tab">Transcript</a></li>
+                    </ul>
+                    <div class="panel panel-default" id="panel-nav-tabs-obj">
+                        <div class="panel-body">
+                            <div class="tab-content clearfix">
+                                <!-- ALL -->
+                                <div class="tab-pane active" id="1a">
+                                </div>
+
+                                <!-- ADVERSE EVENTS -->
+                                <div class="tab-pane" id="2a"></div>
+
+                                <!-- ANATOMICAL STRUCTURES -->
+                                <div class="tab-pane" id="3a"></div>
+
+                                <!-- ASSAY -->
+                                <div class="tab-pane" id="4a">
+
+                                    <div class="form-group">
+                                        <label for="assay_category">Assay category</label> <i class="fa fa-info-circle" title="Screening, confirmatory (i.e. dose-response), summary, panel, or other."></i>
+                                        <input type="text" class="form-control" id="assay_category">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="assay_cell_type">Assay cell type</label> <i class="fa fa-info-circle" title="Name of cell type or cell line used in the assay system (e.g., for cell-based assays)."></i>
+                                        <input type="text" class="form-control" id="assay_cell_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="assay_chembl_id">Assay ChEMBL ID</label>
+                                        <input type="text" class="form-control" id="assay_chembl_id">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="assay_organism">Assay organism</label> <i class="fa fa-info-circle" title="Name of the organism for the assay system (e.g. the organism, tissue or cell line in which an assay was performed). May differ from the target organism (e.g. for a human protein expressed in non-human cells, or pathogen-infected human cells)."></i>
+                                        <input type="text" class="form-control" id="assay_organism">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="assay_strain">Assay strain</label> <i class="fa fa-info-circle" title="Name of specific strain of the assay organism used (where known)."></i>
+                                        <input type="text" class="form-control" id="assay_category">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="assay_subcellular_fraction">Assay subcellular fraction</label> <i class="fa fa-info-circle" title="Name of subcellular fraction used in the assay system (e.g. microsomes, mitochondria)."></i>
+                                        <input type="text" class="form-control" id="assay_category">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="assay_taxon_id">Assay taxon ID</label> <i class="fa fa-info-circle" title="NCBI taxonomy ID for the assay organism."></i>
+                                        <input type="text" class="form-control" id="assay_category">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="assay_test_type">Assay test type</label> <i class="fa fa-info-circle" title="Type of assay system (i.e. in vivo or in vitro)."></i>
+                                        <input type="text" class="form-control" id="assay_category">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="assay_tissue">Assay tissue</label> <i class="fa fa-info-circle" title="Name of tissue used in the assay system (e.g. for tissue-based assays) or from which the assay system was derived (e.g. for cell/subcellular fraction-based assays)."></i>
+                                        <input type="text" class="form-control" id="assay_tissue">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="assay_type">Assay type</label> <i class="fa fa-info-circle" title="Binding (B); Functional (F); ADMET (A)."></i>
+                                        <br/>
+                                        <label class="checkbox-inline"><input type="checkbox" value="" id="assay_type">B</label> <i class="fa fa-info-circle" title="Data measuring binding of compound to a molecular target, e.g. Ki, IC50, Kd."></i>
+                                        <label class="checkbox-inline"><input type="checkbox" value="" id="assay_type">F</label> <i class="fa fa-info-circle" title="Data measuring the biological effect of a compound, e.g. % cell death in a cell line, rat weight."></i>
+                                        <label class="checkbox-inline"><input type="checkbox" value="" id="assay_type">A</label> <i class="fa fa-info-circle" title="ADME and Tox data, e.g. t1/2, oral bioavailability, LD50."></i>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="assay_type_description">Assay type description</label>
+                                        <br/>
+                                        <label class="checkbox-inline"><input type="checkbox" value="" id="assay_type_description">Binding</label> <i class="fa fa-info-circle" title="Data measuring binding of compound to a molecular target, e.g. Ki, IC50, Kd."></i>
+                                        <label class="checkbox-inline"><input type="checkbox" value="" id="assay_type_description">Functional</label> <i class="fa fa-info-circle" title="Data measuring the biological effect of a compound, e.g. % cell death in a cell line, rat weight."></i>
+                                        <label class="checkbox-inline"><input type="checkbox" value="" id="assay_type_description">ADMET</label> <i class="fa fa-info-circle" title="ADME and Tox data, e.g. t1/2, oral bioavailability, LD50."></i>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="bao_format">BAO format</label>
+                                        <input type="text" class="form-control" id="bao_format">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="bao_label">BAO label</label>
+                                        <input type="text" class="form-control" id="bao_label">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cell_chembl_id">Cell ChEMBL ID</label>
+                                        <input type="text" class="form-control" id="cell_chembl_id">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="confidence_description">Confidence description</label>
+                                        <div class="checkbox"><label class="checkbox"><input type="checkbox" value="" id="assay_type">Default value - Target assignment has yet to be curated</label></div>
+                                        <div class="checkbox"><label class="checkbox"><input type="checkbox" value="" id="assay_type">Target assigned is non-molecular</label></div>
+                                        <div class="checkbox"><label class="checkbox"><input type="checkbox" value="" id="assay_type">Target assigned is molecular non-protein target</label></div>
+                                        <div class="checkbox"><label class="checkbox"><input type="checkbox" value="" id="assay_type">Multiple homologous protein targets may be assigned</label></div>
+                                        <div class="checkbox"><label class="checkbox"><input type="checkbox" value="" id="assay_type">Multiple direct protein targets may be assigned</label></div>
+                                        <div class="checkbox"><label class="checkbox"><input type="checkbox" value="" id="assay_type">Homologous protein complex subunits assigned</label></div>
+                                        <div class="checkbox"><label class="checkbox"><input type="checkbox" value="" id="assay_type">Direct protein complex subunits assigned</label></div>
+                                        <div class="checkbox"><label class="checkbox"><input type="checkbox" value="" id="assay_type">Homologous single protein target assigned</label></div>
+                                        <div class="checkbox"><label class="checkbox"><input type="checkbox" value="" id="assay_type">Direct single protein target assigned</label></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="confidence_score">Confidence score</label> <i class="fa fa-info-circle" title="The confidence score value reflects both the type of target assigned to a particular assay and the confidence that the target assigned is the correct target for that assay."></i>
+                                        <br/>
+                                        <label class="checkbox-inline"><input type="checkbox" value="" id="assay_type">0</label> <i class="fa fa-info-circle" title="Default value - Target assignment has yet to be curated."></i>
+                                        <label class="checkbox-inline"><input type="checkbox" value="" id="assay_type">1</label> <i class="fa fa-info-circle" title="Target assigned is non-molecular."></i>
+                                        <label class="checkbox-inline"><input type="checkbox" value="" id="assay_type">3</label> <i class="fa fa-info-circle" title="Target assigned is molecular non-protein target."></i>
+                                        <label class="checkbox-inline"><input type="checkbox" value="" id="assay_type">4</label> <i class="fa fa-info-circle" title="Multiple homologous protein targets may be assigned."></i>
+                                        <label class="checkbox-inline"><input type="checkbox" value="" id="assay_type">5</label> <i class="fa fa-info-circle" title="Multiple direct protein targets may be assigned."></i>
+                                        <label class="checkbox-inline"><input type="checkbox" value="" id="assay_type">6</label> <i class="fa fa-info-circle" title="Homologous protein complex subunits assigned."></i>
+                                        <label class="checkbox-inline"><input type="checkbox" value="" id="assay_type">7</label> <i class="fa fa-info-circle" title="Direct protein complex subunits assigned."></i>
+                                        <label class="checkbox-inline"><input type="checkbox" value="" id="assay_type">8</label> <i class="fa fa-info-circle" title="Homologous single protein target assigned."></i>
+                                        <label class="checkbox-inline"><input type="checkbox" value="" id="assay_type">9</label> <i class="fa fa-info-circle" title="Direct single protein target assigned."></i>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="description">Description</label> <i class="fa fa-info-circle" title="Description of the reported assay."></i>
+                                        <input type="text" class="form-control" id="description">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="document_chembl_id">Document ChEMBL ID</label>
+                                        <input type="text" class="form-control" id="document_chembl_id">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="relationship_description">Relationship description</label>
+                                        <input type="text" class="form-control" id="relationship_description">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="relationship_type">Relationship type</label>
+                                        <input type="text" class="form-control" id="relationship_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="score">Score</label>
+                                        <input type="text" class="form-control" id="score">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="source_assay_id">Source assay ID</label> <i class="fa fa-info-circle" title="Identifier for the assay in the source database/deposition (e.g. PubChem AID)."></i>
+                                        <input type="text" class="form-control" id="source_assay_id">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="source_id">Source ID</label>
+                                        <input type="text" class="form-control" id="source_id">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="tissue_chembl_id">Tissue ChEMBL ID</label>
+                                        <input type="text" class="form-control" id="tissue_chembl_id">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="target_chembl_id">Target ChEMBL ID</label>
+                                        <input type="text" class="form-control" id="target_chembl_id">
+                                    </div>
+
+                                </div>
+
+                                <!-- CELL LINES -->
+                                <div class="tab-pane" id="5a"></div>
+
+                                <!-- CLINICAL TRIALS -->
+                                <div class="tab-pane" id="6a">
+                                    <div class="form-group">
+                                        <label for="accepts_healthy_volunteers_indicator">Accepts healthy volunteers indicator</label> <i class="fa fa-info-circle" title="Indicate whether healthy volunteers may participate in the study. Healthy volunteers are people who have not had the condition(s) being studied or otherwise related conditions or symptoms, as specified in the eligibility requirements."></i>
+                                        <input type="text" class="form-control" id="accepts_healthy_volunteers_indicator">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="acronym">Acronym</label> <i class="fa fa-info-circle" title="The abbreviation (initial letters) by which the trial is known. The acronym or initials used to identify a clinical study."></i>
+                                        <input type="text" class="form-control" id="acronym">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="amendment_date">Amendment date</label> <i class="fa fa-info-circle" title="Date on which the trial record was last amended. The amendment date is generally entered by the trial submitter."></i>
+                                        <input type="text" class="form-control" id="amendment_date">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="anatomic_sites">Anatomic sites</label> <i class="fa fa-info-circle" title="List of the anatomic site(s) on which the trial or study is focused."></i>
+                                        <input type="text" class="form-control" id="anatomic_sites">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="arm_description">Arm description</label> <i class="fa fa-info-circle" title="Brief description of the arm or comparison group, to distinguish it from other arms/groups in the trial."></i>
+                                        <input type="text" class="form-control" id="arm_description">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="arm_name">Arm name</label> <i class="fa fa-info-circle" title="Label (short name) used to identify the arm or comparison group."></i>
+                                        <input type="text" class="form-control" id="arm_name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="arm_type">Arm type</label> <i class="fa fa-info-circle" title="Function of the arm."></i>
+                                        <input type="text" class="form-control" id="arm_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="brief_title">Brief title</label> <i class="fa fa-info-circle" title="Protocol title intended for the lay public. A title that summarizes the purpose of the trial."></i>
+                                        <input type="text" class="form-control" id="brief_title">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="brief_summary">Brief summary</label> <i class="fa fa-info-circle" title="Short description of the protocol intended for the lay public. Includes a brief statement of the study hypothesis."></i>
+                                        <input type="text" class="form-control" id="brief_summary">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ccr_id">CCR ID</label> <i class="fa fa-info-circle" title="The unique ID assigned to the trial by the CCR (Center for Cancer Research)."></i>
+                                        <input type="text" class="form-control" id="ccr_id">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ctep_id">CTEP ID</label> <i class="fa fa-info-circle" title="The unique ID assigned to the trial by the CTEP (Cancer Therapy Evaluation Program)."></i>
+                                        <input type="text" class="form-control" id="ctep_id">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="condition">Condition</label>
+                                        <input type="text" class="form-control" id="condition">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contact_email">Contact email</label> <i class="fa fa-info-circle" title="The email address for a specified participating site contact on a trial."></i>
+                                        <input type="email" class="form-control" id="contact_email">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contact_name">Contact name</label> <i class="fa fa-info-circle" title="The name of a specified participating site contact on a trial."></i>
+                                        <input type="text" class="form-control" id="contact_name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contact_phone">Contact phone</label> <i class="fa fa-info-circle" title="The office phone number for a specified participating site contact on a trial."></i>
+                                        <input type="text" class="form-control" id="contact_phone">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="country">Country</label>
+                                        <input type="text" class="form-control" id="country">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="current_trial_status">Current trial status</label> <i class="fa fa-info-circle" title="The current stage or state of a clinical trial or study relative to other stages and its ability to enroll participants/patients. Overall accrual activity for the protocol."></i>
+                                        <input type="text" class="form-control" id="current_trial_status">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="current_trial_status_date">Current trial status date</label> <i class="fa fa-info-circle" title="The date on which the current trial status became effective."></i>
+                                        <input type="text" class="form-control" id="acronym">
+                                        <!-- bootstrap-datepicker, this date or later -->
+                                        <!-- bootstrap-datepicker, this date or earlier -->
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="dcp_id">DCP ID</label> <i class="fa fa-info-circle" title="The unique ID assigned to the trial submitted by the DCP (Division of Cancer Prevention)."></i>
+                                        <input type="text" class="form-control" id="dcp_id">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="gender">Gender</label> <i class="fa fa-info-circle" title="The physical gender of individuals who may participate in the protocol."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="generic_contact">Generic contact</label> <i class="fa fa-info-circle" title="Primary contact for a participating site."></i>
+                                        <input type="text" class="form-control" id="generic_contact">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="intervention">Intervention</label> <i class="fa fa-info-circle" title="The intervention(s) being studied (administered) in the arm."></i>
+                                        <input type="text" class="form-control" id="intervention">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="intervention_code">Intervention code</label> <i class="fa fa-info-circle" title="The standard name of the intervention being stuided. For a drug, this is the generic name. For an investigational new drug that does not yet have a generic name, this may be the chemical name, company code, or serial number."></i>
+                                        <input type="text" class="form-control" id="intervention code">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="intervention_description">Intervention description</label> <i class="fa fa-info-circle" title="Succintly describes the key details of the intervention. For drug interventions, a summary of the drug's chemical nature and (potential) mechanism of action, and/or details such as dosage form, dosage, frequency, and duration. For other interventions, a summary of the procedure or device that provides key details that distinguish it from similar interventions."></i>
+                                        <input type="text" class="form-control" id="intervention_description">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="intervention_synonyms">Intervention synonyms</label> <i class="fa fa-info-circle" title="Any alternative names for the intervention, including brand names, abbreviations, code names, and chemical structures."></i>
+                                        <input type="text" class="form-control" id="intervention_synonyms">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="intervention_type">Intervention type</label> <i class="fa fa-info-circle" title="The general category or mode of the intervention being studied."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="maximum_age_in_years">Maximum age in years</label> <i class="fa fa-info-circle" title="Maximum age of participants, expressed in years."></i>
+                                        <!-- greater than or equal to -->
+                                        <input type="number" step="1" pattern="\d+" min="0" />
+                                        <!-- less than or equal to -->
+                                        <input type="number" step="1" pattern="\d+" min="0" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="intervention_type">Maximum age number</label> <i class="fa fa-info-circle" title="Provides a number for the maximum age of participants."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="maximum_age_unit">Maximum age unit</label> <i class="fa fa-info-circle" title="Select a unit of time for the maximum age of participants."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="maximum_age_in_years">Minimum age in years</label> <i class="fa fa-info-circle" title="Minimum age of participants in years."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                        <!-- greater than or equal to -->
+                                        <input type="number" step="1" pattern="\d+" min="0" />
+                                        <!-- less than or equal to -->
+                                        <input type="number" step="1" pattern="\d+" min="0" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="intervention_type">Minimum age number</label> <i class="fa fa-info-circle" title="Provides a number for the minimum age of participants."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Minimum age unit</label> <i class="fa fa-info-circle" title="Select a unit of time for the minimum age of participants."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="nci_id">NCI ID</label> <i class="fa fa-info-circle" title="The unique ID assigned to the trial by the CTRP. Format: NCI followed by YYYY followed by 5 digits, <NCI-YYYY-00000>."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="nct_id">NCT ID</label> <i class="fa fa-info-circle" title="The unique ID assigned to the trial by PRS (ClinicalTrials.gov). Format: NCT followed by 8 numeric characters, <NCT00000000>."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="official_title">Official title</label> <i class="fa fa-info-circle" title="The official name of the protocol provided by the study principal investigator or sponsor."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization address line 1</label> <i class="fa fa-info-circle" title="The first part of an address for the participating site."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization address line 2</label> <i class="fa fa-info-circle" title="The second part of an address for the participating site."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization city</label> <i class="fa fa-info-circle" title="The city of the participating site."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization coordinates</label> <i class="fa fa-info-circle" title="The geographic coordinates of the participating site."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                        <!-- Figure out a special input for this?? -->
+                                        <!-- Latitude / Longitude -->
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization country</label> <i class="fa fa-info-circle" title="The country of the participating site."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization email</label> <i class="fa fa-info-circle" title="The email address of the participating site."></i>
+                                        <input type="email" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization family</label> <i class="fa fa-info-circle" title="The organization family of the participating site."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization fax</label> <i class="fa fa-info-circle" title="The fax number of the participating site."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization name</label> <i class="fa fa-info-circle" title="The full name of the participating site (the organization where the protocol is being conducted)."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization name full text</label>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization phone</label> <i class="fa fa-info-circle" title="The phone number of the participating site."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization postal code</label> <i class="fa fa-info-circle" title="The postal code of the participating site."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization state or province</label> <i class="fa fa-info-circle" title="The two-letter abbreviation for the participating site's state or province."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization status</label> <i class="fa fa-info-circle" title="The organization status of the participating site."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization status date</label> <i class="fa fa-info-circle" title="The date associated with the participating site's organization status."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization-to-family relationship</label> <i class="fa fa-info-circle" title="The relationship of the participating site organization to its family."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Organization TTY</label> <i class="fa fa-info-circle" title="The TTY number of the participating site."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Phase</label> <i class="fa fa-info-circle" title="Phase of investigation, as defined by the US FDA for trials involving investigational new drugs."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Primary purpose code</label> <i class="fa fa-info-circle" title="The reason for the protocol."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Protocol ID</label> <i class="fa fa-info-circle" title="The unique ID assigned to the trial by the sponsoring organization, usually an accession number or a variation of a grant number. Multiple studies conducted under the same grant must each have a unique number."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Record verification date</label> <i class="fa fa-info-circle" title="Date the protocol information was last verified. Verification date is shown along with organization name on ClinicalTrials.gov to indicate to the public whether the information is being kept current, particularly recruiting status and contact information."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                        <!-- greater than or equal to -->
+                                        <!-- less than or equal to -->
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Recruiting</label>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Recruitment status</label> <i class="fa fa-info-circle" title="The current stage or state of a participating site relative to other stages and its ability to enroll participants/patients. Protocol accrual activity at a facility."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Recruitment status date</label> <i class="fa fa-info-circle" title="The date associated with the participating site's current site recruitment status."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Sponsor</label> <i class="fa fa-info-circle" title="Name of primary organization that oversees implementation of the study and is responsible for data analysis."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Study ID</label>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Study ID type</label> <i class="fa fa-info-circle" title="The ID of an associated trial."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Study protocol type</label> <i class="fa fa-info-circle" title="The type of associated trial."></i>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="minimum_age_unit">Trial ID</label>
+                                        <input type="text" class="form-control" id="intervention_type">
+                                    </div>
+                                </div>
+                                    
+                                <!-- Compound -->
+                                <div class="tab-pane" id="7a"></div>
+                                
+                                <!-- Disease -->
+                                <div class="tab-pane" id="8a"></div>
+                                
+                                <!-- Drug -->
+                                <div class="tab-pane" id="9a"></div>
+                                
+                                <!-- Enzyme -->
+                                <div class="tab-pane" id="10a"></div>
+                                
+                                <!-- Gene -->
+                                <div class="tab-pane" id="11a"></div>
+                                
+                                <!-- Genotype -->
+                                <div class="tab-pane" id="12a"></div>
+                                
+                                <!-- Mutation -->
+                                <div class="tab-pane" id="13a"></div>
+                                
+                                <!-- Pathway -->
+                                <div class="tab-pane" id="14a"></div>
+                                
+                                <!-- Phenotype -->
+                                <div class="tab-pane" id="15a"></div>
+                                
+                                <!-- Procedure -->
+                                <div class="tab-pane" id="16a"></div>
+                                
+                                <!-- Protein -->
+                                <div class="tab-pane" id="17a">
+                                
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">UniProt Accession</label> <i class="fa fa-info-circle" title="Primary or secondary UniProt accession number."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="active">Active</label> <i class="fa fa-info-circle" title="Used to list active or obsolete entries."></i>
+                                        <select class="form-control" id="active">
+                                            <option>Yes</option>
+                                            <option>No</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Annotation</label> <i class="fa fa-info-circle" title="Entries with general annotations (comments [CC]), sequence annotations (features [FT]), etc."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Author</label> <i class="fa fa-info-circle" title="Entries with at least one reference co-authored by the given person."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">CD antigen</label> <i class="fa fa-info-circle" title="Entries with a given differentiation number."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Citation</label> <i class="fa fa-info-circle" title="Entries with a given citation."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Cluster</label> <i class="fa fa-info-circle" title="Entries in a given identity cluster."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Creation date</label> <i class="fa fa-info-circle" title="Entries with a given creation date."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Database</label> <i class="fa fa-info-circle" title="Entries with a given cross reference."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">EC</label> <i class="fa fa-info-circle" title="Entries with given Enzyme Commission (EC) numbers."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Existence</label> <i class="fa fa-info-circle" title="Protein existence (PE) criteria levels."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Family</label> <i class="fa fa-info-circle" title="Entries belonging to a given protein family."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Fragment</label> <i class="fa fa-info-circle" title="Entries with incomplete or complete sequences."></i>
+                                        <select class="form-control" id="fragment">
+                                            <option>Yes</option>
+                                            <option>No</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Gene</label> <i class="fa fa-info-circle" title="Primary or secondary UniProt accession number."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">GOA</label> <i class="fa fa-info-circle" title="Primary or secondary UniProt accession number."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Host</label> <i class="fa fa-info-circle" title="Entries for viruses infecting organisms of a given taxon."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_id">UniProt ID</label> <i class="fa fa-info-circle" title="Primary UniProt accession number."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inn">INN</label> <i class="fa fa-info-circle" title="Entries with given International Nonproprietary Names (INNs)."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Interactor(s)</label> <i class="fa fa-info-circle" title="Entries describing interactions with the protein described by the given entry."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Keyword(s)</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Length</label> <i class="fa fa-info-circle" title="Primary or secondary UniProt accession number."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                        <!-- Length from x -->
+                                        <!-- to length y -->
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Mass</label> <i class="fa fa-info-circle" title="Primary or secondary UniProt accession number."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                        <!-- Mass from x -->
+                                        <!-- to mass y -->
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Method</label> <i class="fa fa-info-circle" title="Entries for proteins identified by given methods."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Mnemonic</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Modification date</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Name</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Organelle</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Organism</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Plasmid</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Proteome</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Proteome component</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Replaces</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Reviewed</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <select class="form-control" id="reviewed">
+                                            <option>Yes</option>
+                                            <option>No</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Scope</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Sequence</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Sequence modification date</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Strain</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Taxonomy</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Tissue</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="uniprot_accession">Web</label> <i class="fa fa-info-circle" title="Entries with given keywords."></i>
+                                        <input type="text" class="form-control" id="gender">
+                                    </div>
+                                </div>
+                                
+                                <!-- Reference -->
+                                <div class="tab-pane" id="18a">
+
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Affiliation</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">All fields</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Author</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Author ID</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_book">Book</label>
+                                        <input type="text" class="form-control" id="reference_book">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Completion date</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Conflict of interest</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Corporate author</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_title">Creation date</label>
+                                        <input type="text" class="form-control" id="reference_title">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">EC/RN number</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Editor</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Entrez date</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Filter</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">First author name</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Full investigator name</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">grant number</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Investigator</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">ISBN</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Issue</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Journal</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Language</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Last author</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Location ID</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">MeSH date</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">MeSH major topic</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">MeSH subheadings</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">MeSH terms</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Modification date</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">NLM unique ID</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Other term</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Pagination</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Personal name as subject</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Pharmacological action</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Place of publication</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Publisher</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Publication date</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Publication type</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">PubMed ID</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Secondary source ID</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Subset</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Supplementary concept</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Text words</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Title and abstract</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Transliterated title</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reference_affilliation">Volume</label>
+                                        <input type="text" class="form-control" id="reference_affiliation">
+                                    </div>
+
+                                </div>
+                                
+                                <!-- Symptom -->
+                                <div class="tab-pane" id="19a"></div>
+                                
+                                <!-- Taxon -->
+                                <div class="tab-pane" id="20a"></div>
+                                
+                                <!-- Tissue -->
+                                <div class="tab-pane" id="21a"></div>
+                                
+                                <!-- Transcript -->
+                                <div class="tab-pane" id="22a"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Figure out how to paginate this... -->
+    <div class="container result-set" id="controller-container">
+        <div class="loader" id="loader"></div>
+    </div>
+</div>

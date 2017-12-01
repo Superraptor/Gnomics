@@ -1,0 +1,32 @@
+{
+  "name": "angular-environment",
+  "main": "dist/angular-environment.js",
+  "version": "1.0.8",
+  "homepage": "https://github.com/juanpablob/angular-environment",
+  "authors": [
+    "juanpablob <m.juanpablob@gmail.com>"
+  ],
+  "contributors": [
+    "questchile <questchile@gmail.com>",
+    "nirarazi <nir.arazi@gmail.com>"
+  ],
+  "description": "AngularJS Environment Plugin",
+  "keywords": [
+    "angular",
+    "angularjs",
+    "env",
+    "environment",
+    "variables"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": ">1.2.0"
+  }
+}

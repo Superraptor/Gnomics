@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Angular Tablesort</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="tablesort.css"/>
+</head>
+<body>
+
+<div ng-app="myApp" class="container">
+    <div ng-controller="tableTestCtrl">
+        <h1>Angular Tablesort</h1>
+        <table class="table table-striped" ts-wrapper>
+            <thead>
+            <tr>
+                <th>Select</th>
+                <th ts-criteria="Id">Id</th>
+                <th ts-criteria="Name|lowercase" ts-default>Name</th>
+                <th ts-criteria="Price|parseFloat">Price</th>
+                <th ts-criteria="Quantity|parseInt">Quantity</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in items track by item.Id" ts-repeat>
+                <td><input type="checkbox"></td>
+                <td>{{item.Id}}</td>
+                <td>{{item.Name}}</td>
+                <td>{{item.Price | currency}}</td>
+                <td>{{item.Quantity}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h1>Angular Tablesort with tablesort filter and max 5 entries</h1>
+        <table class="table table-striped" ts-wrapper>
+            <thead>
+            <tr>
+                <th>Select</th>
+                <th ts-criteria="Id">Id</th>
+                <th ts-criteria="Name|lowercase" ts-default>Name</th>
+                <th ts-criteria="Price|parseFloat">Price</th>
+                <th ts-criteria="Quantity|parseInt">Quantity</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in items | tablesort | limitTo: 5 track by item.Id" ts-repeat>
+                <td><input type="checkbox"></td>
+                <td>{{item.Id}}</td>
+                <td>{{item.Name}}</td>
+                <td>{{item.Price | currency}}</td>
+                <td>{{item.Quantity}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h1>Angular Tablesort with Multi-Element ts-repeat-start &amp; ts-repeat-end</h1>
+        <h2><em>Click Select to reveal item details.</em></h2>
+        <table class="table" ts-wrapper>
+            <thead>
+            <tr>
+                <th>Select</th>
+                <th ts-criteria="Id">Id</th>
+                <th ts-criteria="Name|lowercase" ts-default>Name</th>
+                <th ts-criteria="Price|parseFloat">Price</th>
+                <th ts-criteria="Quantity|parseInt">Quantity</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat-start="item in items track by item.Id"
+                ts-repeat-start
+                ng-class="{'active' : item.selected}">
+                <td><input type="checkbox" ng-model="item.selected"></td>
+                <td>{{item.Id}}</td>
+                <td>{{item.Name}}</td>
+                <td>{{item.Price | currency}}</td>
+                <td>{{item.Quantity}}</td>
+            </tr>
+            <tr ng-repeat-end
+                ts-repeat-end
+                ng-show="item.selected"
+                ng-class="{'active' : item.selected}">
+                <td colspan="5">{{item.Description}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h1>Angular Tablesort with a custom sort function on the Price column</h1>
+        <table class="table table-striped" ts-wrapper>
+            <thead>
+            <tr>
+                <th>Select</th>
+                <th ts-criteria="Id">Id</th>
+                <th ts-criteria="Name|lowercase">Name</th>
+                <th ts-criteria="Price|parseFloat" ts-default ts-order-by="centsThenDollars">Price</th>
+                <th ts-criteria="Quantity|parseInt">Quantity</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in items track by item.Id" ts-repeat>
+                <td><input type="checkbox"></td>
+                <td>{{item.Id}}</td>
+                <td>{{item.Name}}</td>
+                <td>{{item.Price | currency}}</td>
+                <td>{{item.Quantity}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h1>Empty table</h1>
+        <table class="table table-striped" ts-wrapper>
+            <thead>
+            <tr>
+                <th>Select</th>
+                <th ts-criteria="Id">Id</th>
+                <th ts-criteria="Name|lowercase" ts-default>Name</th>
+                <th ts-criteria="Price|parseFloat">Price</th>
+                <th ts-criteria="Quantity|parseInt">Quantity</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in noitems" ts-repeat ng-click="clickRow()">
+                <td><input type="checkbox"></td>
+                <td>{{item.Id}}</td>
+                <td>{{item.Name}}</td>
+                <td>{{item.Price | currency}}</td>
+                <td>{{item.Quantity}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h1>Empty table without "No data" row</h1>
+        <table class="table table-striped" ts-wrapper>
+            <thead>
+            <tr>
+                <th>Select</th>
+                <th ts-criteria="Id">Id</th>
+                <th ts-criteria="Name|lowercase" ts-default>Name</th>
+                <th ts-criteria="Price|parseFloat">Price</th>
+                <th ts-criteria="Quantity|parseInt">Quantity</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in noitems" ts-repeat ts-hide-no-data ng-click="clickRow()">
+                <td><input type="checkbox"></td>
+                <td>{{item.Id}}</td>
+                <td>{{item.Name}}</td>
+                <td>{{item.Price | currency}}</td>
+                <td>{{item.Quantity}}</td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+<script src="js/angular-tablesort.js"></script>
+<script>
+    var myApp = angular.module( 'myApp', ['tableSort'] )
+            .controller( "tableTestCtrl", function tableTestCtrl($scope)  {
+                $scope.items = [];
+                for(var i = 0; i<10; i++){
+                    var idStr = (i < 10 ? "0" + i : i).toString();
+                    var nameStr = String.fromCharCode(65 + i); //gets alphabet chars
+                    var priceStr = (Math.random()*100).toFixed(2);
+                    var qty = Math.floor(Math.random() * (25 - 1 + 1) + 1);
+                    $scope.items.push({
+                        Id: idStr,
+                        Name: nameStr,
+                        Price: priceStr,
+                        Quantity: qty,
+                        Description: "This is the description for item " + nameStr + ".",
+                        selected: false
+                    });
+                }
+
+                $scope.noitems = [];
+
+                $scope.clickRow = function () {
+                    alert('You clicked the row.');
+                }
+
+                function swapBeforeAndAfterDecimal(number) {
+                  var beforeDecimal = Math.floor(number).toString();
+                  var afterDecimal = number.toString().replace(/.*\./, '');
+
+                  return afterDecimal + '.' + beforeDecimal;
+                }
+
+                $scope.centsThenDollars = function (a, b) {
+                  var aSwapped = swapBeforeAndAfterDecimal(a);
+                  var bSwapped = swapBeforeAndAfterDecimal(b);
+
+                  if (aSwapped > bSwapped) {
+                    return 1;
+                  } else if (aSwapped === bSwapped) {
+                    return 0;
+                  } else {
+                    return -1;
+                  }
+                }
+            }
+    );
+
+</script>
+</body>
+</html>

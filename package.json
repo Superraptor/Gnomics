@@ -1,0 +1,24 @@
+{
+  "name": "gnomics",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "watch": "nodemon main.js"
+  },
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "electron-open-link-in-browser": "^1.0.2",
+    "express-session": "^1.15.6",
+    "morgan": "^1.9.0",
+    "request-promise": "^4.2.2",
+    "session-file-store": "^1.1.2",
+    "sqlite3": "^3.1.13",
+    "zerorpc": ""
+  },
+  "devDependencies": {
+    "electron": "^1.4.1",
+    "electron-packager": "^8.5.1",
+    "electron-rebuild": "^1.6.0",
+    "nodemon": "^1.12.1"
+  }
+}

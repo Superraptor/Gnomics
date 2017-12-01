@@ -1,0 +1,2314 @@
+<div ng-controller="helpCtrl" class="container" id="obj-container">
+    <h3 id="page-title">Help</h3>
+    
+    <ul class="nav nav-tabs" id="border-nav-tabs-obj">
+        <li class="active"><a href data-target="#1a" data-toggle="tab">Introduction</a></li>
+        <li><a href data-target="#2a" data-toggle="tab">Installation</a></li>
+        <li><a href data-target="#3a" data-toggle="tab">Usage</a></li>
+        <li><a href data-target="#4a" data-toggle="tab">Outline</a></li>
+        <li><a href data-target="#5a" data-toggle="tab">Coverage</a></li>
+        <li><a href data-target="#6a" data-toggle="tab">Identifiers</a></li>
+        <li><a href data-target="#7a" data-toggle="tab">Functions</a></li>
+        <li><a href data-target="#8a" data-toggle="tab">Tutorials</a></li>
+    </ul>
+    
+    <div class="panel panel-default" id="panel-nav-tabs-obj">
+        <div class="tab-content clearfix" id="text-margin-add">
+            <div class="tab-pane active" id="1a">
+                
+                <p style="margin-top:10px;">
+                    The World Wide Web is an indispensable tool for biomedical researchers who are striving to understand the molecular basis of phenotype. However, it presents challenges too, in the form of proliferation of data resources, with heterogeneity ranging from their content to functionality to interfaces. This often frustrates researchers who have to visit multiple sites, get familiar with their interfaces, and learn how to use them or extract knowledge from them and still never feel sure they have tracked down all the information they might need. <i>GNOMICS</i> (Genomic Nomenclature Omnibus and Multifaceted Informatics and Computational Suite), a suite with both a programmatic interface and a GUI, was envisioned as an answer to this challenge. <i>GNOMICS</i> allows for extensible biomedical functionality, including identifier conversion, pathway enrichment, sequence alignment, and reference gathering, among others. It combines usage of other biological and chemical database application programming interfaces (APIs) to deliver uniform data which is easy to further manipulate and parse.
+                </p>
+                
+                <hr/>
+                <h4 style="text-align: center;">Biomedical Informatics</h4>
+                <hr/>
+                
+                <p>AMIA, the American Medical Informatics Association, defines biomedical informatics (BMI) as the “interdisciplinary field that studies and pursues the effective uses of biomedical data, information, and knowledge for scientific inquiry, problem solving and decision making, motivated by efforts to improve human health.”</p>
+                
+                <p>One of the most important pieces of this definition is effective use. Michael Gurstein characterized effective use as the “capacity and opportunity to successfully integrate [Information and Communications Technology] into the accomplishment of self or collaboratively identified goals.” One of the deepest divides in BMI is between clinical applications and strictly biological research. Even informatics is divided on the subject, considering clinical informatics and bioinformatics as separate disciplines.</p>
+                
+                <p>A primary issue in this regard is the existence of different standards. Consider, for example, the FDA’s Adverse Event Reporting System (FAERS). FAERS records component drugs using RxCUIs and adverse events (AEs) as MedDRA terms. A bioinformaticist might more commonly utilize compound identifiers such as PubChem CIDs or ChEBI IDs instead of RxCUIs, or use Human Phenotype Ontology (HPO) IDs instead of MedDRA terms. Of course, translating from one ontology to another is somewhat laborious.</p>
+                
+                <hr/>
+                <h4 style="text-align: center;">UID Problem</h4>
+                <hr/>
+                
+                <p>The unique identifier (UID) problem is one rooted in the usage of primary keys for in database tables. Three basic keys of UIDs exist: serial numbers, random numbers, and choice codes. At times, just like there are many languages, there are many types of UIDs representing the same objects. Water has an RxCUI, a ChemSpider ID, a PubChem ID, etc., but they all mean the same thing. In many cases, “overarching” or meta- databases are constructed to link all of these sources together. A popular example of this would be the UMLS Metathesaurus. However, this introduces a problem, namely, that a new UID for this meta-database must be designed, adding a whole new identifier to worry about. This problem was represented well in the comic XKCD #927:</p>
+                
+                <img src="https://imgs.xkcd.com/comics/standards.png" style="display: block; margin-left: auto; margin-right: auto; margin-bottom: 5px;" alt="'Standards' cartoon by Randall Munroe from the xkcd online comic, hotlinked from: https://imgs.xkcd.com/comics/standards.png." />
+                
+                The reason for the creation of competing identifiers and standards is multifaceted, ranging from “Not Invented Here” (NIH) ideologies, economic or political motivations, or lack of reliable identifier mapping for usage in updates.
+                
+                <hr/>
+                <h4 style="text-align: center;">APIs</h4>
+                <hr/>
+                
+                <h5>REST and SOAP Services</h5>
+                
+                <h5>Return Types: JSON, JSONP, and XML</h5>
+                
+                <h5>API Security</h5>
+                <h6>ChemSpider</h6>
+                <h6>EOL</h6>
+                <h6>OMIM</h6>
+                <h6>OpenPHACTS</h6>
+                <h6>UMLS</h6>
+                
+            </div>
+            <div class="tab-pane" id="2a">
+                
+                <p style="margin-top:10px;">Because three different interfaces are available for using <i>GNOMICS</i>, the installation instructions can differ, sometimes greatly, especially from system to system.</p>
+                
+                <hr/>
+                <h4>Windows</h4>
+                <hr/>
+                
+                <p>First, install Git. This can be done by downloading it from the Git website, <a onclick="return shell.openExternal('http://git-scm.com/download/win');" style="cursor:pointer;">here</a>. After clicking on the link, the download should start automatically. Note that this source is a project called Git for Windows, ostensibly separate from Git itself. An alternative, for automated installation is the <a onclick="return shell.openExternal('https://chocolatey.org/packages/git');" style="cursor:pointer;">Git Chocolatey package</a>, which is community maintained. The other alternative is to install GitHub for Windows, which includes the command-line version of Git as well as the GUI (it also works with Powershell). This final version can be downloaded <a onclick="return shell.openExternal('http://windows.github.com/');" style="cursor:pointer;">here</a>.</p>
+                
+                <hr/>
+                <h4>Linux</h4>
+                <hr/>
+                
+                <p>For Linux platforms, install the basic Git tools using the binary installer. For example, on Fedora, RHEL, CentOS, and related RPM-based distros, use <code>dnf</code>:</p>
+
+                <pre style="margin-right:10px;">sudo dnf install git-all</pre>
+
+                <p>However, if using a Debian-based distribution (such as Ubuntu), use <code>apt-get</code>:</p>
+
+                <pre style="margin-right:10px;">sudo apt-get install git-all</pre>
+
+                <p>If your platform does not fall under either of these categories, utilize any of the various instructions located <a onclick="return shell.openExternal('http://git-scm.com/download/linux');" style="cursor:pointer;">here</a>.</p>
+                
+                <hr/>
+                <h4>Mac OS</h4>
+                <hr/>
+                
+                <p>Install Git first, using any of various methods. Typically the easiest is to install the Xcode Command Line Tools. On Mavericks (10.9) or above, this can be done just by running <code>git</code> from the Terminal the very first time. If not installed already, you will be prompted to install. For a more up-to-date version, use a binary installer, which can be downloaded <a onclick="return shell.openExternal('http://git-scm.com/download/mac');" style="cursor:pointer;">here</a>. Another method is to install it as part of the GitHub for Mac application; their GUI Git Tool has an option to install command line tools as well. It can be downloaded from the GitHub for Mac website, <a onclick="return shell.openExternal('http://mac.github.com');" style="cursor:pointer;">here</a>.</p>
+                
+            </div>
+            <div class="tab-pane" id="3a">
+                
+                <hr/>
+                <h4>Command-Line Interface (CLI)</h4>
+                <hr/>
+                
+                <hr/>
+                <h4>Graphical User Interface (Electon)</h4>
+                <hr/>
+                
+                <h5>Windows</h5>
+                
+                <p>First make sure no processes are current running on port 4242. To check this, open a command prompt and run the command <code>netstat -a -o -n</code>. This will list all protocols being run on various ports. If TCP 127.0.0.1:4242 does not appear in the list, we can continue the Electron launch procedure. However, if it does appear in the list, check the PID (last column of the <code>netstat</code> output) and run <code>taskkill /F /PID $PID</code>, where <code>$PID</code> is the aforementioned PID. For example, if the PID is 20284, run <code>taskkill /F /PID 20284</code>.</p>
+                
+                <hr/>
+                <h4>Graphical User Interface (Executable)</h4>
+                <hr/>
+                
+            </div>
+            <div class="tab-pane" id="4a">
+                
+                <p style="margin-top:10px;"><i>GNOMICS</i> is meant to be setup in a (relatively) intuitive manner, with objects named after what they represent in real-life. Not only this, but with a Swiss army knife approach, it is hoped that if a component fails, another component will take its place dynamically.</p>
+                
+                <p>Unfortunately, some data we try to find isn’t exactly easily accessible. In addition, certain databases or APIs being accessed might require particular security parameters or the entire API might be dropped suddenly. In these events, it is hoped that a dynamic user base will help keep the software up-to-date. If you encounter a bug or a database issue, at the very least, please please <i>please</i> note it on the GitHub.</p>
+                
+                <p>The basic outline of the project currently includes the following folders/file hierarchy:</p>
+            
+                <ul>
+                    <li>data</li>
+                    <li>docs</li>
+                    <li>objects
+                        <ul>
+                            <li>adverse_event_files</li>
+                            <li>anatomical_structure_files</li>
+                            <li>assay_files</li>
+                            <li>cell_line_files</li>
+                            <li>clinical_trial_files</li>
+                            <li>compound_files</li>
+                            <li>disease_files</li>
+                            <li>drug_files</li>
+                            <li>enzyme_files</li>
+                            <li>gene_files</li>
+                            <li>genotype_files</li>
+                            <li>patent_files</li>
+                            <li>pathway_files</li>
+                            <li>phenotype_files</li>
+                            <li>procedure_files</li>
+                            <li>protein_files</li>
+                            <li>reference_files</li>
+                            <li>symptom_files</li>
+                            <li>taxon_files</li>
+                            <li>tissue_files
+                                <ul>
+                                    <li>bto.py</li>
+                                    <li>caloha.py</li>
+                                    <li>fma.py</li>
+                                    <li>hpa.py</li>
+                                    <li>mesh.py</li>
+                                    <li>uberon.py</li>
+                                    <li>search.py</li>
+                                </ul>
+                            </li>
+                            <li>transcript_files</li>
+                            
+                            <li>interaction_objects
+                                <ul>
+                                    <li>compound_disease.py</li>
+                                    <li>compound_gene.py</li>
+                                    <li>compound_reference.py</li>
+                                    <li>disease_gene.py</li>
+                                    <li>disease_reference.py</li>
+                                    <li>gene_reference.py</li>
+                                </ul>
+                            </li>
+                            
+                            <li>adverse_event.py</li>
+                            <li>anatomical_structure.py</li>
+                            <li>assay.py</li>
+                            <li>cell_line.py</li>
+                            <li>clinical_trial.py</li>
+                            <li>compound.py</li>
+                            <li>disease.py</li>
+                            <li>drug.py</li>
+                            <li>enzyme.py</li>
+                            <li>gene.py</li>
+                            <li>genotype.py</li>
+                            <li>patent.py</li>
+                            <li>phenotype.py</li>
+                            <li>procedure.py</li>
+                            <li>protein.py</li>
+                            <li>reference.py</li>
+                            <li>symptom.py</li>
+                            <li>taxon.py</li>
+                            <li>tissue.py</li>
+                            <li>transcript.py</li>
+                            <li>user.py</li>
+                        </ul>
+                    </li>
+                </ul>
+            
+            </div>
+            <div class="tab-pane" id="5a">
+                
+                <p style="margin-top:10px;">
+                    <i>GNOMICS</i> covers a variety of databases and identifiers, of which are listed here, along with component APIs, source code references, and other materials. For ease of reference, these sources are listed alphabetically, with sub-sources and identifiers listed with them.
+                </p>
+                
+                <hr/>
+                <h5 style="text-align: center;">AEO</h5>
+                <hr/>
+                
+                <p>The AEO (Anatomical Entity Ontology) is an ontology of anatomical structures which expands upon CARO. It provides a detailed type classification for tissues and is thus useful in facilitating annotation and interoperability across anatomy ontologies. </p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/anatomical_structure_files/aeo.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer">
+                            <a onclick="return shell.openExternal('https://www.ebi.ac.uk/ols/ontologies/aeo');" style="cursor:pointer;">Anatomical Entity Ontology - EMBL-EBI</a>
+                            <br/>
+                            <a onclick="return shell.openExternal('https://bioportal.bioontology.org/ontologies/AEO');" style="cursor:pointer;">Anatomical Entity Ontology - NCBO BioPortal</a>
+                            <br/>
+                            <a onclick="return shell.openExternal('http://www.obofoundry.org/ontology/aeo.html');" style="cursor:pointer;">Anatomical Entity Ontology - OBO Foundry</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>AEO ID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">ATC/DDD Index</h5>
+                <hr/>
+                
+                <p>A searchable version of the complete ATC index with DDDs (Defined Daily Doses) available. The ATC (Anatomical Therapeutic Chemical) code is used for the classification of active ingredients of drugs according to the organ or system on which they act and their therapeutic, pharmacology, and chemical properties. It is controlled by the World Health Organization Collaborating Centre for Drug Statistics Methodology (WHOCC), and was first published in 1976.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/drug_files/atc.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://www.whocc.no/atc_ddd_index/');" style="cursor:pointer;">ATC/DDD Index - WHO Collaborating Centre for Drug Statistics Methodology</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>ATC Code</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">Beilstein Database</h5>
+                <hr/>
+                
+                <p>The Beilstein Database is an organic chemistry data source which covers scientific literature from 1771 to the present, and contains experimentally validated information on millions of chemical reactions and substances from original scientific publications. The electronic database was originally created from <i>Beilstein's Handbook of Organic Chemistry</i>, founded by Friedrich Konrad Beilstein in 1881.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/compound_files/beilstein.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>Beilstein Registry Number</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">BioCyc Database Collection</h5>
+                <hr/>
+                
+                <p>The BioCyc Database Collection is an assortment of organism-specific pathway and genome databases (PGDBs). They, in turn, provide reference to genome and metabolic pathway information for thousands of organisms.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer"></td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://biocyc.org/');" style="cursor:pointer;">BioCyc Pathway/Genome Database Collection</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">CARO</h5>
+                <hr/>
+                
+                <p>CARO (Common Anatomy Reference Ontology) is a standard developed to facilitate interoperability between existing anatomy ontologies for different species. It will be fully described in <i>Anatomy Ontologies for Bioinformatics: Principles and Practice</i>.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/anatomical_structure_files/caro.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer">
+                            <a onclick="return shell.openExternal('https://www.ebi.ac.uk/ols/ontologies/caro');" style="cursor:pointer;">Common Anatomy Reference Ontology - EMBL-EBI</a>
+                            <br/>
+                            <a onclick="return shell.openExternal('https://bioportal.bioontology.org/ontologies/CARO');" style="cursor:pointer;">Common Anatomy Reference Ontology - NCBO BioPortal</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>CARO ID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">CAS</h5>
+                <hr/>
+                
+                <p>The Chemical Abstracts Service (CAS) is a division of the American Chemical Society (ACS). Its largest database is its registry, containing information on more than 130 million organic and inorganic substances, as well as more than 64 million protein and nucleic acid sequences.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/compound_files/cas.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://www.cas.org/');" style="cursor:pointer;">CAS</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>CAS RN</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td>
+                            CAS RN &rarr; MeSH Term
+                            <br/>
+                            CAS RN &rarr; MeSH UID
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">Catalogue of Life</h5>
+                <hr/>
+                
+                <p>The Catalogue of Life, begun in 2001 by Species 2000 and the Integrated Taxonomic Information System (ITIS), is a comprehensive catalogue of known organisms on Earth. It compiles data from 156 peer-reviewed taxonomic databases.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/taxon_files/col.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('http://www.catalogueoflife.org/');" style="cursor:pointer;">Catalogue of Life</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>COL ID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">ChEBI</h5>
+                <hr/>
+                
+                <p>The Chemical Entities of Biological Interest (ChEBI) is a database and ontology of molecular entities focused on small chemical compounds. It is part of the Open Biomedical Ontologies effort.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/compound_files/chebi.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://www.ebi.ac.uk/chebi/');" style="cursor:pointer;">Chemical Entities of Biological Interest (ChEBI)</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>
+                            ChEBI ID &rarr; Beilstein Registry Number
+                            <br/>
+                            ChEBI ID &rarr; CAS RN
+                            <br/>
+                            ChEBI ID &rarr; DrugBank ID
+                            <br/>
+                            ChEBI ID &rarr; DrugCentral ID
+                            <br/>
+                            ChEBI ID &rarr; InChI
+                            <br/>
+                            ChEBI ID &rarr; INN
+                            <br/>
+                            ChEBI ID &rarr; KEGG COMPOUND ID
+                            <br/>
+                            ChEBI ID &rarr; KEGG DRUG ID
+                            <br/>
+                            ChEBI ID &rarr; PDBeChem Code
+                            <br/>
+                            ChEBI ID &rarr; SM LINCS ID
+                            <br/>
+                            ChEBI ID &rarr; SMILES
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">ChEMBL</h5>
+                <hr/>
+                
+                <p>ChEMBL is a manually curated chemical database of bioactive molecules with drug-like properties. It is maintained by the European Bioinformatics Institute (EBI), of the European Molecular Biology Laboratory (EMBL), based at the Wellcome Trust Genome Campus in the United Kingdom.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/compound_files/chembl.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://www.ebi.ac.uk/chembl/');" style="cursor:pointer;">ChEMBL</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>ChEMBL ID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td>
+                            ChEMBL ID &rarr; ATC Code
+                            <br/>
+                            ChEMBL ID &rarr; BAN
+                            <br/>
+                            ChEMBL ID &rarr; Canonical SMILES
+                            <br/>
+                            ChEMBL ID &rarr; FDA Approved Drug Name
+                            <br/>
+                            ChEMBL ID &rarr; INN
+                            <br/>
+                            ChEMBL ID &rarr; JAN
+                            <br/>
+                            ChEMBL ID &rarr; USAN
+                            <br/>
+                            ChEMBL ID &rarr; USP
+                            <br/>
+                            ChEMBL ID &rarr; Wikipedia Accession
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">ChemSpider</h5>
+                <hr/>
+                
+                <p>ChemSpider is a database of chemicals owned by the Royal Society of Chemistry (RSC). It currently provides access to over 60 million structures, properties, and associated information.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/compound_files/cs.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('http://www.chemspider.com/');" style="cursor:pointer;">http://www.chemspider.com/</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>CSID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td>
+                            CSID &rarr; InChI
+                            <br/>
+                            CSID &rarr; Molecular Formula
+                            <br/>
+                            CSID &rarr; PubChem CID
+                            <br/>
+                            CSID &rarr; SMILES
+                            <br/>
+                            InChI &rarr; CSID
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td>ChemSpiPy (<a onclick="return shell.openExternal('http://chemspipy.readthedocs.io');" style="cursor:pointer;">http://chemspipy.readthedocs.io</a>)</td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td>API Security Token</td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">DGIdb</h5>
+                <hr/>
+                
+                <p>The Drug-Gene Interaction database (DGIdb) mines existing resources that generate hypotheses about how mutated genes might be targeted therapeutically or prioritized for drug development. It provides an interface for searching lists of genes against a compendium of drug-gene interactions and potentially "druggable" genes.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer"></td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('http://dgidb.genome.wustl.edu/');" style="cursor:pointer;">http://dgidb.genome.wustl.edu/</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>DGIdb Gene Interaction ID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">Disease Ontology</h5>
+                <hr/>
+                
+                <p>The Disease Ontology (DO) is a standardized ontology for human disease with the purpose of providing the biomedical community with consistent, reusable, and sustainable descriptions of human disease terms, phenotype characteristics, and related medical vocabulary disease concepts.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer"></td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer">
+                            <a onclick="return shell.openExternal('http://disease-ontology.org/');" style="cursor:pointer;">Disease Ontology - Institute for Genome Sciences</a>
+                            <br/>
+                            <a onclick="return shell.openExternal('https://bioportal.bioontology.org/ontologies/DOID');" style="cursor:pointer;">Human Disease Ontology - NCBO BioPortal</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>
+                            DO Term
+                            <br/>
+                            DOID
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td>
+                            DOID &rarr; DO Term
+                            <br/>
+                            DOID &rarr; HGNC Approved Symbol
+                            <br/>
+                            DOID &rarr; MIM Number
+                            <br/>
+                            DOID &rarr; NCBI GeneID
+                            <br/>
+                            DOID &rarr; ORDO ID
+                            <br/>
+                            DOID &rarr; SNOMED-CT ID
+                            <br/>
+                            DOID &rarr; UMLS CUI
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">DrugBank</h5>
+                <hr/>
+                
+                <p>The DrugBank database is a bioinformatics and cheminformatics resources that combines detailed drug data with comprehensive drug target information.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/drug_files/drugbank.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://www.drugbank.ca/');" style="cursor:pointer;">DrugBank</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>DrugBank ID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td>API Security Token</td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">DrugCentral</h5>
+                <hr/>
+                
+                <p>DrugCentral is an online drug information resource created and maintained by Division of Translational Informatics at University of New Mexico.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/drug_files/drugcentral.py</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('http://drugcentral.org/');" style="cursor:pointer;">DrugCentral</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>DrugCentral ID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">Drugs@FDA</h5>
+                <hr/>
+                
+                <p>Drugs@FDA is a database that includes most drug products approved since 1939. The majority of patient information, labels, approval letters, reviews, and other information are available for drug products approved since 1998.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/drug_files/fda.py</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://www.fda.gov/drugs/informationondrugs/ucm135821.htm');" style="cursor:pointer;" href="">Drugs@FDA</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>FDA Approved Drug Name</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">EOL</h5>
+                <hr/>
+                
+                <p>The Encyclopedia of Life (EOL) is a free, online collaborative encyclopedia intended to document all of the 1.9 million living species known to science. It is compiled from existing databases and contributions by both experts and non-experts.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/taxon_files/eol.py</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('http://eol.org/');" style="cursor:pointer;">Encyclopedia of Life</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>EOL ID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td>
+                            EOL ID &rarr; COL ID
+                            <br/>
+                            Index Fungorum &rarr; EOL ID
+                            <br/>
+                            ITIS TSN &rarr; EOL ID
+                            <br/>
+                            NCBI TaxID &rarr; EOL ID
+                            <br/>
+                            Paleobiology Database ID &rarr; EOL ID
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">FMA</h5>
+                <hr/>
+                
+                <p>The Foundational Model of Anatomy (FMA) ontology is a reference ontology for the domain of anatomy. It is a symbolic representation of the canonical, phenotypic structure of an organism as well as a spatial-structural ontology of anatomical entities and relations which form the physical organization of an organism at all salient levels of granularity.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/anatomical_structure_files/fma.py</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer">
+                            <a onclick="return shell.openExternal('https://bioportal.bioontology.org/ontologies/FMA');" style="cursor:pointer;">Foundational Model of Anatomy - NCBO BioPortal</a>
+                            <a onclick="return shell.openExternal('http://si.washington.edu/projects/fma');" style="cursor:pointer;" href="">Foundational Model of Anatomy - Structural Informatics Group</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>FMA ID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">Gene Ontology</h5>
+                <hr/>
+                
+                <p>The Gene Ontology (GO) is a major bioinformatics initiative to unify the representation of gene and gene product attributes across all species.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer"></td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('http://www.geneontology.org/');" style="cursor:pointer;">Gene Ontology Consortium</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>
+                            GO Accession
+                            <br/>
+                            GO Term
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">ICD</h5>
+                <hr/>
+                
+                <p>The International Classification of Diseases (ICD) is the international standard diagnostic tool for epidemiology, health management, and clinical purposes. It is maintained by the World Health Organization (WHO).</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">
+                            /objects/disease_files/icd.py [Main]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('http://www.who.int/classifications/icd/en/');" style="cursor:pointer;">International Classification of Diseases - WHO</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>
+                            ICD-10-CM Code
+                            <br/>
+                            ICD-9-CM Code
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">KEGG</h5>
+                <hr/>
+                
+                <p>KEGG (Kyoto Encyclopedia of Genes and Genomes) is a collection of databases dealing with genomes, biological pathways, diseases, drugs, and chemical substances. It is utilized for bioinformatics research and education, including data analysis in genomics, metagenomics, and metabolomics.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">
+                            /objects/compound_files/kegg.py [Main]
+                            <br/>
+                            /objects/disease_files/kegg.py [Main]
+                            <br/>
+                            /objects/drug_files/kegg.py [Main]
+                            <br/>
+                            /objects/gene_files/kegg.py [Main]
+                            <br/>
+                            /objects/pathway_files/kegg.py [Main]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('http://www.genome.jp/kegg/');" style="cursor:pointer;">KEGG: Kyoto Encyclopedia of Genes and Genomes</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>
+                            KEGG COMPOUND ID
+                            <br/>
+                            KEGG DISEASE ID
+                            <br/>
+                            KEGG DRUG ID
+                            <br/>
+                            KEGG GENE ID
+                            <br/>
+                            KEGG ORTHOLOGY (KO) ID
+                            <br/>
+                            KEGG PATHWAY ID (EC)
+                            <br/>
+                            KEGG PATHWAY ID (KO)
+                            <br/>
+                            KEGG PATHWAY ID (MAP)
+                            <br/>
+                            KEGG PATHWAY ID (Reaction)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td>
+                            KEGG COMPOUND ID &rarr; ChEBI ID
+                            <br/>
+                            KEGG COMPOUND ID &rarr; ChEMBL ID
+                            <br/>
+                            KEGG COMPOUND ID &rarr; PubChem SID
+                            <br/>
+                            KEGG DISEASE ID &rarr; ICD-10-CM Code
+                            <br/>
+                            KEGG DISEASE ID &rarr; MeSH UID
+                            <br/>
+                            KEGG DISEASE ID &rarr; MIM Number
+                            <br/>
+                            KEGG ORTHOLOGY (KO) ID &rarr; GO Accession
+                            <br/>
+                            KEGG ORTHOLOGY (KO) ID &rarr; KEGG COMPOUND ID
+                            <br/>
+                            KEGG ORTHOLOGY (KO) ID &rarr; KEGG DRUG ID
+                            <br/>
+                            KEGG ORTHOLOGY (KO) ID &rarr; KEGG PATHWAY ID (KO)
+                            <br/>
+                            KEGG PATHWAY ID (KO) &rarr; BSID
+                            <br/>
+                            KEGG PATHWAY ID (KO) &rarr; GO Accession
+                            <br/>
+                            KEGG PATHWAY ID (KO) &rarr; KEGG COMPOUND ID
+                            <br/>
+                            KEGG PATHWAY ID (KO) &rarr; KEGG DISEASE ID
+                            <br/>
+                            KEGG PATHWAY ID (KO) &rarr; KEGG ORTHOLOGY (KO) ID
+                            <br/>
+                            KEGG PATHWAY ID (MAP) &rarr; GO Accession
+                            <br/>
+                            KEGG PATHWAY ID (MAP) &rarr; KEGG DISEASE ID
+                            <br/>
+                            KEGG PATHWAY ID (MAP) &rarr; KEGG PATHWAY ID (KO)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">LINCS Data Portal</h5>
+                <hr/>
+                
+                <p>The LINCS Data Portal is a data portal created for the Library of Integrated Network-based Cellular Signatures (LINCS). It provides an interactive query interface to all curated datasets generated by the LINCS consortium.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">
+                            /objects/compound_files/lincs.py [Main]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('http://lincsportal.ccs.miami.edu/dcic-portal/');" style="cursor:pointer;">LINCS Data Portal</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>SM LINCS ID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">MeSH Browser</h5>
+                <hr/>
+                
+                <p>The MeSH Browser is an online vocabulary look-up aid available for use with Medical Subject Headings (MeSH). It is designed to help quickly locate descriptors of possible interest and to show the hierarchy in which descriptors of interest appear.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">
+                            /objects/compound_files/mesh.py [Main]
+                            <br/>
+                            /objects/drug_files/mesh.py [Main]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://meshb.nlm.nih.gov/');" style="cursor:pointer;">MeSH Browser</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>
+                            MeSH Term (English)
+                            MeSH Tree Number
+                            MeSH UID
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">MMDB</h5>
+                <hr/>
+                
+                <p>The Molecular Modeling DataBase (MMDB) is a database of experimentally determined three-dimensional biomolecular structures and hosted by the National Central for Biotechnology Information (NCBI).</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/compound_files/mmdb.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://www.ncbi.nlm.nih.gov/structure');" style="cursor:pointer;">MMDB - NCBI - NIH</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>MMDB ID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">NCBI BioSystems Database</h5>
+                <hr/>
+                
+                <p>The NCBI BioSystems Database centralizes and cross-links existing biological systems databases, increasing their utiliy and target audience by integrating their pathways and systems into NCBI resources.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer"></td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://www.ncbi.nlm.nih.gov/biosystems/');" style="cursor:pointer;">NCBI BioSystems Database</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>BSID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td>NOBLE Coder</td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">Noble</h5>
+                <hr/>
+                
+                <p>NOBLE Coder is a generic tool and API that auto codes free text with concepts from controlled terminology.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/reference_files/noble.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('http://noble-tools.dbmi.pitt.edu/');" style="cursor:pointer;">NOBLE Tools</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>MIM Number</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td>NOBLE Coder</td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">OMIM</h5>
+                <hr/>
+                
+                <p>Online Mendelian Inheritance in Man (OMIM) is a comprehensive, authoritative compendium of human genes and genetic phenotypes.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/disease_files/omim.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://omim.org/');" style="cursor:pointer;">OMIM - Online Mendelian Inheritance in Man</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>MIM Number</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td>
+                            MIM Number &rarr; DOID
+                            <br/>
+                            MIM Number &rarr; HGNC Approved Symbol
+                            <br/>
+                            MIM Number &rarr; ICD-10-CM Code
+                            <br/>
+                            MIM Number &rarr; ICD-9-CM Code
+                            <br/>
+                            MIM Number &rarr; NCBI GeneID
+                            <br/>
+                            MIM Number &rarr; UMLS CUI
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td>API Security Token</td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">PDB</h5>
+                <hr/>
+                
+                <p>The RCSB PDB (Protein Data Bank) is an archive that contains information about experimentally-determined structures of proteins, nucleic acids, and complex assemblies.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/protein_files/pdb.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://www.rcsb.org/pdb/home/home.do');" style="cursor:pointer;">RCSB Protein Data Bank</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>PDB ID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">PDBeChem</h5>
+                <hr/>
+                
+                <p>PDBeChem is a dictionary of chemical components (ligands, small molecules, and monomers) referred to in PDB entries and maintained by wwPDB (Worldwide Protein Data Bank).</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/compound_files/pdbechem.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('http://www.ebi.ac.uk/pdbe-srv/pdbechem/');" style="cursor:pointer;">PDBeChem: Ligand Dictionary</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>PDBeChem Code</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">PIR</h5>
+                <hr/>
+                
+                <p>The Protein Information Resource (PIR) is an integrated public bioinformatics resource to support genomic, proteomic, and systems biology research and scientific studies.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/protein_files/pir.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('http://pir.georgetown.edu/');" style="cursor:pointer;">Protein Information Resource (PIR)</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>PIR ID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">PubChem</h5>
+                <hr/>
+                
+                <p>PubChem is a database of chemical molecules and their activities against biological assays. The system is maintained by the National Central for Biotechnology Information (NCBI), a component of the National Library of Medicine (NLM).</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">
+                            /objects/assay_files/pubchem.py [Main]
+                            <br/>
+                            /objects/compound_files/pubchem.py [Main]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://pubchem.ncbi.nlm.nih.gov/');" style="cursor:pointer;">The PubChem Project</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>
+                            PubChem AID
+                            <br/>
+                            PubChem CID
+                            <br/>
+                            PubChem SID
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td>
+                            PubChem CID &rarr; Canonical SMILES
+                            <br/>
+                            PubChem CID &rarr; CAS RN
+                            <br/>
+                            PubChem CID &rarr; InChI
+                            <br/>
+                            PubChem CID &rarr; Isomeric SMILES
+                            <br/>
+                            PubChem CID &rarr; IUPAC Name
+                            <br/>
+                            PubChem CID &rarr; MIM Number
+                            <br/>
+                            PubChem CID &rarr; MMDB ID
+                            <br/>
+                            PubChem CID &rarr; Molecular Formula
+                            <br/>
+                            PubChem CID &rarr; PubChem AID
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td>
+                            PubChemPy (<a onclick="return shell.openExternal('https://pubchempy.readthedocs.io');" style="cursor:pointer;">https://pubchempy.readthedocs.io</a>)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">PubMed</h5>
+                <hr/>
+                
+                <p>PubMed is a database comprised of more than 27 million citations for biomedical literature from MEDLINE, life science journals, and online books.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/reference_files/pubmed.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://www.ncbi.nlm.nih.gov/pubmed/');" style="cursor:pointer;">PubMed - NCBI</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>PMID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">PubTator</h5>
+                <hr/>
+                
+                <p>PubTator is a web-based tool for accelerating manual literature curation through the use of advanced text-mining techniques.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/reference_files/pubtator.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://www.ncbi.nlm.nih.gov/CBBresearch/Lu/Demo/PubTator/');" style="cursor:pointer;">PubTator</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td>
+                            PMID &rarr; ChEBI ID
+                            <br/>
+                            PMID &rarr; MeSH UID
+                            <br/>
+                            PMID &rarr; NCBI GeneID
+                            <br/>
+                            PMID &rarr; NCBI TaxID
+                            <br/>
+                            PMID &rarr; RS Number
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">RefSeq</h5>
+                <hr/>
+                
+                <p>RefSeq is a comprehensive, integrated, non-redundant, well-annotated set of reference sequences including genomes, transcripts, and proteins.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/protein_files/refseq.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://www.ncbi.nlm.nih.gov/refseq/');" style="cursor:pointer;">RefSeq: NCBI Reference Sequence Database</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>
+                            RefSeq Nucleotide ID
+                            <br/>
+                            RefSeq Protein Accession
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">RxNorm</h5>
+                <hr/>
+                
+                <p>RxNorm provides normalized names for clinical drugs and links its names to many of the drug vocabularies commonly used in pharmacy management and drug interaction software, including those of First Databank, Micromedex, MediSpan, Gold Standard Drug Database, and Multum.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/drug_files/rxcui.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>RxCUI</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td>
+                            AMPID &rarr; RxCUI
+                            <br/>
+                            ANDA &rarr; RxCUI
+                            <br/>
+                            ATC Code &rarr; RxCUI
+                            <br/>
+                            CVX &rarr; RxCUI
+                            <br/>
+                            DrugBank ID &rarr; RxCUI
+                            <br/>
+                            GCN &rarr; RxCUI
+                            <br/>
+                            GFC &rarr; RxCUI
+                            <br/>
+                            GPI &rarr; RxCUI
+                            <br/>
+                            GPPC &rarr; RxCUI
+                            <br/>
+                            HIC Sequence Number &rarr; RxCUI
+                            <br/>
+                            MMSL Code &rarr; RxCUI
+                            <br/>
+                            NDA &rarr; RxCUI
+                            <br/>
+                            NDC &rarr; RxCUI
+                            <br/>
+                            NUI &rarr; RxCUI
+                            <br/>
+                            SNOMED-CT ID &rarr; RxCUI
+                            <br/>
+                            SPL Set ID &rarr; RxCUI
+                            <br/>
+                            UMLS CUI &rarr; RxCUI
+                            <br/>
+                            UNII &rarr; RxCUI
+                            <br/>
+                            VUID &rarr; RxCUI
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">SNOMED</h5>
+                <hr/>
+                
+                <p>The Systematized Nomenclature of Medicine (SNOMED) is a systematic, computer-processable collection of medical terms, in human and veterinary medicine, to provide codes, terms, synonyms, and definitions which cover anatomy, diseases, findings, procedures, microorganisms, substances, and more.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/disease_files/aeo.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('http://www.snomed.org/');" style="cursor:pointer;">SNOMED International</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>SNOMED-CT ID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">UniProt</h5>
+                <hr/>
+                
+                <p>UniProt is a freely accessible database of protein sequences and functional information, with many entries begin derived from genome sequencing projects.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/protein_files/uniprot.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('http://www.uniprot.org/');" style="cursor:pointer;">UniProt</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>
+                            UniParc
+                            <br/>
+                            UniProtKB AC/ID
+                            <br/>
+                            UniProtKB Accession
+                            <br/>
+                            UniProtKB ID
+                            <br/>
+                            UniRef100
+                            <br/>
+                            UniRef50
+                            <br/>
+                            UniRef90
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td>
+                            UniProtKB Accession &rarr; DisProt ID
+                            <br/>
+                            UniProtKB Accession &rarr; MINT ID
+                            <br/>
+                            UniProtKB Accession &rarr; PDB ID
+                            <br/>
+                            UniProtKB Accession &rarr; PIR ID
+                            <br/>
+                            UniProtKB Accession &rarr; RefSeq Protein Accession
+                            <br/>
+                            UniProtKB Accession &rarr; STRING ID
+                            <br/>
+                            UniProtKB ID &rarr; DisProt ID
+                            <br/>
+                            UniProtKB ID &rarr; MINT ID
+                            <br/>
+                            UniProtKB ID &rarr; PDB ID
+                            <br/>
+                            UniProtKB ID &rarr; PIR ID
+                            <br/>
+                            UniProtKB ID &rarr; RefSeq Protein Accession
+                            <br/>
+                            UniProtKB ID &rarr; STRING ID
+                            <br/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">UBERON</h5>
+                <hr/>
+                
+                <p>UBERON (Uber Anatomy Ontology) is a comparative anatomy ontology representing a variety of structures found in animals.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">/objects/anatomical_structure_files/uberon.py [Main]</td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer">
+                            <a onclick="return shell.openExternal('https://bioportal.bioontology.org/ontologies/UBERON');" style="cursor:pointer;">Uber Anatomy Ontology - NCBO BioPortal</a>
+                            <br/>
+                            <a onclick="return shell.openExternal('http://uberon.github.io/');" style="cursor:pointer;">Uberon - GitHub</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>UBERON ID</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">Wikidata</h5>
+                <hr/>
+                
+                <p>Wikidata is a collaboratively edited knowledge base operated by the Wikimedia Foundation. It is intended to provide a common source of data which can be used by Wikimedia projects such as Wikipedia.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">
+                            /objects/compound_file/wiki.py [Main]
+                            <br/>
+                            /objects/taxon_files/wiki.py [Main]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://www.wikidata.org/');" style="cursor:pointer;">Wikidata</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>Wikidata Accession</td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td>
+                            Wikidata Accession &rarr; AAT ID
+                            <br/>
+                            Wikidata Accession &rarr; ATC Code
+                            <br/>
+                            Wikidata Accession &rarr; Canonical SMILES
+                            <br/>
+                            Wikidata Accession &rarr; CAS Registry Number
+                            <br/>
+                            Wikidata Accession &rarr; ChEBI ID
+                            <br/>
+                            Wikidata Accession &rarr; ChEMBL ID
+                            <br/>
+                            Wikidata Accession &rarr; ChemSpider ID
+                            <br/>
+                            Wikidata Accession &rarr; DrugBank ID
+                            <br/>
+                            Wikidata Accession &rarr; EOL ID
+                            <br/>
+                            Wikidata Accession &rarr; Fossilworks ID
+                            <br/>
+                            Wikidata Accession &rarr; Freebase ID
+                            <br/>
+                            Wikidata Accession &rarr; InChI
+                            <br/>
+                            Wikidata Accession &rarr; InChI Key
+                            <br/>
+                            Wikidata Accession &rarr; INN
+                            <br/>
+                            Wikidata Accession &rarr; Isomeric SMILES
+                            <br/>
+                            Wikidata Accession &rarr; ITIS TSN
+                            <br/>
+                            Wikidata Accession &rarr; KEGG COMPOUND ID
+                            <br/>
+                            Wikidata Accession &rarr; KEGG DRUG ID
+                            <br/>
+                            Wikidata Accession &rarr; MeSH UID
+                            <br/>
+                            Wikidata Accession &rarr; MSW ID
+                            <br/>
+                            Wikidata Accession &rarr; NCBI Taxonomy ID
+                            <br/>
+                            Wikidata Accession &rarr; PDB Ligand ID
+                            <br/>
+                            Wikidata Accession &rarr; PubChem CID
+                            <br/>
+                            Wikidata Accession &rarr; RxCUI
+                            <br/>
+                            Wikidata Accession &rarr; UMLS CUI
+                            <br/>
+                            Wikidata Accession &rarr; UNII
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+                <hr/>
+                <h5 style="text-align: center;">Wikipedia</h5>
+                <hr/>
+                
+                <p>Wikipedia is a free online encyclopedia with the aim to allow anyone to edit articles. It is the largest and most popular general reference work on the Internet.</p>
+                
+                <table class="table table-condensed" id="obj-content-table">
+                    <tr>
+                        <td>Files</td>
+                        <td id="obj-identifer">
+                            /objects/anatomical_structure_files/wiki.py [Main]
+                            <br/>
+                            /objects/compound_files/wiki.py [Main]
+                            <br/>
+                            /objects/disease_files/wiki.py [Main]
+                            <br/>
+                            /objects/gene_files/wiki.py [Main]
+                            <br/>
+                            /objects/taxon_files/wiki.py [Main]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Homepage</td>
+                        <td id="obj-identifer"><a onclick="return shell.openExternal('https://wikipedia.org/');" style="cursor:pointer;">Wikipedia</a></td>
+                    </tr>
+                    <tr>
+                        <td>Identifiers</td>
+                        <td>
+                            Wikipedia Accession (Albanian)
+                            <br/>
+                            Wikipedia Accession (Arabic)
+                            <br/>
+                            Wikipedia Accession (Aramaic)
+                            <br/>
+                            Wikipedia Accession (Azerbaijani)
+                            <br/>
+                            Wikipedia Accession (Bangla)
+                            <br/>
+                            Wikipedia Accession (Bashkir)
+                            <br/>
+                            Wikipedia Accession (Basque)
+                            <br/>
+                            Wikipedia Accession (Bosnian)
+                            <br/>
+                            Wikipedia Accession (Breton)
+                            <br/>
+                            Wikipedia Accession (Bulgarian)
+                            <br/>
+                            Wikipedia Accession (Catalan)
+                            <br/>
+                            Wikipedia Accession (Central Kurdish)
+                            <br/>
+                            Wikipedia Accession (Chinese)
+                            <br/>
+                            Wikipedia Accession (Classical Chinese)
+                            <br/>
+                            Wikipedia Accession (Croatian)
+                            <br/>
+                            Wikipedia Accession (Czech)
+                            <br/>
+                            Wikipedia Accession (Danish)
+                            <br/>
+                            Wikipedia Accession (Divehi)
+                            <br/>
+                            Wikipedia Accession (Dutch)
+                            <br/>
+                            Wikipedia Accession (English)
+                            <br/>
+                            Wikipedia Accession (Esperanto)
+                            <br/>
+                            Wikipedia Accession (Estonian)
+                            <br/>
+                            Wikipedia Accession (Finnish)
+                            <br/>
+                            Wikipedia Accession (French)
+                            <br/>
+                            Wikipedia Accession (Galician)
+                            <br/>
+                            Wikipedia Accession (Georgian)
+                            <br/>
+                            Wikipedia Accession (German)
+                            <br/>
+                            Wikipedia Accession (Greek)
+                            <br/>
+                            Wikipedia Accession (Hebrew)
+                            <br/>
+                            Wikipedia Accession (Hungarian)
+                            <br/>
+                            Wikipedia Accession (Ido)
+                            <br/>
+                            Wikipedia Accession (Indonesian)
+                            <br/>
+                            Wikipedia Accession (Irish)
+                            <br/>
+                            Wikipedia Accession (Italian)
+                            <br/>
+                            Wikipedia Accession (Japanese)
+                            <br/>
+                            Wikipedia Accession (Kazakh)
+                            <br/>
+                            Wikipedia Accession (Korean)
+                            <br/>
+                            Wikipedia Accession (Latin)
+                            <br/>
+                            Wikipedia Accession (Latvian)
+                            <br/>
+                            Wikipedia Accession (Lithuanian)
+                            <br/>
+                            Wikipedia Accession (Macedonian)
+                            <br/>
+                            Wikipedia Accession (Newari)
+                            <br/>
+                            Wikipedia Accession (Norwegian)
+                            <br/>
+                            Wikipedia Accession (Persian)
+                            <br/>
+                            Wikipedia Accession (Polish)
+                            <br/>
+                            Wikipedia Accession (Portuguese)
+                            <br/>
+                            Wikipedia Accession (Romanian)
+                            <br/>
+                            Wikipedia Accession (Russian)
+                            <br/>
+                            Wikipedia Accession (Scots)
+                            <br/>
+                            Wikipedia Accession (Serbo-Croatian)
+                            <br/>
+                            Wikipedia Accession (Simple English)
+                            <br/>
+                            Wikipedia Accession (Slovenian)
+                            <br/>
+                            Wikipedia Accession (Spanish)
+                            <br/>
+                            Wikipedia Accession (Swedish)
+                            <br/>
+                            Wikipedia Accession (Tamil)
+                            <br/>
+                            Wikipedia Accession (Telugu)
+                            <br/>
+                            Wikipedia Accession (Thai)
+                            <br/>
+                            Wikipedia Accession (Turkish)
+                            <br/>
+                            Wikipedia Accession (Ukrainian)
+                            <br/>
+                            Wikipedia Accession (Urdu)
+                            <br/>
+                            Wikipedia Accession (Walloon)
+                            <br/>
+                            Wikipedia Accession (Western Mari)
+                            <br/>
+                            Wikipedia Accession (Xhosa)
+                            <br/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mappings</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Packages</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Requirements</td>
+                        <td></td>
+                    </tr>
+                </table>
+                
+            </div>
+            <div class="tab-pane" id="6a">
+                
+                <hr/>
+                <h4>Alphabetical List</h4>
+                <hr/>
+                
+                <h5>0-9</h5>
+                <ul>
+                </ul>
+                <h5>Aa</h5>
+                <ul>
+                    <li><b>AAT ID</b>, <i>Art and Architecture Thesaurus IDentifier</i>.</li>
+                    <li><b>ADW Taxon ID</b>, <i>Animal Diversity Web Taxon IDentifier</i>.</li>
+                    <li><b>AEO ID</b>, <i>Anatomical Entity Ontology IDentifier</i>.</li>
+                    <li><b>AOD ID</b>, <i>Alcohol and Other Drug IDentifier</i>.</li>
+                    <li><b>ATC Code</b>, <i>Anatomical Therapeutic Chemical Code</i>.</li>
+                </ul>
+                <h5>Bb</h5>
+                <ul>
+                    <li><b>BAN</b>, <i>British Accepted Name</i>.</li>
+                    <li><b>BAO ID</b>, <i>BioAssay Ontology IDentifier</i>.</li>
+                    <li><b>Beilstein Registry Number</b>.</li>
+                    <li><b>BNCF Thesaurus ID</b>, <i title="National Central Library of Florence">Biblioteca Nazionale Centrale di Firenze Thesaurus IDentifier</i>.</li>
+                    <li><b>BnF ID</b>, <i title="National Library of France">Bibliothèque nationale de France IDentifier</i>.</li>
+                </ul>
+                <h5>Cc</h5>
+                <ul>
+                    <li><b>CARO ID</b>, <i>Common Anatomy Reference Ontology IDentifier</i>.</li>
+                    <li><b>CAS RN</b>, <i>Chemical Abstracts Service Registry Number</i>.</li>
+                    <li><b>CEPH ID</b>, <i>CEPHalopod ontology IDentifier</i>.</li>
+                    <li><b>CHEBI ID</b>, <i>CHemical Entities of Biological Interest IDentifier</i>.</li>
+                    <li><b>ChEMBL ID</b>, <i>Chemical European Molecular Laboratory IDentifier</i>.</li>
+                    <li><b>CMPO ID</b>, <i>Cellular Microscopy Phenotype Ontology IDentifier</i>.</li>
+                    <li><b>COL ID</b>, <i>Catalogue Of Life IDentifier</i>.</li>
+                    <li><b>CSID</b>, <i>ChemSpider IDentifier</i>.</li>
+                    <li><b>CPT Code</b>, <i>Current Procedural Terminology Code</i>.</li>
+                </ul>
+                <h5>Dd</h5>
+                <ul>
+                    <li><b>DiseasesDB ID</b>, <i>Diseases DataBase IDentifier</i>.</li>
+                    <li><b>DOI</b>, <i>Digital Object Identifier</i>.</li>
+                    <li><b>DOID</b>, <i>Disease Ontology IDentifier</i>.</li>
+                    <li><b>DRON ID</b>, <i>DRug Ontology IDentifier</i>.</li>
+                    <li><b>DrugBank ID</b>, <i>DrugBank IDentifier</i>.</li>
+                    <li><b>DrugCentral ID</b>, <i>DrugCentral IDentifier</i>.</li>
+                    <li><b>DSSTox ID</b>, <i>Distributed Structure-Searchable Toxicity IDentifier</i>.</li>
+                </ul>
+                <h5>Ee</h5>
+                <ul>
+                    <li><b>ECHA InfoCard ID</b>, <i>European CHemicals Agency InfoCard IDentifier</i>.</li>
+                    <li><b>EMAP ID</b>, <i>Edinburgh Mouse Atlas Project IDentifier</i>.</li>
+                    <li><b>EMAPA ID</b>, <i>Edinburgh Mouse Atlas Project Abstract IDentifier</i>.</li>
+                    <li><b>Ensembl Exon ID</b>, <i>Ensembl Exon IDentifier</i>.</li>
+                    <li><b>Ensembl Gene ID</b>, <i>Ensembl Gene IDentifier</i>.</li>
+                    <li><b>Ensembl Protein ID</b>, <i>Ensembl Protein IDentifier</i>.</li>
+                    <li><b>Ensembl Transcript ID</b>, <i>Ensembl Transcript IDentifier</i>.</li>
+                    <li><b>EOL ID</b>, <i>Encyclopedia Of Life IDentifier</i>.</li>
+                    <li><b>EPPO ID</b>, <i>European and mediterranean Plant Protection Organization IDentifier</i>.</li>
+                </ul>
+                <h5>Ff</h5>
+                <ul>
+                    <li><b>FAO ID</b>, <i>Fungal Anatomy Ontology IDentifier</i>.</li>
+                    <li><b>FLOPO ID</b>, <i>FLOra Phenotype Ontology IDentifier</i>.</li>
+                    <li><b>FMA ID</b>, <i>Foundational Model of Anatomy IDentifier</i>.</li>
+                    <li><b>Freebase ID</b>, <i>Freebase IDentifier</i>.</li>
+                    <li><b>FYPO ID</b>, <i>Fission Yeast Phenotype Ontology IDentifier</i>.</li>
+                </ul>
+                <h5>Gg</h5>
+                <ul>
+                    <li><b>GeneReviews ID</b>, <i>GeneReview IDentifier</i>.</li>
+                    <li><b>GENO ID</b>, <i>GENotype Ontology IDentifier</i>.</li>
+                    <li><b>GI Number</b>, <i>GenInfo Number</i>.</li>
+                    <li><b>GND ID</b>, <i title="Integrated Authority File">Gemeinsame NormDatei IDentifier</i>.</li>
+                    <li><b>GO Accession</b>, <i>Gene Ontology Accession</i>.</li>
+                    <li><b>GO Term</b>, <i>Gene Ontology Term</i>.</li>
+                </ul>
+                <h5>Hh</h5>
+                <ul>
+                    <li><b>HAO ID</b>, <i>Hymenoptera Anatomy Ontology IDentifier</i>.</li>
+                    <li><b>HMDB ID</b>, <i>Human Metabolome DataBase IDentifier</i>.</li>
+                    <li><b>HPO ID</b>, <i>Human Phenotype Ontology IDentifier</i>.</li>
+                </ul>
+                <h5>Ii</h5>
+                <ul>
+                    <li><b>ICD-10-CM Code</b>, <i>International Classification of Diseases, Tenth Revision, Clinical Modification Code</i>.</li>
+                    <li><b>ICD-9-CM Code</b>, <i>International Classification of Diseases, Ninth Revision, Clinical Modification Code</i>.</li>
+                    <li><b>IDO ID</b>, <i>Infectious Disease Ontology IDentifier</i>.</li>
+                    <li><b>IEDB Epitope ID</b>, <i>Immune Epitope DataBase Epitope IDentifier</i>.</li>
+                    <li><b>InChI</b>, <i>International Chemical Identifier</i>.</li>
+                    <li><b>INN</b>, <i>International Nonproprietary Name</i>.</li>
+                    <li><b>ITIS TSN</b>, <i>Integrated Taxonomic Information System Taxonomic Serial Number</i></li>
+                    <li><b>IUPAC Name</b>, <i>International Union of Pure and Applied Chemistry Name</i>.</li>
+                </ul>
+                <h5>Jj</h5>
+                <ul>
+                    <li><b>JAN</b>, <i>Japanese Accepted Name</i>.</li>
+                    <li><b>JSTOR Topic ID</b>, <i>Journal STORage Topic IDentifier</i>.</li>
+                </ul>
+                <h5>Kk</h5>
+                <ul>
+                </ul>
+                <h5>Ll</h5>
+                <ul>
+                </ul>
+                <h5>Mm</h5>
+                <ul>
+                    <li><b>MA ID</b>, <i>Mouse Anatomy IDentifier</i>.</li>
+                    <li><b>MedDRA ID</b>, <i>Medical Dictionary for Regulatory Activities IDentifier</i>.</li>
+                    <li><b>MedDRA Term</b>, <i>Medical Dictionary for Regulatory Activities Term</i>.</li>
+                    <li><b>MedlinePlus ID</b>, <i>MedlinePlus IDentifier</i>.</li>
+                    <li><b>MeSH Registry Number</b>, <i>Medical Subject Headings Registry Number</i>.</li>
+                    <li><b>MeSH Term</b>, <i>Medical Subject Headings Term</i>.</li>
+                    <li><b>MeSH Tree Number</b>, <i>Medical Subject Headings Tree Number</i>.</li>
+                    <li><b>MeSH UID</b>, <i>Medical Subject Headings Unique IDentifier</i>.</li>
+                    <li><b>MF ID</b>, <i>Mental Functioning ontology IDentifier</i>.</li>
+                    <li><b>MFMO ID</b>, <i>Mammalian Feeding Muscle Ontology IDentifier</i>.</li>
+                    <li><b>MFOMD ID</b>, <i>Mental Functioning Ontology, Mental Disease IDentifier</i>.</li>
+                    <li><b>MGI ID</b>, <i>Mouse Genome Informatics IDentifier</i>.</li>
+                    <li><b>MIRNAO ID</b>, <i>MIcroRNA Ontology IDentifier</i>.</li>
+                    <li><b>MonDO ID</b>, <i>Monarch Disease Ontology IDentifier</i>.</li>
+                    <li><b>MP ID</b>, <i>Mammalian Phenotype ontology IDentifier</i>.</li>
+                    <li><b>MSW ID</b>, <i>Mammal Species of the World IDentifier</i>.</li>
+                </ul>
+                <h5>Nn</h5>
+                <ul>
+                    <li><b>NBN System Key</b>, <i>National Biodiversity Network System Key</i>.</li>
+                    <li><b>NCBI GeneID</b>, <i>NCBI Gene IDentifier</i>.</li>
+                    <li><b>NCBI TaxID</b>, <i>NCBI Taxonomy IDentifier</i>.</li>
+                    <li><b>NDC</b>, <i>National Drug Code</i>.</li>
+                    <li><b>NDF-RT ID</b>, <i>National Drug File - Reference Terminology IDentifier</i>.</li>
+                    <li><b>NDL Auth ID</b>, <i>National Diet Library of japan Authority IDentifier</i>.</li>
+                    <li><b>NKCR AUT ID</b>, <i title="National Library of the Czech Republic">Národní Knihovna České Republiky AUThority database IDentifier</i></li>
+                </ul>
+                <h5>Oo</h5>
+                <ul>
+                    <li><b>OAE ID</b>, <i>Ontology of Adverse Events IDentifier</i>.</li>
+                    <li><b>OGG ID</b>, <i>Ontology of Genes and Genomes IDentifier</i>.</li>
+                    <li><b>OMP ID</b>, <i>Ontology of Microbial Phenotypes IDentifier</i>.</li>
+                    <li><b>ORDO ID</b>, <i>Orphanet Rare Disease Ontology IDentifier</i>.</li>
+                    <li><b>OVAE ID</b>, <i>Ontology of Vaccine Adverse Events IDentifier</i>.</li>
+                </ul>
+                <h5>Pp</h5>
+                <ul>
+                    <li><b>PDB ID</b>, <i>Protein Data Bank IDentifier</i>.</li>
+                    <li><b>PLANA ID</b>, <i>PLANAria-ontology IDentifier</i>.</li>
+                    <li><b>PMCID</b>, <i>PubMed Central reference IDentifier</i>.</li>
+                    <li><b>PMID</b>, <i>PubMed IDentifier</i>.</li>
+                    <li><b>PO ID</b>, <i>Plant Ontology IDentifier</i>.</li>
+                    <li><b>PR ID</b>, <i>PRotein ontology IDentifier</i>.</li>
+                    <li><b>PSH</b>, <i>Polytemathematic structured Subject Heading</i>.</li>
+                    <li><b>PubChem AID</b>, <i>PubChem Assay IDentifier</i>.</li>
+                    <li><b>PubChem CID</b>, <i>PubChem Compound IDentifier</i>.</li>
+                    <li><b>PubChem SID</b>, <i>PubChem Substance IDentifier</i>.</li>
+                </ul>
+                <h5>Qq</h5>
+                <ul>
+                    <li><b>Quora Topic ID</b>, <i>Quora Topic IDentifier</i>.</li>
+                </ul>
+                <h5>Rr</h5>
+                <ul>
+                    <li><b>RSID</b>, <i>Reference SNP IDentifier</i>.</li>
+                    <li><b>RTECS Number</b>, <i>Registry of Toxic Effects of Chemical Substances Number</i>.</li>
+                    <li><b>RxCUI</b>, <i>RxNorm Concept Unique Identifier</i>.</li>
+                </ul>
+                <h5>Ss</h5>
+                <ul>
+                    <li><b>SMILES</b>, <i>Simplified Molecular-Input Line-Entry System</i>.</li>
+                    <li><b>SNOMED CT Concept ID</b>, <i>Systematized Nomenclature Of MEDicine - Clinical Terms Concept IDentifier</i>.</li>
+                    <li><b>SYMP ID</b>, <i>SYMPtom ontology IDentifier</i>.</li>
+                </ul>
+                <h5>Tt</h5>
+                <ul>
+                </ul>
+                <h5>Uu</h5>
+                <ul>
+                    <li><b>UBERON ID</b>, <i>UBER anatomy ONtology IDentifier</i>.</li>
+                    <li><b>UMLS CUI</b>, <i>Unified Medical Language System Concept Unique Identifier</i>.</li>
+                    <li><b>UNII</b>, <i>UNique Ingredient Identifier</i>.</li>
+                    <li><b>UniProtKB AC</b></li>
+                    <li><b>UniProtKB AC/ID</b></li>
+                    <li><b>UniProtKB ID</b></li>
+                    <li><b>USAN</b>, <i>United States Adopted Name</i>.</li>
+                    <li><b>USP</b>, <i>United States Pharmacopeia</i>.</li>
+                </ul>
+                <h5>Vv</h5>
+                <ul>
+                    <li><b>VOID</b>, <i>Vaccine Ontology IDentifier</i>.</li>
+                </ul>
+                <h5>Ww</h5>
+                <ul>
+                    <li><b>Wikidata Accession</b></li>
+                    <li><b>Wikipedia Accession (English)</b></li>
+                </ul>
+                <h5>Xx</h5>
+                <ul>
+                    <li><b>XAO ID</b>, <i>Xenopus Anatomy Ontology IDentifier</i>.</li>
+                </ul>
+                <h5>Yy</h5>
+                <ul>
+                </ul>
+                <h5>Zz</h5>
+                <ul>
+                    <li><b>ZFA ID</b>, <i>ZebraFish Anatomy ontology IDentifier</i></li>
+                    <li><b>ZVG ID</b>.</li>
+                </ul>
+                
+                <hr/>
+                <h4>Object-based List</h4>
+                <hr/>
+                
+                <h5>Adverse Event Identifier</h5>
+                
+                <ul>
+                    <li>MedDRA ID</li>
+                    <li>MedDRA Term</li>
+                </ul>
+                
+                <h5>Anatomical Structure Identifiers</h5>
+                
+                <ul>
+                    <li>AEO ID</li>
+                    <li>AOD ID</li>
+                    <li>BNCF Thesaurus ID</li>
+                    <li>CARO ID</li>
+                    <li>CCPSS ID</li>
+                    <li>CEPH ID</li>
+                    <li>EHDAA2 ID</li>
+                    <li>EMAP ID</li>
+                    <li>EMAPA ID</li>
+                    <li>Encyclopædia Britannica Online ID</li>
+                    <li>FBbt ID</li>
+                    <li>FMA ID</li>
+                    <li>Freebase ID</li>
+                    <li>HAO ID</li>
+                    <li>JSTOR Topic ID</li>
+                    <li>LCSH</li>
+                    <li>MA ID</li>
+                    <li>MeSH Term (Croatian)</li>
+                    <li>MeSH Term (Czech)</li>
+                    <li>MeSH Term (Dutch)</li>
+                    <li>MeSH Term (English)</li>
+                    <li>MeSH Term (Finnish)</li>
+                    <li>MeSH Term (French)</li>
+                    <li>MeSH Term (German)</li>
+                    <li>MeSH Term (Italian)</li>
+                    <li>MeSH Term (Japanese)</li>
+                    <li>MeSH Term (Latvian)</li>
+                    <li>MeSH Term (Norwegian)</li>
+                    <li>MeSH Term (Polish)</li>
+                    <li>MeSH Term (Portuguese)</li>
+                    <li>MeSH Term (Russian)</li>
+                    <li>MeSH Term (Spanish)</li>
+                    <li>MeSH Term (Swedish)</li>
+                    <li>MeSH Tree Number</li>
+                    <li>MeSH UID</li>
+                    <li>MFMO ID</li>
+                    <li>NCI Thesaurus ID</li>
+                    <li>NEU ID</li>
+                    <li>PLANA ID</li>
+                    <li>Read Code, Clinical Terms Version 3</li>
+                    <li>SNOMED International Version 3.5</li>
+                    <li>SNOMED-II, 1982 Update</li>
+                    <li>TA98 ID</li>
+                    <li>TA98 Latin Term</li>
+                    <li>TADS ID</li>
+                    <li>TGMA ID</li>
+                    <li>Thesaurus of Psychological Index Terms ID</li>
+                    <li>UBERON ID</li>
+                    <li>UMLS CUI</li>
+                    <li>UWDA ID</li>
+                    <li>WBbt ID</li>
+                </ul>
+                
+                <h5>Assay Identifiers</h5>
+                <h5>Clinical Trial Identifiers</h5>
+                <h5>Compound Identifiers</h5>
+                <h5>Disease Identifiers</h5>
+                <h5>Drug Identifiers</h5>
+                <h5>Gene Identifiers</h5>
+                <h5>Genotype Identifiers</h5>
+                <h5>Mutation Identifiers</h5>
+                <h5>Patent Identifiers</h5>
+                <h5>Pathway Identifiers</h5>
+                <h5>Phenotype Identifiers</h5>
+                <h5>Procedure Identifiers</h5>
+                <h5>Protein Identifiers</h5>
+                <h5>Reference Identifiers</h5>
+                <h5>Symptom Identifiers</h5>
+                <h5>Taxon Identifiers</h5>
+                
+            </div>
+            <div class="tab-pane" id="7a">
+                
+                <hr/>
+                <h4>Adverse Event Functions</h4>
+                <hr/>
+                
+                <hr/>
+                <h4>Anatomical Structure Functions</h4>
+                <hr/>
+                
+                <h5>Anatomical Connections</h5>
+                <h5>Anatomical Location</h5>
+                <h5>Arterial Supply</h5>
+                <h5>Venous Drainage</h5>
+                
+                <hr/>
+                <h4>Assay Functions</h4>
+                <hr/>
+                
+            </div>
+            <div class="tab-pane" id="8a">
+            </div>
+        </div>
+    </div>
+    
+</div>
