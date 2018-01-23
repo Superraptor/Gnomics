@@ -84,7 +84,7 @@ def get_tissue_expression(gene):
     return tiss_dict
         
 #   UNIT TESTS
-def gene_tissue_unit_tests(ensembl_ids)
+def gene_tissue_unit_tests(ensembl_ids):
     for ensembl_gene_id in ensembl_ids:
         ensembl_gene = gnomics.objects.gene.Gene(identifier = ensembl_gene_id, identifier_type = "Ensembl Gene ID", language = None, taxon = "Homo sapiens", source = "Ensembl")
         print("Getting tissue gene expression from Ensembl Gene ID (%s):" % ensembl_gene_id)

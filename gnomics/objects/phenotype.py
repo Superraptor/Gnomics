@@ -30,7 +30,7 @@ import gnomics.objects.disease
 
 #   Import sub-methods.
 from gnomics.objects.phenotype_files.hpo import get_hpo_id, get_hpo_term
-from gnomics.objects.phenotype_files.meddra import get_meddra_id, get_meddra_term
+from gnomics.objects.phenotype_files.meddra import get_meddra_id
 from gnomics.objects.phenotype_files.mesh import get_mesh_uid
 from gnomics.objects.phenotype_files.search import search
 from gnomics.objects.phenotype_files.snomed import get_snomed_ct_id
@@ -110,7 +110,6 @@ class Phenotype:
         
         HPO ID
         MedDRA ID
-        MedDRA Term
         MeSH UID
         SNOMED-CT ID
     """
@@ -120,7 +119,6 @@ class Phenotype:
         Phenotype.hpo(phenotype, user)
         Phenotype.hpo_term(phenotype, user)
         Phenotype.meddra_id(phenotype, user)
-        Phenotype.meddra_term(phenotype, user)
         Phenotype.mesh_uid(phenotype, user)
         Phenotype.snomed_ct_id(phenotype, user)
         return phenotype.identifiers
@@ -136,10 +134,6 @@ class Phenotype:
     # Returns MedDRA IDs.
     def meddra_id(phenotype, user):
         return get_meddra_id(phenotype, user)
-    
-    # Returns MedDRA Terms.
-    def meddra_term(phenotype, user):
-        return get_meddra_term(phenotype, user)
     
     # Returns MeSH UIDs.
     def mesh_uid(phenotype, user):

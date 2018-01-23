@@ -56,15 +56,15 @@ class Taxon(object):
     """
         Taxon class:
         
-        This class usually refers to what is called a "biological species," or more specifically a "Biological Species Concept" (BSC), which the Encyclopedia of Life (EOL) defined as a group
+        This class usually refers to what is called a
+        "biological species," or more specifically a
+        "Biological Species Concept" (BSC), which the 
+        Encyclopedia of Life (EOL) defined as a group
         "of actually or potentially interbreeding natural
-        populations which are reproductively isolated from other
-        such groups." 
-        
-        However, in practice, this class contains any taxonomical
-        entity, as long as that entity is biological in nature
-        (i.e. viruses, etc.).
-        
+        populations which are reproductively isolated from 
+        other such groups." However, in practice, this class 
+        contains any taxonomical entity, as long as that entity 
+        is biological in nature (i.e. viruses, etc.).
         Note that this class does not cover chemical species.
         
     """

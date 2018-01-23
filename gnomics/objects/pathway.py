@@ -37,7 +37,6 @@ import requests
 
 # Import sub-methods.
 from gnomics.objects.pathway_files.kegg import get_kegg_map_pathway, get_kegg_map_pathway_id, get_kegg_ko_pathway, get_kegg_ko_pathway_id
-import gnomics.objects.auxiliary_files.kegg
 
 #   Import further methods.
 from gnomics.objects.interaction_objects.pathway_compound import get_compounds

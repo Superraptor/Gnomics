@@ -331,7 +331,7 @@ class Reference(object):
     def get_mesh_from_pmid(ref, user):
         # Continue from here: https://stackoverflow.com/questions/13652230/cant-get-entrez-to-return-mesh-terms-using-biopython
         Entrez.email = user.email
-        handle = efetch(db = "pubmed", id = str(Reference..pmid(ref)), retmode = "xml")
+        handle = efetch(db = "pubmed", id = str(Reference.pmid(ref)), retmode = "xml")
         xml_data = read(handle)[0]
         # Skips articles without MeSH terms
         if u'MeshHeadingList' in xml_data["MedlineCitation"]:

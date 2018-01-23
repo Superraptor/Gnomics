@@ -29,7 +29,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 #   Import modules.
 from gnomics.objects.user import User
 import gnomics.objects.disease
-import gnomics.objects.disease_files.disgenet
 import gnomics.objects.gene
 import gnomics.objects.pathway
 import gnomics.objects.reference

@@ -1,3 +1,5 @@
+WARNING: A potential security vulnerability in Electron has been discovered. We are working on updating *GNOMICS* to the most recent version. Once this message has been removed, the version will have been updated. Until then, please do not utilize this code repository. We apologize for the inconvenience. For more information on this vulnerability, please see [here](https://electronjs.org/blog/protocol-handler-fix).
+
 DISCLAIMER: This README, associated documentation, and the program itself are currently in Alpha 0.1; thus, they should be considered incomplete. All errors in software, README, etc. should be noted as GitHub issues. I will try to answer all issues with expediency. Thank you for using *GNOMICS*.
 
 # GNOMICS

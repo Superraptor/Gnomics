@@ -51,7 +51,6 @@ from gnomics.objects.interaction_objects.gene_disease import get_diseases
 from gnomics.objects.interaction_objects.gene_pathway import get_pathways
 from gnomics.objects.interaction_objects.gene_phenotype import get_phenotypes
 from gnomics.objects.interaction_objects.gene_protein import get_proteins
-from gnomics.objects.interaction_objects.gene_reference import get_references
 from gnomics.objects.interaction_objects.gene_tissue import get_tissue_expression
 
 #   MAIN
