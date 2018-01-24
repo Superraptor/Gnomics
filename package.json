@@ -7,7 +7,9 @@
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
+    "cookie-parser": "^1.4.3",
     "electron-open-link-in-browser": "^1.0.2",
+    "express": "^4.16.2",
     "express-session": "^1.15.6",
     "morgan": "^1.9.0",
     "request-promise": "^4.2.2",
@@ -16,9 +18,9 @@
     "zerorpc": ""
   },
   "devDependencies": {
-    "electron": "^1.4.1",
+    "electron": "1.7.11",
     "electron-packager": "^8.5.1",
-    "electron-rebuild": "^1.6.0",
+    "electron-rebuild": "^1.7.3",
     "nodemon": "^1.12.1"
   }
 }

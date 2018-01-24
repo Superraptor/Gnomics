@@ -1,6 +1,6 @@
-WARNING: A potential security vulnerability in Electron has been discovered. We are working on updating *GNOMICS* to the most recent version. Once this message has been removed, the version will have been updated. Until then, please do not utilize this code repository. We apologize for the inconvenience. For more information on this vulnerability, please see [here](https://electronjs.org/blog/protocol-handler-fix).
+PRIMARY DISCLAIMER: This README, associated documentation, and the program itself are currently in Alpha 0.1.1; thus, they should be considered incomplete. All errors in software, README, etc. should be noted as GitHub issues. I will try to answer all issues with expediency. Thank you for using *GNOMICS*.
 
-DISCLAIMER: This README, associated documentation, and the program itself are currently in Alpha 0.1; thus, they should be considered incomplete. All errors in software, README, etc. should be noted as GitHub issues. I will try to answer all issues with expediency. Thank you for using *GNOMICS*.
+SECONDARY DISCLAIMER(S): Do not rely on openFDA to make decisions regarding medical care. Always speak to your health provider about the risks and benefits of FDA-regulated products. For more information, please review the OpenFDA Terms of Service, available [here](https://open.fda.gov/terms/).
 
 # GNOMICS
 
@@ -13,6 +13,12 @@ Because three different interfaces are available for using *GNOMICS*, the instal
 ### Windows
 
 First, install Git. This can be done by downloading it from the Git website, [here](http://git-scm.com/download/win). After clicking on the link, the download should start automatically. Note that this source is a project called Git for Windows, ostensibly separate from Git itself. An alternative, for automated installation is the [Git Chocolatey package](https://chocolatey.org/packages/git), which is community maintained. The other alternative is to install GitHub for Windows, which includes the command-line version of Git as well as the GUI (it also works with Powershell). This final version can be downloaded [here](http://windows.github.com/).
+
+Running the Electron version of the application can be somewhat difficult on Windows systems. Once everything is downloaded, Electron must be built from the source. This must be done from an Administrator Windows PowerShell (right-clicking on the PowerShell icon will provide this option if using an administrator account).
+
+First run `npm install -g npm-windows-upgrade` as mentioned [here](https://stackoverflow.com/questions/18412129/how-can-i-update-npm-on-windows). Following this, run `npm rebuild`. Each time a new rebuild is run, be sure to run `./node_modules/.bin/electron-rebuild`. If any other packages cannot be found when the Electron window is opened, run an `npm install`. For example, if `express` is missing, run `npm install express --save`. After each new `npm install`, be sure to run `./node_modules/.bin/electron-rebuild` again.
+
+Additionally, if an `Error: Lost remote after 10000ms` occurs, remember to change lines 31 and 34 in `./gnomics_app/node_modules/zerorpc/lib/client.js`. Line 31 should read `var DEFAULT_TIMEOUT = 30000;` and Line 34 should read `var DEFAULT_HEARTBEAT = 1000000;`.
 
 ### Mac OS
 
@@ -48,14 +54,22 @@ Once the port is cleared, open two command prompts or bash shells and change dir
 
 However, before doing this, if you are trying to use an account-based profile (i.e. logging users in or out), you will need to initialize the database by running `node ./db/create_db.js`.
 
+Note that running `python ../gnomics_app/node_modules/electron/dist/electron.exe ../gnomics_app` will result in the following error or a variant of this error:
+
+```
+File "../gnomics_app/node_modules/electron/dist/electron.exe", line 1
+SyntaxError: Non-UTF-8 code starting with '\x90' in file ../gnomics_app/node_modules/electron/dist/electron.exe on line 1, but no encoding declared; see http://python.org/dev/peps/pep-0263/ for details
+```
+
 ### Executable Interface
-The executable interface is still in production.
+The executable interface is still in development.
 
 ## Contributing
 * Charles Kronk (Head Developer)
 
 ## History
 * 30 November 2017: The first alpha version (0.1) was uploaded to GitHub.
+* 24 January 2018: A small incremental alpha (version 0.1.1) was uploaded in order to fix a critical Electron security vulnerability. See [here](https://electronjs.org/blog/protocol-handler-fix) for more details.
 
 ## Credits
 Created by Charles Kronk.
