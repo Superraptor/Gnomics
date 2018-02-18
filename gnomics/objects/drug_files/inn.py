@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,7 @@
 
 #
 #   IMPORT SOURCES:
+#
 #
 
 #
@@ -33,9 +36,9 @@ def main():
 #   Get INNs.
 def get_inns(drug):
     inn_array = []
-    for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "inn" or ident["identifier_type"].lower() == "international nonproprietary name":
-            inn_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(drug.identifiers, ["inn", "international nonproprietary name"]):
+        if iden["identifier"] not in inn_array:
+            inn_array.append(iden["identifier"])
     return inn_array
 
 #   UNIT TESTS

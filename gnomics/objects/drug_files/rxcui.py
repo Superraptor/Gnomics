@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -42,16 +44,19 @@ def main():
 def get_rxnorm_obj(drug):
     for drug_obj in drug.drug_objects:
         if 'object_type' in drug_obj:
-            if drug_obj['object_type'].lower() == 'rxnorm' or drug_obj['object_type'].lower() == 'rxcui':
+            if drug_obj['object_type'].lower() in ['rxnorm', 'rxcui']:
                 return drug_obj['object']
+    
     for rx in gnomics.objects.drug.Drug.rxcui(drug):
         base = "https://rxnav.nlm.nih.gov/REST/"
-        ext = "rxcui/" + rx + "/allProperties.json?prop=all"
+        ext = "rxcui/" + str(rx) + "/allProperties.json?prop=all"
         r = requests.get(base+ext, headers={"Content-Type": "application/json"})
         if not r.ok:
             r.raise_for_status()
             sys.exit()
+
         decoded = json.loads(r.text)
+        
         rx_obj = {}
         for properties in decoded["propConceptGroup"]["propConcept"]:
             if properties["propName"] == "AVAILABLE_STRENGTH":
@@ -120,26 +125,32 @@ def get_rxnorm_obj(drug):
                     rx_obj["rxnorm_name"] = [properties["propValue"]]
             elif properties["propName"] == "Prescribable Synonym":
                 rx_obj["prescribable_synonym"] = properties["propValue"]
+
         drug.drug_objects.append({
             'object': rx_obj,
             'object_type': "RxNorm"
         })
+        
         return rx_obj
     
 #   Get RxCUI.
 def get_rxcui(drug):
     rxcui_array = []
+    
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             rxcui_array.append(ident["identifier"])
+
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "mesh uid" or ident["identifier_type"].lower() == "mesh unique identifier":
+        if ident["identifier_type"].lower() in ["mesh uid", "mesh unique identifier"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=MESH&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             if "idGroup" in decoded:
                 if "rxnormId" in decoded["idGroup"]:
@@ -151,14 +162,17 @@ def get_rxcui(drug):
                                 'language': None,
                                 'identifier_type': "RxCUI",
                                 'source': "RxNorm"
-                            })  
-        elif ident["identifier_type"].lower() == "drugbank id" or ident["identifier_type"].lower() == "drugbank" or ident["identifier_type"].lower() == "drugbank identifier" or ident["identifier_type"].lower() == "drugbank accession":
+                            })
+            
+        elif ident["identifier_type"].lower() in ["drugbank id", "drugbank", "drugbank identifier", "drugbank accession"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=DrugBank&allSourcesFlag=1&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for x in decoded["idGroup"]["rxnormId"]:
                 if x not in rxcui_array:
@@ -169,202 +183,254 @@ def get_rxcui(drug):
                         'identifier_type': "RxCUI",
                         'source': "RxNorm"
                     })
-        elif ident["identifier_type"].lower() == "snomed" or ident["identifier_type"].lower() == "snomed-ct":
+        
+        elif ident["identifier_type"].lower() in ["snomed", "snomed-ct"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=SNOMEDCT&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for x in decoded["idGroup"]["rxnormId"]:
                 if x not in rxcui_array:
                     rxcui_array.append(x)
-        elif ident["identifier_type"].lower() == "atc" or ident["identifier_type"].lower() == "atc code":
+            
+        elif ident["identifier_type"].lower() in ["atc", "atc code"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=ATC&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for x in decoded["idGroup"]["rxnormId"]:
                 if x not in rxcui_array:
                     rxcui_array.append(x)
-        elif ident["identifier_type"].lower() == "ampid":
+                    
+        elif ident["identifier_type"].lower() in ["ampid"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=AMPID&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for x in decoded["idGroup"]["rxnormId"]:
                 if x not in rxcui_array:
                     rxcui_array.append(x)
-        elif ident["identifier_type"].lower() == "anda" or ident["identifier_type"].lower() == "fda anda" or ident["identifier_type"].lower() == "fda abbreviated new drug application identifier" or ident["identifier_type"].lower() == "fda abbreviated new drug application id":
+                    
+        elif ident["identifier_type"].lower() in ["anda", "fda anda", "fda abbreviated new drug application identifier", "fda abbreviated new drug application id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=ANDA&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for x in decoded["idGroup"]["rxnormId"]:
                 if x not in rxcui_array:
                     rxcui_array.append(x)
-        elif ident["identifier_type"].lower() == "cvx" or ident["identifier_type"].lower() == "vaccine code":
+        
+        elif ident["identifier_type"].lower() in ["cvx", "vaccine code"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=CVX&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for x in decoded["idGroup"]["rxnormId"]:
                 if x not in rxcui_array:
                     rxcui_array.append(x)
-        elif ident["identifier_type"].lower() == "generic code sequence number" or ident["identifier_type"].lower() == "gcn":
+                    
+        elif ident["identifier_type"].lower() in ["generic code sequence number", "gcn"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=GCN_SEQNO&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for x in decoded["idGroup"]["rxnormId"]:
                 if x not in rxcui_array:
                     rxcui_array.append(x)
-        elif ident["identifier_type"].lower() == "generic formula code" or ident["identifier_type"].lower() == "gfc":
+                    
+        elif ident["identifier_type"].lower() in ["generic formula code", "gfc"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=GFC&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             if "rxnormId" in decoded["idGroup"]:
                 for rx in decoded["idGroup"]["rxnormId"]:
                     if rx not in rxcui_array:
                         rxcui_array.append(rx)
-        elif ident["identifier_type"].lower() == "generic product identifier" or ident["identifier_type"].lower() == "gpi":
+        
+        elif ident["identifier_type"].lower() in ["generic product identifier", "gpi"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=GPI&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             if "rxnormId" in decoded["idGroup"]:
                 for rx in decoded["idGroup"]["rxnormId"]:
                     if rx not in rxcui_array:
                         rxcui_array.append(rx)
-        elif ident["identifier_type"].lower() == "generic product packaging code" or ident["identifier_type"].lower() == "gppc":
+        
+        elif ident["identifier_type"].lower() in ["generic product packaging code", "gppc"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=GPPC&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             if "rxnormId" in decoded["idGroup"]:
                 for rx in decoded["idGroup"]["rxnormId"]:
                     if rx not in rxcui_array:
                         rxcui_array.append(rx)
-        elif ident["identifier_type"].lower() == "fdb hierarchical ingredient code sequence number" or ident["identifier_type"].lower() == "hierarchical ingredient code sequence number" or ident["identifier_type"].lower() == "hic_seqn":
+                    
+        elif ident["identifier_type"].lower() in ["fdb hierarchical ingredient code sequence number", "hierarchical ingredient code sequence number", "hic_seqn"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=HIC_SEQN&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for x in decoded["idGroup"]["rxnormId"]:
                 if x not in rxcui_array:
                     rxcui_array.append(x)
-        elif ident["identifier_type"].lower() == "mmsl code" or ident["identifier_type"].lower() == "multum mediasource lexicon code":
+                    
+        elif ident["identifier_type"].lower() in ["mmsl code", "multum mediasource lexicon code"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=MMSL_CODE&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for x in decoded["idGroup"]["rxnormId"]:
                 if x not in rxcui_array:
                     rxcui_array.append(x)
-        elif ident["identifier_type"].lower() == "fda nda" or ident["identifier_type"].lower() == "nda" or ident["identifier_type"].lower() == "fda new drug application id" or ident["identifier_type"].lower() == "fda new drug application identifier":
+                    
+        elif ident["identifier_type"].lower() in ["fda nda", "nda", "fda new drug application id", "fda new drug application identifier"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=NDA&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for x in decoded["idGroup"]["rxnormId"]:
                 if x not in rxcui_array:
                     rxcui_array.append(x)
-        elif ident["identifier_type"].lower() == "ndc" or ident["identifier_type"].lower() == "national drug code":
+                    
+        elif ident["identifier_type"].lower() in ["ndc", "national drug code"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=NDC&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for x in decoded["idGroup"]["rxnormId"]:
                 if x not in rxcui_array:
                     rxcui_array.append(x)
-        elif ident["identifier_type"].lower() == "nui" or ident["identifier_type"].lower() == "national drug file reference terminology unique identifier" or ident["identifier_type"].lower() == "national drug file reference terminology unique id":
+                    
+        elif ident["identifier_type"].lower() in ["nui", "national drug file reference terminology unique identifier", "national drug file reference terminology unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=NUI&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for x in decoded["idGroup"]["rxnormId"]:
                 if x not in rxcui_array:
                     rxcui_array.append(x)
-        elif ident["identifier_type"].lower() == "spl set id" or ident["identifier_type"].lower() == "spl set identifier" or ident["identifier_type"].lower() == "fda structured product label set identifier" or ident["identifier_type"].lower() == "structured product label set identifier":
+                    
+        elif ident["identifier_type"].lower() in ["spl set id", "spl set identifier", "fda structured product label set identifier", "structured product label set identifier"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=SPL_SET_ID&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for x in decoded["idGroup"]["rxnormId"]:
                 if x not in rxcui_array:
                     rxcui_array.append(x)
-        elif ident["identifier_type"].lower() == "umls id" or ident["identifier_type"].lower() == "umls cui" or ident["identifier_type"].lower() == "umls concept id" or ident["identifier_type"].lower() == "umls concept unique identifier" or ident["identifier_type"].lower() == "umls concept unique id":
+                    
+        elif ident["identifier_type"].lower() in ["umls id", "umls cui", "umls concept id", "umls concept unique identifier", "umls concept unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=UMLSCUI&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for x in decoded["idGroup"]["rxnormId"]:
                 if x not in rxcui_array:
                     rxcui_array.append(x)
-        elif ident["identifier_type"].lower() == "vuid" or ident["identifier_type"].lower() == "veterans health administration unique identifier" or ident["identifier_type"].lower() == "veterans health administration unique id":
+                    
+        elif ident["identifier_type"].lower() in ["vuid", "veterans health administration unique identifier", "veterans health administration unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui.json?idtype=VUID&id=" + ident["identifier"]
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for x in decoded["idGroup"]["rxnormId"]:
                 if x not in rxcui_array:
                     rxcui_array.append(x)
+    
     return rxcui_array
 
 def get_related_rxcuis(drug):
     rxcui_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             bn = get_rxcui_bn(drug)
             bpck = get_rxcui_bpck(drug)
             df = get_rxcui_df(drug)
@@ -397,6 +463,7 @@ def get_related_rxcuis(drug):
             rxcui_array.extend(scdf)
             rxcui_array.extend(scdg)
             rxcui_array = list(set(rxcui_array))
+    
     return rxcui_array
 
 #   Get RxCUI BNs (brand names).
@@ -404,27 +471,33 @@ def get_rxcui_bn(drug):
     rxcui_bn_array = []
     rxcui_bn_obj_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui bn" or ident["identifier_type"].lower() == "rxcui brand name":
+        if ident["identifier_type"].lower() in ["rxcui bn", "rxcui brand name"]:
             rxcui_bn_array.append(ident["identifier"])
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui/" + ident["identifier"] + "/related.json?tty=" + "bn"
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for iden in decoded["relatedGroup"]["conceptGroup"][0]["conceptProperties"]:
                 if iden["rxcui"] not in rxcui_bn_array:
                     temp_drug = gnomics.objects.drug.Drug( identifier = iden["rxcui"], identifier_type = "RxCUI BN", source = "RxNorm")
+
                     if "umlscui" in iden:
                         gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["umlscui"], identifier_type = "UMLS CUI", source = "RxNorm")
+
                     if "name" in iden and "language" in iden:
                         if iden["language"] == "ENG":
                             gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["name"], identifier_type = "Brand Name", source = "RxNorm", language = "en")
+                            
                     rxcui_bn_obj_array.append(temp_drug)
                     rxcui_bn_array.append(iden["rxcui"])
+                    
     return rxcui_bn_array
     
 #   Get RxCUI BPCKs (branded packs).
@@ -432,27 +505,33 @@ def get_rxcui_bpck(drug):
     rxcui_bpck_array = []
     rxcui_bpck_obj_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui bpck" or ident["identifier_type"].lower() == "rxcui branded pack":
+        if ident["identifier_type"].lower() in ["rxcui bpck", "rxcui branded pack"]:
             rxcui_bpck_array.append(ident["identifier"])
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui/" + ident["identifier"] + "/related.json?tty=" + "bpck"
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             if "conceptProperties" in decoded["relatedGroup"]["conceptGroup"][0]:
                 for iden in decoded["relatedGroup"]["conceptGroup"][0]["conceptProperties"]:
                     temp_drug = gnomics.objects.drug.Drug( identifier = iden["rxcui"], identifier_type = "RxCUI BPCK", source = "RxNorm")
+
                     if "umlscui" in iden:
                         gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["umlscui"], identifier_type = "UMLS CUI", source = "RxNorm")
+
                     if "name" in iden and "language" in iden:
                         if iden["language"] == "ENG":
                             gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["name"], identifier_type = "Branded Pack", source = "RxNorm", language = "en")
+
                     rxcui_bpck_obj_array.append(temp_drug)
                     rxcui_bpck_array.append(iden["rxcui"])
+                    
     return rxcui_bpck_array
 
 #   Get RxCUI DFs (dose forms).
@@ -460,26 +539,32 @@ def get_rxcui_df(drug):
     rxcui_df_array = []
     rxcui_df_obj_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui df" or ident["identifier_type"].lower() == "rxcui dose form":
+        if ident["identifier_type"].lower() in ["rxcui df", "rxcui dose form"]:
             rxcui_df_array.append(ident["identifier"])
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui/" + ident["identifier"] + "/related.json?tty=" + "df"
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for iden in decoded["relatedGroup"]["conceptGroup"][0]["conceptProperties"]:
                 temp_drug = gnomics.objects.drug.Drug(identifier = iden["rxcui"], identifier_type = "RxCUI DF", source = "RxNorm")
+                
                 if "umlscui" in iden:
                     gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["umlscui"], identifier_type = "UMLS CUI", source = "RxNorm")
+                
                 if "name" in iden and "language" in iden:
                     if "language" == "ENG":
                         gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["name"], identifier_type = "Dose Form", source = "RxNorm", language = "en")
+                        
                 rxcui_df_obj_array.append(temp_drug)
                 rxcui_df_array.append(iden["rxcui"])
+                    
     return rxcui_df_array
 
 #   Get RxCUI DFGs (dose form groups).
@@ -487,26 +572,32 @@ def get_rxcui_dfg(drug):
     rxcui_dfg_array = []
     rxcui_dfg_obj_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui dfg" or ident["identifier_type"].lower() == "rxcui dose form group":
+        if ident["identifier_type"].lower() in ["rxcui dfg", "rxcui dose form group"]:
             rxcui_dfg_array.append(ident["identifier"])
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui/" + ident["identifier"] + "/related.json?tty=" + "dfg"
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for iden in decoded["relatedGroup"]["conceptGroup"][0]["conceptProperties"]:
                 temp_drug = gnomics.objects.drug.Drug(identifier = iden["rxcui"], identifier_type = "RxCUI DFG", source = "RxNorm")
+                
                 if "umlscui" in iden:
                     gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["umlscui"], identifier_type = "UMLS CUI", source = "RxNorm")
+                
                 if "name" in iden and "language" in iden:
                     if "language" == "ENG":
                         gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["name"], identifier_type = "Dose Form Group", source = "RxNorm", language = "en")
+                        
                 rxcui_dfg_obj_array.append(temp_drug)
                 rxcui_dfg_array.append(iden["rxcui"])
+                    
     return rxcui_dfg_array
 
 #   Get RxCUI INs (ingredients).
@@ -514,26 +605,32 @@ def get_rxcui_in(drug):
     rxcui_in_array = []
     rxcui_in_obj_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui in" or ident["identifier_type"].lower() == "rxcui ingredient":
+        if ident["identifier_type"].lower() in ["rxcui in", "rxcui ingredient"]:
             rxcui_in_array.append(ident["identifier"])
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui/" + ident["identifier"] + "/related.json?tty=" + "in"
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for iden in decoded["relatedGroup"]["conceptGroup"][0]["conceptProperties"]:
                 temp_drug = gnomics.objects.drug.Drug(identifier = iden["rxcui"], identifier_type = "RxCUI IN", source = "RxNorm")
+                
                 if "umlscui" in iden:
                     gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["umlscui"], identifier_type = "UMLS CUI", source = "RxNorm")
+                
                 if "name" in iden and "language" in iden:
                     if "language" == "ENG":
                         gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["name"], identifier_type = "Ingredient", source = "RxNorm", language = "en")
+                        
                 rxcui_in_obj_array.append(temp_drug)
                 rxcui_in_array.append(iden["rxcui"])
+                    
     return rxcui_in_array
     
 #   Get RxCUI MINs (multiple ingredients).
@@ -541,27 +638,33 @@ def get_rxcui_min(drug):
     rxcui_min_array = []
     rxcui_min_obj_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui min" or ident["identifier_type"].lower() == "rxcui multiple ingredient":
+        if ident["identifier_type"].lower() in ["rxcui min", "rxcui multiple ingredient"]:
             rxcui_min_array.append(ident["identifier"])
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui/" + ident["identifier"] + "/related.json?tty=" + "min"
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             if "conceptProperties" in decoded["relatedGroup"]["conceptGroup"][0]:
                 for iden in decoded["relatedGroup"]["conceptGroup"][0]["conceptProperties"]:
                     temp_drug =  gnomics.objects.drug.Drug(identifier = iden["rxcui"], identifier_type = "RxCUI MIN", source = "RxNorm")
+
                     if "umlscui" in iden:
                         gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["umlscui"], identifier_type = "UMLS CUI", source = "RxNorm")
+
                     if "name" in iden and "language" in iden:
                         if "language" == "ENG":
                             gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["name"], identifier_type = "Multiple Ingredient", source = "RxNorm", language = "en")
+
                     rxcui_min_obj_array.append(temp_drug)
                     rxcui_min_array.append(iden["rxcui"])
+                    
     return rxcui_min_array
     
 #   Get RxCUI PINs (precise ingredients).
@@ -569,27 +672,33 @@ def get_rxcui_pin(drug):
     rxcui_pin_array = []
     rxcui_pin_obj_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui pin" or ident["identifier_type"].lower() == "rxcui precise ingredient":
+        if ident["identifier_type"].lower() in ["rxcui pin", "rxcui precise ingredient"]:
             rxcui_pin_array.append(ident["identifier"])
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui/" + ident["identifier"] + "/related.json?tty=" + "pin"
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             if "conceptProperties" in decoded["relatedGroup"]["conceptGroup"][0]:
                 for iden in decoded["relatedGroup"]["conceptGroup"][0]["conceptProperties"]:
                     temp_drug = gnomics.objects.drug.Drug(identifier = iden["rxcui"], identifier_type = "RxCUI PIN", source = "RxNorm")
+
                     if "umlscui" in iden:
                         gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["umlscui"], identifier_type = "UMLS CUI", source = "RxNorm")
+
                     if "name" in iden and "language" in iden:
                         if "language" == "ENG":
                             gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["name"], identifier_type = "Precise Ingredient", source = "RxNorm", language = "en")
+
                     rxcui_pin_obj_array.append(temp_drug)
                     rxcui_pin_array.append(iden["rxcui"])
+                    
     return rxcui_pin_array
     
 #   Get RxCUI SBDs (branded drugs).
@@ -597,26 +706,33 @@ def get_rxcui_sbd(drug):
     rxcui_sbd_array = []
     rxcui_sbd_obj_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui sbd" or ident["identifier_type"].lower() == "rxcui branded drug":
+        if ident["identifier_type"].lower() in ["rxcui sbd", "rxcui branded drug"]:
             rxcui_sbd_array.append(ident["identifier"])
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui/" + ident["identifier"] + "/related.json?tty=" + "sbd"
+
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for iden in decoded["relatedGroup"]["conceptGroup"][0]["conceptProperties"]:
                 temp_drug = gnomics.objects.drug.Drug(identifier = iden["rxcui"], identifier_type = "RxCUI SBD", source = "RxNorm")
+                
                 if "umlscui" in iden:
                     gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["umlscui"], identifier_type = "UMLS CUI", source = "RxNorm")
+                
                 if "name" in iden and "language" in iden:
                     if "language" == "ENG":
                         gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["name"], identifier_type = "Branded Drug", source = "RxNorm", language = "en")
+                        
                 rxcui_sbd_obj_array.append(temp_drug)
                 rxcui_sbd_array.append(iden["rxcui"])
+                    
     return rxcui_sbd_array
     
 #   Get RxCUI SBDC (branded drug components).
@@ -624,26 +740,32 @@ def get_rxcui_sbdc(drug):
     rxcui_sbdc_array = []
     rxcui_sbdc_obj_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui sbdc" or ident["identifier_type"].lower() == "rxcui branded drug component":
+        if ident["identifier_type"].lower() in ["rxcui sbdc", "rxcui branded drug component"]:
             rxcui_sbdc_array.append(ident["identifier"])
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui/" + ident["identifier"] + "/related.json?tty=" + "sbdc"
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for iden in decoded["relatedGroup"]["conceptGroup"][0]["conceptProperties"]:
                 temp_drug = gnomics.objects.drug.Drug(identifier = iden["rxcui"], identifier_type = "RxCUI SBDC", source = "RxNorm")
+                
                 if "umlscui" in iden:
                     gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["umlscui"], identifier_type = "UMLS CUI", source = "RxNorm")
+                
                 if "name" in iden and "language" in iden:
                     if "language" == "ENG":
                         gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["name"], identifier_type = "Branded Drug Component", source = "RxNorm", language = "en")
+                        
                 rxcui_sbdc_obj_array.append(temp_drug)
                 rxcui_sbdc_array.append(iden["rxcui"])
+                    
     return rxcui_sbdc_array
     
 #   Get RxCUI SBDF (branded dose forms).
@@ -651,26 +773,32 @@ def get_rxcui_sbdf(drug):
     rxcui_sbdf_array = []
     rxcui_sbdf_obj_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui sbdf" or ident["identifier_type"].lower() == "rxcui branded dose form":
+        if ident["identifier_type"].lower() in ["rxcui sbdf", "rxcui branded dose form"]:
             rxcui_sbdf_array.append(ident["identifier"])
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui/" + ident["identifier"] + "/related.json?tty=" + "sbdf"
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for iden in decoded["relatedGroup"]["conceptGroup"][0]["conceptProperties"]:
                 temp_drug = gnomics.objects.drug.Drug(identifier = iden["rxcui"], identifier_type = "RxCUI SBDF", source = "RxNorm")
+                
                 if "umlscui" in iden:
                     gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["umlscui"], identifier_type = "UMLS CUI", source = "RxNorm")
+                
                 if "name" in iden and "language" in iden:
                     if "language" == "ENG":
                         gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["name"], identifier_type = "Branded Dose Form", source = "RxNorm", language = "en")
+                        
                 rxcui_sbdf_obj_array.append(temp_drug)
                 rxcui_sbdf_array.append(iden["rxcui"])
+                    
     return rxcui_sbdf_array
     
 #   Get RxCUI SBDG (branded dose form groups).
@@ -678,26 +806,33 @@ def get_rxcui_sbdg(drug):
     rxcui_sbdg_array = []
     rxcui_sbdg_obj_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui sbdg" or ident["identifier_type"].lower() == "rxcui branded dose form group":
+        if ident["identifier_type"].lower() in ["rxcui sbdg", "rxcui branded dose form group"]:
             rxcui_sbdg_array.append(ident["identifier"])
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui/" + ident["identifier"] + "/related.json?tty=" + "sbdg"
+
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for iden in decoded["relatedGroup"]["conceptGroup"][0]["conceptProperties"]:
                 temp_drug = gnomics.objects.drug.Drug(identifier = iden["rxcui"], identifier_type = "RxCUI SBDG", source = "RxNorm")
+                
                 if "umlscui" in iden:
                     gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["umlscui"], identifier_type = "UMLS CUI", source = "RxNorm")
+                
                 if "name" in iden and "language" in iden:
                     if "language" == "ENG":
                         gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["name"], identifier_type = "Branded Dose Form Group", source = "RxNorm", language = "en")
+                        
                 rxcui_sbdg_obj_array.append(temp_drug)
                 rxcui_sbdg_array.append(iden["rxcui"])
+                    
     return rxcui_sbdg_array
     
 #   Get RxCUI SCD (clinical drugs).
@@ -705,26 +840,33 @@ def get_rxcui_scd(drug):
     rxcui_scd_array = []
     rxcui_scd_obj_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui scd" or ident["identifier_type"].lower() == "rxcui clinical drug":
+        if ident["identifier_type"].lower() in ["rxcui scd", "rxcui clinical drug"]:
             rxcui_scd_array.append(ident["identifier"])
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui/" + ident["identifier"] + "/related.json?tty=" + "scd"
+
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for iden in decoded["relatedGroup"]["conceptGroup"][0]["conceptProperties"]:
                 temp_drug = gnomics.objects.drug.Drug(identifier = iden["rxcui"], identifier_type = "RxCUI SCD", source = "RxNorm")
+                
                 if "umlscui" in iden:
                     gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["umlscui"], identifier_type = "UMLS CUI", source = "RxNorm")
+                
                 if "name" in iden and "language" in iden:
                     if "language" == "ENG":
                         gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["name"], identifier_type = "Clinical Drug", source = "RxNorm", language = "en")
+                        
                 rxcui_scd_obj_array.append(temp_drug)
                 rxcui_scd_array.append(iden["rxcui"])
+                    
     return rxcui_scd_array
     
 #   Get RxCUI SCDC (clinical drug components).
@@ -732,26 +874,32 @@ def get_rxcui_scdc(drug):
     rxcui_scdc_array = []
     rxcui_scdc_obj_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui scdc" or ident["identifier_type"].lower() == "rxcui clinical drug component":
+        if ident["identifier_type"].lower() in ["rxcui scdc", "rxcui clinical drug component"]:
             rxcui_scdc_array.append(ident["identifier"])
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui/" + ident["identifier"] + "/related.json?tty=" + "scdc"
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for iden in decoded["relatedGroup"]["conceptGroup"][0]["conceptProperties"]:
                 temp_drug = gnomics.objects.drug.Drug(identifier = iden["rxcui"], identifier_type = "RxCUI SCDC", source = "RxNorm")
+                
                 if "umlscui" in iden:
                     gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["umlscui"], identifier_type = "UMLS CUI", source = "RxNorm")
+                
                 if "name" in iden and "language" in iden:
                     if "language" == "ENG":
                         gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["name"], identifier_type = "Clinical Drug Component", source = "RxNorm", language = "en")
+                        
                 rxcui_scdc_obj_array.append(temp_drug)
                 rxcui_scdc_array.append(iden["rxcui"])
+                    
     return rxcui_scdc_array
     
 #   Get RxCUI SCDF (clinical dose forms).
@@ -759,26 +907,32 @@ def get_rxcui_scdf(drug):
     rxcui_scdf_array = []
     rxcui_scdf_obj_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui scdf" or ident["identifier_type"].lower() == "rxcui clinical dose form":
+        if ident["identifier_type"].lower() in ["rxcui scdf", "rxcui clinical dose form"]:
             rxcui_scdf_array.append(ident["identifier"])
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui/" + ident["identifier"] + "/related.json?tty=" + "scdf"
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for iden in decoded["relatedGroup"]["conceptGroup"][0]["conceptProperties"]:
                 temp_drug = gnomics.objects.drug.Drug(identifier = iden["rxcui"], identifier_type = "RxCUI SCDF", source = "RxNorm")
+                
                 if "umlscui" in iden:
                     gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["umlscui"], identifier_type = "UMLS CUI", source = "RxNorm")
+                
                 if "name" in iden and "language" in iden:
                     if "language" == "ENG":
                         gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["name"], identifier_type = "Clinical Dose Form", source = "RxNorm", language = "en")
+                        
                 rxcui_scdf_obj_array.append(temp_drug)
                 rxcui_scdf_array.append(iden["rxcui"])
+                    
     return rxcui_scdf_array
     
 #   Get RxCUI SCDG (clinical dose form groups).
@@ -786,30 +940,37 @@ def get_rxcui_scdg(drug):
     rxcui_scdg_array = []
     rxcui_scdg_obj_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui scdg" or ident["identifier_type"].lower() == "rxcui clinical dose form group":
+        if ident["identifier_type"].lower() in ["rxcui scdg", "rxcui clinical dose form group"]:
             rxcui_scdg_array.append(ident["identifier"])
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm concept unique identifier" or ident["identifier_type"].lower() == "rxnorm concept unique id":
+        if ident["identifier_type"].lower() in ["rxcui", "rxnorm concept unique identifier", "rxnorm concept unique id"]:
             base = "https://rxnav.nlm.nih.gov/REST/"
             ext = "rxcui/" + ident["identifier"] + "/related.json?tty=" + "scdg"
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
             for iden in decoded["relatedGroup"]["conceptGroup"][0]["conceptProperties"]:
                 temp_drug = gnomics.objects.drug.Drug(identifier = iden["rxcui"], identifier_type = "RxCUI SCDG", source = "RxNorm")
+                
                 if "umlscui" in iden:
                     gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["umlscui"], identifier_type = "UMLS CUI", source = "RxNorm")
+                
                 if "name" in iden and "language" in iden:
                     if "language" == "ENG":
                         gnomics.objects.drug.Drug.add_identifier(temp_drug, identifier = iden["name"], identifier_type = "Clinical Dose Form Group", source = "RxNorm", language = "en")
+                        
                 rxcui_scdg_obj_array.append(temp_drug)
                 rxcui_scdg_array.append(iden["rxcui"])
+                    
     return rxcui_scdg_array
     
 #   UNIT TESTS
 def rxcui_unit_tests(mesh_uid, drugbank_id, snomedct, atc_code, ampid, anda, cvx, gcn_seqno, gfc, gpi, gppc, hic_seqn, mmsl_code, nda, ndc, nui, spl_set_id, umls_cui, vuid):
+    
     mesh_com = gnomics.objects.drug.Drug(identifier = str(mesh_uid), identifier_type = "MeSH UID", source = "MeSH")
     print("\nGetting RxCUIs from MeSH UID (%s):" % mesh_uid)
     for rx in get_rxcui(mesh_com):
@@ -906,6 +1067,7 @@ def rxcui_unit_tests(mesh_uid, drugbank_id, snomedct, atc_code, ampid, anda, cvx
         print("- " + str(rx))
         
 def rxcui_type_unit_tests(rxcui):
+    
     rx_drug = gnomics.objects.drug.Drug(identifier = str(rxcui), identifier_type = "RxCUI", source = "RxNorm")
     
     print("Getting RxCUI BNs from RxCUI (%s):" % rxcui)

@@ -1,6 +1,13 @@
+#!/usr/bin/env python
+
 #
 #
 #
+#
+#
+
+#
+#   IMPORT SOURCES:
 #
 #
 
@@ -14,14 +21,22 @@ faulthandler.enable()
 
 #   IMPORTS
 
+#   Other imports.
+import timeit
+
+#   Import sub-methods.
+from gnomics.objects.enzyme_files.ec import get_ec_number
+
 #   MAIN
 def main():
-    print("NOT FUNCTIONAL.")
+    enzyme_unit_tests()
 
 #   ENZYME CLASS
 class Enzyme:
     """
         Enzyme class
+        
+        An enzyme is a macromolecular biological catalyst.
     """
     
     """
@@ -40,18 +55,18 @@ class Enzyme:
     """
         
     # Initialize the enzyme.
-    def __init__(self, identifier = None, identifier_type = None, language = None, source = None, name = None):
+    def __init__(self, identifier=None, identifier_type=None, language=None, source=None, name=None):
         
         # Initialize dictionary of identifiers.
-        self.identifiers = [
-            {
+        self.identifiers = []
+        if identifier is not None:
+            self.identifiers = [{
                 'identifier': identifier,
                 'language': language,
                 'identifier_type': identifier_type,
                 'source': source,
                 'name': name
-            }
-        ]
+            }]
         
         # Initialize dictionary of enzyme objects.
         self.enzyme_objects = []
@@ -60,7 +75,7 @@ class Enzyme:
         self.related_objects = []
         
     # Add an identifier to a enzyme.
-    def add_identifier(enzyme, identifier = None, identifier_type = None, language = None, source = None, name = None):
+    def add_identifier(enzyme, identifier=None, identifier_type=None, language=None, source=None, name=None):
         enzyme.identifiers.append({
             'identifier': str(identifier),
             'language': language,
@@ -79,9 +94,17 @@ class Enzyme:
     """
         Enzyme identifiers
     
+        EC Number
     """
     
+    # Return all identifiers.
+    def all_identifiers(enzyme, user=None):
+        Enzyme.ec_number(enzyme, user=user)
+        return enzyme.identifiers
     
+    # Return EC Number.
+    def ec_number(enzyme, user=None):
+        return get_ec_number(enzyme)
     
     """
         Interaction objects
@@ -95,7 +118,7 @@ class Enzyme:
         
     """
     
-    def all_properties(enzyme, user = None):
+    def all_properties(enzyme, user=None):
         property_dict = {}
         return property_dict
     
@@ -104,7 +127,10 @@ class Enzyme:
         
     """
     
-    
+    # Return links.
+    def all_urls(enzyme, user=None):
+        url_dict = {}
+        return url_dict
     
     """
         Auxiliary functions
@@ -122,6 +148,8 @@ class Enzyme:
     """
 
 #   UNIT TESTS
+def enzyme_unit_tests():
+    print("NOT FUNCTIONAL.")
 
 #   MAIN
 if __name__ == "__main__": main()

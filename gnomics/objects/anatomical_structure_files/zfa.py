@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -7,7 +9,7 @@
 #
 #   IMPORT SOURCES:
 #
-
+#
 
 #
 #   ZFA ID.
@@ -27,21 +29,23 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 #   Import modules.
 from gnomics.objects.user import User
 import gnomics.objects.anatomical_structure
+import gnomics.objects.auxiliary_files.identifier
 
 #   Other imports.
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
     zfa_unit_tests()
     
 # Return ZFA ID.
-def get_zfa_id(anat):
+def get_zfa_id(anat, user=None):
     zfa_array = []
-    for ident in anat.identifiers:
-        if ident["identifier_type"].lower() == "zfa id" or ident["identifier_type"].lower() == "zfa identifier":
-            zfa_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(anat.identifiers, ["zfa", "zfa id", "zfa identifier"]):
+        if iden["identifier"] not in zfa_array:
+            zfa_array.append(iden["identifier"])
     return zfa_array
     
 #   UNIT TESTS

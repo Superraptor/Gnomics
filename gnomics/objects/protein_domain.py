@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -27,16 +29,26 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 #   Import modules.
 import gnomics.objects.protein
 
+#   Other imports.
+import timeit
+
+#   Import sub-methods.
+
+#   Import further methods.
+
 #   MAIN
 def main():
-    print("NOT FUNCTIONAL.")
+    protein_domain_unit_tests()
 
 #   PROTEIN DOMAIN CLASS
 class ProteinDomain():
     """
         Protein domaain class
         
-        
+        A protein domain is a conserved part of a given
+        protein sequence and tertiary structure that
+        can evolve, function, and exist independently
+        of the rest of the protein chain.
     """
     
     """
@@ -59,26 +71,25 @@ class ProteinDomain():
     """
     
     # Initialize the protein domain.
-    def __init__(self, identifier = None, identifier_type = None, language = None, taxon = None, source = None, name = None):
+    def __init__(self, identifier=None, identifier_type=None, language=None, taxon=None, source=None, name=None):
         
         # Initialize dictionary of identifiers.
-        self.identifiers = [
-            {
+        self.identifiers = []
+        if identifier is not None:
+            self.identifiers = [{
                 'identifier': str(identifier),
                 'language': language,
                 'identifier_type': identifier_type,
                 'taxon': taxon,
                 'source': source,
                 'name': name
-            }
-        ]
+            }]
         
         # Initialize dictionary of protein domain objects.
         self.protein_domain_objects = []
         
     # Add an identifier to a protein domain.
-    def add_identifier(protein_famliy, identifier = None, identifier_type = None, taxon = None, language = None, source = None, name = None):
-        
+    def add_identifier(protein_famliy, identifier=None, identifier_type=None, taxon=None, language=None, source=None, name=None):
         protein_domain.identifiers.append({
             'identifier': str(identifier),
             'language': language,
@@ -101,12 +112,16 @@ class ProteinDomain():
         SMART ID
     """
     
+    # Return all identifiers.
+    def all_identifiers(protein_domain, user=None):
+        return protein_domain.identifiers
+    
     # Return CDD (Conserved Domain Database) ID.
-    def cdd_id(prot):
+    def cdd_id(prot, user=None):
         print("NOT FUNCTIONAL.")
         
     # Return SMART (Simple Modular Architecture Research Tool) ID.
-    def smart_id(prot):
+    def smart_id(prot, user=None):
         print("NOT FUNCTIONAL.")
     
     """
@@ -114,22 +129,29 @@ class ProteinDomain():
         
     """
     
+    # Return interaction objects.
+    def all_interaction_objects(protein_domain, user=None):
+        interaction_obj = {}
+        return interaction_obj
     
     """
         Other properties:
         
     """
     
-    def all_properties(protein_domain, user = None):
+    def all_properties(protein_domain, user=None):
         property_dict = {}
         return property_dict
     
     """
-        Protein URLs:
+        Protein Domain URLs:
         
     """
     
-    
+    # Return links.
+    def all_urls(protein_domain, user=None):
+        url_dict = {}
+        return url_dict
     
     """
         Auxiliary functions:
@@ -138,7 +160,7 @@ class ProteinDomain():
         
     """
     
-    def search(query):
+    def search(query, user=None):
         print("NOT FUNCTIONAL.")
         
     """
@@ -147,6 +169,8 @@ class ProteinDomain():
     """
 
 #   UNIT TESTS
+def protein_domain_unit_tests():
+    print("NOT FUNCTIONAL.")
 
 #   MAIN
 if __name__ == "__main__": main()

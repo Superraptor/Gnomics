@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,7 @@
 
 #
 #   IMPORT SOURCES:
+#
 #
 
 #
@@ -25,13 +28,14 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 
 #   Import modules.
 from gnomics.objects.user import User
-import gnomics.objects.cell_line
 import gnomics.objects.gene
+import gnomics.objects.cell_line
 
 #   Other imports.
 import json
 import numpy
 import requests
+import timeit
 import xml.etree.ElementTree as ET
 
 #   MAIN
@@ -42,14 +46,17 @@ def main():
 def get_cell_line_expression(gene):
     cell_array = []
     cell_dict = {}
+    
     for ident in gene.identifiers:
-        if ident["identifier_type"].lower() == "ensembl" or ident["identifier_type"].lower() == "ensembl id" or ident["identifier_type"].lower() == "ensembl identifier" or ident["identifier_type"].lower() == "ensembl gene id" or ident["identifier_type"].lower() == "ensembl gene identifier":
+        if ident["identifier_type"].lower() in ["ensembl", "ensembl id", "ensembl identifier", "ensembl gene id", "ensembl gene identifier"]:
             server = "https://www.proteinatlas.org/"
             ext = ident["identifier"] + ".xml"
             r = requests.get(server+ext)
+            
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+                
             tree = ET.ElementTree(ET.fromstring(r.text))
             root = tree.getroot()
             for child in root:
@@ -81,13 +88,20 @@ def get_cell_line_expression(gene):
                                         'source': exp_source,
                                         'technology': exp_tech
                                     }
+            
     return cell_dict
         
 #   UNIT TESTS
 def gene_cell_line_unit_tests(ensembl_gene_id):
     ensembl_gene = gnomics.objects.gene.Gene(identifier = ensembl_gene_id, identifier_type = "Ensembl Gene ID", language = None, taxon = "Homo sapiens", source = "Ensembl")
-    print("Getting tissue gene expression from Ensembl Gene ID (%s):" % ensembl_gene_id)
-    for key, val in get_cell_line_expression(ensembl_gene).items():
+    print("Getting cell line gene expression from Ensembl Gene ID (%s):" % ensembl_gene_id)
+    
+    start = timeit.timeit()
+    all_genes = get_cell_line_expression(ensembl_gene)
+    end = timeit.timeit()
+    print("TIME ELAPSED: %s seconds." % str(end - start))
+    
+    for key, val in all_genes.items():
         print("- %s" % key)
         print("  - method: %s" % val["method"])
         print("  - type: %s" % val["type"])

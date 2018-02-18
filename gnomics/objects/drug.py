@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+
+#
+#   DISCLAIMERS:
+#   Do not rely on openFDA to make decisions regarding 
+#   medical care. Always speak to your health provider 
+#   about the risks and benefits of FDA-regulated products.
+#
+
 #
 #
 #
@@ -6,10 +15,16 @@
 
 #
 #   IMPORT SOURCES:
+#       BIOSERVICES
+#           https://pythonhosted.org/bioservices/
+#       CHEMBL
+#           https://github.com/chembl/chembl_webresource_client
+#       WIKIPEDIA
+#           https://pypi.python.org/pypi/wikipedia
 #
 
 #
-#   Create instance of a compound.
+#   Create instance of a drug.
 #
 
 #   PRE-CODE
@@ -25,14 +40,18 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
 #   Import modules.
 from gnomics.objects.user import User
-import gnomics.objects.anatomical_structure
+import gnomics.objects.clinical_trial
 import gnomics.objects.compound
 
 #   Other imports.
+from bioservices import *
+from chembl_webresource_client.new_client import new_client
 import json
 import re
 import requests
 import signal
+import timeit
+import wikipedia
 
 #   Import sub-methods.
 from gnomics.objects.drug_files.atc import get_atc_codes
@@ -70,6 +89,18 @@ class Drug(object):
     
     """
     
+    # ATC BioPortal PURL.
+    atc_bioportal_purl = "http://purl.bioontology.org/ontology/ATC"
+    
+    # NDDF BioPortal PURL.
+    nddf_bioportal_purl = "http://purl.bioontology.org/ontology/NDDF"
+    
+    # MESH BioPortal PURL.
+    mesh_bioportal_purl = "http://purl.bioontology.org/ontology/MESH"
+    
+    # RxNORM BioPortal PURL.
+    rxnorm_bioportal_purl = "http://purl.bioontology.org/ontology/RXNORM"
+    
     """
         Drug attributes:
         
@@ -86,18 +117,18 @@ class Drug(object):
     """
     
     # Initialize the drug.
-    def __init__(self, identifier = None, identifier_type = None, language = None, source = None, name = None):
+    def __init__(self, identifier=None, identifier_type=None, language=None, source=None, name=None):
         
         # Initialize dictionary of identifiers.
-        self.identifiers = [
-            {
+        self.identifiers = []
+        if identifier is not None:
+            self.identifiers = [{
                 'identifier': str(identifier),
                 'language': language,
                 'identifier_type': identifier_type,
                 'source': source,
                 'name': name
-            }
-        ]
+            }]
         
         # Initialize dictionary of drug objects.
         self.drug_objects = []
@@ -106,7 +137,7 @@ class Drug(object):
         self.related_objects = []
         
     # Add an identifier to a compound.
-    def add_identifier(drug, identifier = None, identifier_type = None, language = None, source = None, name = None):
+    def add_identifier(drug, identifier=None, identifier_type=None, language=None, source=None, name=None):
         drug.identifiers.append({
             'identifier': str(identifier),
             'language': language,
@@ -125,15 +156,15 @@ class Drug(object):
     """
     
     # FDA drug object.
-    def fda_drug_obj(drug):
+    def fda_drug_obj(drug, user=None):
         return get_fda_obj(drug)
     
     # KEGG database entry (for drug).
-    def kegg_drug_db_entry(drug):
+    def kegg_drug_db_entry(drug, user=None):
         return get_kegg_drug_db_entry(drug)
     
     # RxNorm object.
-    def rxnorm_obj(drug):
+    def rxnorm_obj(drug, user=None):
         return get_rxnorm_obj(drug)
     
     """
@@ -145,9 +176,9 @@ class Drug(object):
         FDA drug name
         INN
         JAN
-        KEGG drug identifier
+        KEGG DRUG identifier
         MeSH UID
-        Patent accession
+        RxCUI
         Trade names
         USAN
         USP
@@ -156,76 +187,76 @@ class Drug(object):
     """
     
     # Return all identifiers.
-    def all_identifiers(drug, user = None):
-        Drug.atc_codes(drug)
-        Drug.ban(drug)
-        Drug.drugbank_id(drug)
-        Drug.drugcentral_id(drug)
-        Drug.fda(drug)
-        Drug.inn(drug)
-        Drug.jan(drug)
-        Drug.kegg_drug_id(drug)
-        Drug.mesh_uid(drug)
-        Drug.rxcui(drug)
-        Drug.trade_names(drug)
-        Drug.usan(drug)
-        Drug.usp(drug)
+    def all_identifiers(drug, user=None):
+        Drug.atc_codes(drug, user=user)
+        Drug.ban(drug, user=user)
+        Drug.drugbank_id(drug, user=user)
+        Drug.drugcentral_id(drug, user=user)
+        Drug.fda(drug, user=user)
+        Drug.inn(drug, user=user)
+        Drug.jan(drug, user=user)
+        Drug.kegg_drug_id(drug, user=user)
+        Drug.mesh_uid(drug, user=user)
+        Drug.rxcui(drug, user=user)
+        Drug.trade_names(drug, user=user)
+        Drug.usan(drug, user=user)
+        Drug.usp(drug, user=user)
         return drug.identifiers
     
     # Returns ATC classifications (codes).
-    def atc_codes(drug):
+    def atc_codes(drug, user=None):
         return get_atc_codes(drug)
     
     # Returns BAN (British Accepted Name).
-    def ban(drug):
+    def ban(drug, user=None):
         return get_ban(drug)
     
     # Returns DrugBank identifier.
-    def drugbank_id(drug):
+    def drugbank_id(drug, user=None):
         return get_drugbank_id(drug)
     
     # Returns DrugCentral identifier.
-    def drugcentral_id(drug):
+    def drugcentral_id(drug, user=None):
         return get_drugcentral_id(drug)
     
     # Returns FDA drug name.
-    def fda(drug):
+    def fda(drug, user=None):
         return get_fda_id(drug)
     
     # Returns INNs (International Nonproprietary Names).
-    def inn(drug):
+    def inn(drug, user=None):
         return get_inns(drug)
     
     # Returns JAN (Japanese Accepted Name).
-    def jan(drug):
+    def jan(drug, user=None):
         return get_jan(drug)
     
     # Returns KEGG Drug identifier.
-    def kegg_drug_id(drug):
+    def kegg_drug_id(drug, user=None):
         return get_kegg_drug_id(drug)
     
     # Returns MeSH UID.
-    def mesh_uid(drug):
+    def mesh_uid(drug, user=None):
         return get_mesh_uid(drug)
             
     # Returns RxCUIs.
-    def rxcui(drug):
+    def rxcui(drug, user=None):
         return get_rxcui(drug)
     
     # Returns related RxCUIs.
-    def related_rxcui(drug):
+    def related_rxcui(drug, user=None):
         return get_related_rxcuis(drug)
                     
     # Returns trade names.
-    def trade_names(drug):
+    def trade_names(drug, user=None):
         return get_trade_names(drug)
             
     # Returns USAN (United States Adopted Names).
-    def usan(drug):
+    def usan(drug, user=None):
         return get_usan(drug)
             
     # Returns USP (United States Pharmacopeia).
-    def usp(drug):
+    def usp(drug, user=None):
         return get_usp(drug)
     
     """
@@ -241,53 +272,49 @@ class Drug(object):
     """
     
     # Return interaction objects.
-    def all_interaction_objects(drug, user = None):
+    def all_interaction_objects(drug, user=None):
         interaction_obj = {}
-        interaction_obj["Adverse Events"] = Drug.adverse_events(drug)
-        interaction_obj["Compounds"] = Drug.compounds(drug)
-        #interaction_obj["Diseases"] = Drug.diseases(drug)
-        interaction_obj["Drug Interactions"] = Drug.drug_drug_interactions(drug)
-        interaction_obj["Genes"] = Drug.genes(drug, user = user)
-        #interaction_obj["Pathways"] = Drug.pathways(drug, user = user)
-        #interaction_obj["References"] = Drug.references(drug)
+        interaction_obj["Adverse_Events"] = Drug.adverse_events(drug, user=user)
+        interaction_obj["Compounds"] = Drug.compounds(drug, user=user)
+        interaction_obj["Drug_Interactions"] = Drug.drug_interactions(drug, user=user)
+        interaction_obj["Gene_Interactions"] = Drug.gene_interactions(drug, user=user)
         print(interaction_obj)
         return interaction_obj
 
     # Returns adverse events.
-    def adverse_events(drug, user = None, counts = False, exact = True, all_results = True, limit = 100, details = True):
-        return get_adverse_events(drug, user = user, counts = counts, exact = exact, all_results = all_results, limit = limit, details = details)
+    def adverse_events(drug, user=None, counts=False, exact=True, all_results=True, limit=100, details=True):
+        return get_adverse_events(drug, user=user, counts=counts, exact=exact, all_results=all_results, limit=limit, details=details)
         
     # Return compound objects.
-    def compounds(drug, user = None):
-        return get_compounds(drug, user = user)
+    def compounds(drug, user=None):
+        return get_compounds(drug, user=user)
     
     # Return disease objects.
-    def diseases(drug):
+    def diseases(drug, user=None):
         print("NOT FUNCTIONAL.")
-        #return get_diseases(drug)
     
-    def drug_drug_interactions(drug, source = "Drugbank"):
-        return get_drug_drug_interactions(drug, source = source)
+    # Return drug-drug interactions (DDIs).
+    def drug_interactions(drug, source="Drugbank", user=None):
+        return get_drug_drug_interactions(drug, source=source)
     
     # Get gene interactions.
     # http://dgidb.genome.wustl.edu/api
     #
     # Interaction sources can be TTD, DrugBank, etc.
     # But should be an array if possible.
-    def genes(drug, user = None, source = None, interaction_sources = None, interaction_types = None, gene_categories = None, source_trust_levels = None):
-        return get_genes(drug, user = user, source = source, interaction_sources = interaction_sources, interaction_types = interaction_types, gene_categories = gene_categories, source_trust_levels = source_trust_levels)
+    def gene_interactions(drug, user=None, source=None, interaction_sources=None, interaction_types=None, gene_categories=None, source_trust_levels=None):
+        return get_genes(drug, user=user, source=source, interaction_sources=interaction_sources, interaction_types=interaction_types, gene_categories=gene_categories, source_trust_levels=source_trust_levels)
     
     # Get pathways related to compound (KEGG).
     #
     # For pathway associations, either
     # "inferred" or "enriched" may be used.
-    def pathways(drug, source = None, pathway_assoc = None, user = None):
+    def pathways(drug, source=None, pathway_assoc=None, user=None):
         print("NOT FUNCTIONAL.")
     
     # Returns sources/references.
-    def references(drug):
+    def references(drug, user=None):
         print("NOT FUNCTIONAL.")
-        return get_references(drug)
     
     """
         Other properties:
@@ -308,7 +335,7 @@ class Drug(object):
         Keep out of reach of children?
         Manufacturer name
         Package label principal display panel
-        Prescribable
+        Prescribable?
         Product type
         Purpose
         Questions
@@ -321,109 +348,201 @@ class Drug(object):
     """
     
     # Return all properties in this category.
-    def all_properties(drug, user = None):
+    def all_properties(drug, user=None):
         property_dict = {}
+        property_dict["Ask Doctor"] = Drug.ask_doctor(drug, user=user)
+        property_dict["Ask Doctor or Pharmacist"] = Drug.ask_doctor_or_pharmacist(drug, user=user)
+        property_dict["Do Not Use"] = Drug.do_not_use(drug, user=user)
+        property_dict["Dosage and Administration"] = Drug.dosage_and_administration(drug, user=user)
+        property_dict["Effective Time"] = Drug.effective_time(drug, user=user)
+        property_dict["Indication and Usage Information"] = Drug.indications_and_usage_information(drug, user=user)
+        property_dict["Is Original Packager?"] = Drug.is_original_packager(drug, user=user)
+        property_dict["Keep Out of Reach of Children?"] = Drug.keep_out_of_reach_of_children(drug, user=user)
+        property_dict["Manufacturer Name"] = Drug.manufacturer_name(drug, user=user)
+        property_dict["Package Label Principal Display Panel"] = Drug.package_label_principal_display_panel(drug, user=user)
+        property_dict["Prescribable?"] = Drug.prescribable(drug, user=user)
+        property_dict["Product Type"] = Drug.product_type(drug, user=user)
+        property_dict["Purpose"] = Drug.purpose(drug, user=user)
+        property_dict["Questions"] = Drug.questions(drug, user=user)
+        property_dict["Route"] = Drug.route(drug, user=user)
+        property_dict["Stop Use"] = Drug.stop_use(drug, user=user)
+        property_dict["Version"] = Drug.version(drug, user=user)
+        property_dict["Warnings"] = Drug.warnings(drug, user=user)
+        property_dict["When Using"] = Drug.when_using(drug, user=user)
         return property_dict
     
     # Return "ask doctor" from label.
-    def ask_doctor(drug):
-        return fda_drug_obj(drug)["ask_doctor"]
+    def ask_doctor(drug, user=None):
+        #print(str(Drug.fda_drug_obj(drug)).encode('ascii', 'ignore').decode())
+        if "ask_doctor" in Drug.fda_drug_obj(drug):
+            return [Drug.fda_drug_obj(drug)["ask_doctor"]]
+        else:
+            return []
     
     # Return "ask doctor or pharmacist" from label.
-    def ask_doctor_or_pharmacist(drug):
-        return fda_drug_obj(drug)["ask_doctor_or_pharmacist"]
+    def ask_doctor_or_pharmacist(drug, user=None):
+        if "ask_doctor_or_pharmacist" in Drug.fda_drug_obj(drug):
+            return [Drug.fda_drug_obj(drug)["ask_doctor_or_pharmacist"]]
+        else:
+            return []
     
     # Get available strength.
-    def available_strength(drug):
+    def available_strength(drug, user=None):
         print("NOT FUNCTIONAL.")
+        return []
     
     # Return "do not use" from label.
-    def do_not_use(drug):
-        return fda_drug_obj(drug)["do_not_use"]
+    def do_not_use(drug, user=None):
+        if "do_not_use" in Drug.fda_drug_obj(drug):
+            return [Drug.fda_drug_obj(drug)["do_not_use"]]
+        else:
+            return []
     
     # Return dosage and administration information.
-    def dosage_and_administration(drug):
-        return fda_drug_obj(drug)["dosage_and_administration"]
+    def dosage_and_administration(drug, user=None):
+        if "dosage_and_administration" in Drug.fda_drug_obj(drug):
+            return Drug.fda_drug_obj(drug)["dosage_and_administration"]
+        else:
+            return []
     
     # Return dosage and administration table from label.
-    def dosage_and_administration_table(drug):
-        return fda_drug_obj(drug)["dosage_and_administration_table"]
+    def dosage_and_administration_table(drug, user=None):
+        if "dosage_and_administration_table" in Drug.fda_drug_obj(drug):
+            return [Drug.fda_drug_obj(drug)["dosage_and_administration_table"]]
+        else:
+            return []
     
     # Get effective time.
-    def effective_time(drug):
-        return fda_drug_obj(drug)["effective_time"]
+    def effective_time(drug, user=None):
+        if "effective_time" in Drug.fda_drug_obj(drug):
+            return [Drug.fda_drug_obj(drug)["effective_time"]]
+        else:
+            return []
     
     # Get indications and usage information.
-    def indications_and_usage_information(drug):
-        return fda_drug_obj(drug)["indications_and_usage"]
+    def indications_and_usage_information(drug, user=None):
+        if "indications_and_usage" in Drug.fda_drug_obj(drug):
+            return Drug.fda_drug_obj(drug)["indications_and_usage"]
+        else:
+            return []
     
     # Get whether this is the original packager.
-    def is_original_packager(drug):
-        return fda_drug_obj(drug)["is_original_packager"]
+    def is_original_packager(drug, user=None):
+        if "is_original_packager" in Drug.fda_drug_obj(drug):
+            return [Drug.fda_drug_obj(drug)["is_original_packager"]]
+        else:
+            return []
     
     # Return "keep out of reach of children" statement from label.
-    def keep_out_of_reach_of_children(drug):
-        return fda_drug_obj(drug)["keep_out_of_reach_of_children"]
+    def keep_out_of_reach_of_children(drug, user=None):
+        if "keep_out_of_reach_of_children" in Drug.fda_drug_obj(drug):
+            return [Drug.fda_drug_obj(drug)["keep_out_of_reach_of_children"]]
+        else:
+            return []
     
     # Get manufacturer name.
-    def manufacturer_name(drug):
-        return fda_drug_obj(drug)["openfda"]["manufacturer_name"]
+    def manufacturer_name(drug, user=None):
+        if "openfda" in Drug.fda_drug_obj(drug):
+            return Drug.fda_drug_obj(drug)["openfda"]["manufacturer_name"]
+        else:
+            return []
     
     # Return package label principal display panel.
-    def package_label_principal_display_panel(drug):
-        return fda_drug_obj(drug)["package_label_principal_display_panel"]
+    def package_label_principal_display_panel(drug, user=None):
+        if "package_label_principal_display_panel" in Drug.fda_drug_obj(drug):
+            return Drug.fda_drug_obj(drug)["package_label_principal_display_panel"]
+        else:
+            return []
     
     # Get prescribable.
-    def prescribable(drug):
+    def prescribable(drug, user=None):
         print("NOT FUNCTIONAL.")
+        return []
         
     # Get product type.
-    def product_type(drug):
-        return fda_drug_obj(drug)["openfda"]["product_type"]
+    def product_type(drug, user=None):
+        if "product_type" in Drug.fda_drug_obj(drug):
+            return [Drug.fda_drug_obj(drug)["openfda"]["product_type"]]
+        else:
+            return []
     
     # Get drug purpose.
-    def purpose(drug):
-        return fda_drug_obj(drug)["purpose"]
+    def purpose(drug, user=None):
+        if "purpose" in Drug.fda_drug_obj(drug):
+            return [Drug.fda_drug_obj(drug)["purpose"]]
+        else:
+            return []
     
     # Get questions.
-    def questions(drug):
-        return fda_drug_obj(drug)["questions"]
+    def questions(drug, user=None):
+        if "questions" in Drug.fda_drug_obj(drug):
+            return [Drug.fda_drug_obj(drug)["questions"]]
+        else:
+            return []
     
     # Get drug route.
-    def route(drug):
-        return fda_drug_obj(drug)["openfda"]["route"]
+    def route(drug, user=None):
+        if "openfda" in Drug.fda_drug_obj(drug):
+            return Drug.fda_drug_obj(drug)["openfda"]["route"]
+        else:
+            return []
     
     # Get "stop use" from product label.
-    def stop_use(drug):
-        return fda_drug_obj(drug)["stop_use"]
+    def stop_use(drug, user=None):
+        if "stop_use" in Drug.fda_drug_obj(drug):
+            return [Drug.fda_drug_obj(drug)["stop_use"]]
+        else:
+            return []
     
     # Get version.
-    def version(drug):
-        return fda_drug_obj(drug)["version"]
+    def version(drug, user=None):
+        if "version" in Drug.fda_drug_obj(drug):
+            return [Drug.fda_drug_obj(drug)["version"]]
+        else:
+            return []
     
     # Get warnings from product label.
-    def warnings(drug):
-        return fda_drug_obj(drug)["warnings"]
+    def warnings(drug, user=None):
+        if "warnings" in Drug.fda_drug_obj(drug):
+            return Drug.fda_drug_obj(drug)["warnings"]
+        else:
+            return []
     
     # Get "when using" from product label.
-    def when_using(drug):
-        return fda_drug_obj(drug)["when_using"]
+    def when_using(drug, user=None):
+        if "when_using" in Drug.fda_drug_obj(drug):
+            return [Drug.fda_drug_obj(drug)["when_using"]]
+        else:
+            return []
         
     """
         URLs:
         
         DrugBank URL
-        KEGG Drug URL
+        KEGG DRUG URL
         
     """
     
-    # Returns DrugBank URL.
-    def drugbank_url(drug):
-        return "https://www.drugbank.ca/drugs/" + str(Drug.drugbank_id(drug))
+    # Return links.
+    def all_urls(drug, user=None):
+        url_dict = {}
+        url_dict["DrugBank"] = Drug.drugbank_url(drug, user=user)
+        url_dict["KEGG DRUG"] = Drug.kegg_drug_url(drug, user=user)
+        return url_dict
     
-    # Returns KEGG Drug URL.
-    def kegg_drug_url(drug):
-        return "http://www.genome.jp/dbget-bin/www_bget?dr:" + str(Drug.kegg_drug_id(drug))
+    # Returns DrugBank URL.
+    def drugbank_url(drug, user=None):
+        url_array = []
+        for drugbank_id in Drug.drugbank_id(drug, user=user):
+            url_array.append("https://www.drugbank.ca/drugs/" + str(drugbank_id))
+        return url_array
+    
+    # Returns KEGG DRUG URL.
+    def kegg_drug_url(drug, user=None):
+        url_array = []
+        for kegg_drug_id in Drug.kegg_drug_id(drug, user=user):
+            url_array.append("http://www.genome.jp/dbget-bin/www_bget?dr:" + str(kegg_drug_url))
+        return url_array
     
     """
         Auxiliary functions:
@@ -433,17 +552,8 @@ class Drug(object):
     """
     
     # Returns compounds by search.
-    # http://chemspipy.readthedocs.io/en/latest/guide/searching.html
-    #
-    # Can use SMILES, common name, or ChemSpider identifier.
-    # May return many results.
-    #
-    # Note that searching by mass has a default range of +/- 0.001.
-    #
-    # PubChem search is also included, but is not currently
-    # fully documented.
-    def search(query, search_type = "exact", source = "rxnorm", user = None):
-        return search(query, search_type = search_type, source = source)
+    def search(query, search_type="exact", source="rxnorm", user=None):
+        return search(query, search_type=search_type, source=source)
     
     """
         External files:
@@ -452,6 +562,7 @@ class Drug(object):
     """
     
     # Return images.
+    #   TODO: Maybe move to a different file?
     #
     # Pattern options off of:
     # https://rximage.nlm.nih.gov/index/visualizer/
@@ -479,40 +590,63 @@ class Drug(object):
     # Name:
     # Inactive:
     # Parse:
-    def images(drug, resource = "rxnav", reply_format = "json", color = None, resolution = "full"):
+    def images(drug, resource="rxnav", reply_format="json", color=None, resolution="full"):
         base = "https://rximage.nlm.nih.gov/api/"
         image_url_array = []
+        
         for ident in drug.identifiers:
             if ident["identifier_type"].lower() == "rxcui":
                 ext = "rximage/1/" + resource + "?&resolution=" + resolution + "&rxcui=" + ident["identifier"] 
                 r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
                 if not r.ok:
                     r.raise_for_status()
                     sys.exit()
+
                 decoded = r.json()
+
                 for im in decoded["nlmRxImages"]:
                     image_url_array.append(im["imageUrl"])
+                    
             if ident["identifier_type"].lower() == "ndc" or ident["identifier_type"].lower() == "national drug code":
                 ext = "rximage/1/" + resource + "?&resolution=" + resolution + "&ndc=" + ident["identifier"] 
                 r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
                 if not r.ok:
                     r.raise_for_status()
                     sys.exit()
+
                 decoded = r.json()
+
                 for im in decoded["nlmRxImages"]:
                     image_url_array.append(im["imageUrl"])
+                
         return image_url_array
         
 #   UNIT TESTS
 def drug_unit_tests(rxcui, ndc):
+    
     rx_drug = Drug(identifier = rxcui, identifier_type = "RxCUI", language = None, source = "RxNorm")
-    print("Getting drug images from RxCUI (%s):" % rxcui)
-    for imag in Drug.images(rx_drug):
-        print("- %s" % str(imag))
-    ndc_drug = Drug(identifier = ndc, identifier_type = "NDC", language = None, source = "FDA")
-    print("\nGetting drug images from NDC (%s):" % ndc)
-    for imag in Drug.images(ndc_drug):
-        print("- %s" % str(imag))
+    
+    # Get all identifiers.
+    print("Getting drug identifiers from RxCUI (%s)..." % rxcui)
+    start = timeit.timeit()
+    results_array = Drug.all_identifiers(rx_drug)
+    end = timeit.timeit()
+    print("\tTIME ELAPSED: %s seconds." % str(end - start))
+    print("\tRESULTS:")
+    for iden in results_array:
+        print("\t- %s: %s (%s)" % (iden["identifier_type"], iden["identifier"], iden["source"]))
+    
+    # Get all properties.
+    print("\nGetting drug properties from RxCUI (%s)..." % rxcui)
+    start = timeit.timeit()
+    results_dict = Drug.all_properties(rx_drug)
+    end = timeit.timeit()
+    print("\tTIME ELAPSED: %s seconds." % str(end - start))
+    print("\tRESULTS:")
+    for prop_type, prop in results_dict.items():
+        print("\t- %s: %s" % (prop_type, str(prop).encode('ascii', 'ignore').decode()))
 
 #   MAIN
 if __name__ == "__main__": main()

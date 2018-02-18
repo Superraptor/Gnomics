@@ -4,7 +4,7 @@
     <ul class="nav nav-tabs" id="border-nav-tabs-obj">
         <li class="active"><a href data-target="#1a" data-toggle="tab">Identifiers</a></li>
         <li><a href data-target="#2a" data-toggle="tab">Properties</a></li>
-        <li ng-repeat="int_object in interaction_objects"><a href data-target="#3{{int_object.type}}" data-toggle="tab">{{int_object.type}}</a></li>
+        <li ng-repeat="int_object in interaction_objects"><a href data-target="#3{{int_object.type}}" data-toggle="tab">{{int_object['type'].replace('_', ' ')}}</a></li>
         <li><a href data-target="#5a" data-toggle="tab">Links</a></li>
         <li><a href data-target="#6a" data-toggle="tab">Downloads</a></li>
     </ul>
@@ -37,12 +37,14 @@
                         <th ng-click="sortByIden('identifier_type')">Identifier Type <span class="sortorder" ng-show="propertyNameIden === 'identifier_type'" ng-class="{reverseIden: reverseIden}"></span></th>
                         <th ng-click="sortByIden('identifier')">Identifier <span class="sortorder" ng-show="propertyNameIden === 'identifier'" ng-class="{reverseIden: reverseIden}"></span></th>
                         <th ng-click="sortByIden('language')">Language <span class="sortorder" ng-show="propertyNameIden === 'language'" ng-class="{reverseIden: reverseIden}"></span></th>
+                        <th ng-click="sortByIden('taxon')">Taxon <span class="sortorder" ng-show="propertyNameIden === 'taxon'" ng-class="{reverseIden: reverseIden}"></span></th>
                         <th ng-click="sortByIden('source')">Source <span class="sortorder" ng-show="propertyNameIden === 'source'" ng-class="{reverseIden: reverseIden}"></span></th>
                     </tr>
                     <tr dir-paginate="iden in identifiers | filter: qAllIden | orderBy:propertyNameIden:reverseIden | itemsPerPage: pageSizeIden" pagination-id="identifier_table" current-page="currentPageIden">
                         <td>{{iden.identifier_type}}</td>
-                        <td id="obj-identifer"><a href="#/object?identifier={{iden.identifier}}&identifier_type={{iden.identifier_type}}&language={{iden.language}}&source={{iden.source}}&object={{object_type}}">{{iden.identifier}}</a></td>
+                        <td id="obj-identifer"><a href="#/object?identifier={{iden.identifier}}&identifier_type={{iden.identifier_type}}&language={{iden.language}}&taxon={{iden.taxon}}&source={{iden.source}}&object={{object_type}}">{{iden.identifier}}</a></td>
                         <td>{{iden.language}}</td>
+                        <td><i>{{iden.taxon}}</i></td>
                         <td>{{iden.source}}</td>
                     </tr>
                 </table>
@@ -89,12 +91,12 @@
                     </div>
                     <div class="col-xs-6">
                         <label for="search{{int_object.type}}">Items Per Page:</label>
-                        <input type="number" min="1" max="100" class="form-control" ng-model="interaction_obj_sort_dict[int_object.type].pageSize">
+                        <input type="number" min="1" max="100" class="form-control" ng-model="interaction_obj_sort_dict[int_object['type']].pageSize">
                     </div>
 
                     <div align="center">
                        <dir-pagination-controls
-                            pagination-id="int_object.type"
+                            pagination-id="int_object['type']"
                             max-size="100"
                             direction-links="true"
                             boundary-links="true" >
@@ -104,21 +106,29 @@
 
                 <table class="table table-condensed" id="obj-content-table" show-filter="true">
                     <tr>
-                        <th ng-click="interaction_obj_sort_dict[int_object.type].sortBy('identifier_type')">Identifier Type <span class="sortorder" ng-show="interaction_obj_sort_dict[int_object.type].propertyName === 'identifier_type'" ng-class="{reverse{{int_object.type}}: interaction_obj_sort_dict[int_object.type].reverse}"></span></th>
-                        <th ng-click="interaction_obj_sort_dict[int_object.type].sortBy('identifier')">Identifier <span class="sortorder" ng-show="interaction_obj_sort_dict[int_object.type].propertyName === 'identifier'" ng-class="{reverse{{int_object.type}}: interaction_obj_sort_dict[int_object.type].reverse}"></span></th>
-                        <th ng-click="interaction_obj_sort_dict[int_object.type].sortBy('language')">Language <span class="sortorder" ng-show="interaction_obj_sort_dict[int_object.type].propertyName === 'language'" ng-class="{reverse{{int_object.type}}: interaction_obj_sort_dict[int_object.type].reverse}"></span></th>
-                        <th ng-click="interaction_obj_sort_dict[int_object.type].sortBy('source')">Source <span class="sortorder" ng-show="interaction_obj_sort_dict[int_object.type].propertyName === 'source'" ng-class="{reverse{{int_object.type}}: interaction_obj_sort_dict[int_object.type].reverse}"></span></th>
+                        <th ng-click="interaction_obj_sort_dict[int_object['type']].sortBy('identifier_type')">Identifier Type <span class="sortorder" ng-show="interaction_obj_sort_dict[int_object['type']].propertyName === 'identifier_type'" ng-class="{reverse{{int_object['type']}}: interaction_obj_sort_dict[int_object['type']].reverse}"></span></th>
+                        <th ng-click="interaction_obj_sort_dict[int_object['type']].sortBy('identifier')">Identifier <span class="sortorder" ng-show="interaction_obj_sort_dict[int_object['type']].propertyName === 'identifier'" ng-class="{reverse{{int_object['type']}}: interaction_obj_sort_dict[int_object['type']].reverse}"></span></th>
+                        <th ng-click="interaction_obj_sort_dict[int_object['type']].sortBy('language')">Language <span class="sortorder" ng-show="interaction_obj_sort_dict[int_object['type']].propertyName === 'language'" ng-class="{reverse{{int_object['type']}}: interaction_obj_sort_dict[int_object['type']].reverse}"></span></th>
+                        <th ng-click="interaction_obj_sort_dict[int_object['type']].sortBy('taxon')">Taxon <span class="sortorder" ng-show="interaction_obj_sort_dict[int_object['type']].propertyName === 'taxon'" ng-class="{reverse{{int_object['type']}}: interaction_obj_sort_dict[int_object['type']].reverse}"></span></th>
+                        <th ng-click="interaction_obj_sort_dict[int_object['type']].sortBy('source')">Source <span class="sortorder" ng-show="interaction_obj_sort_dict[int_object['type']].propertyName === 'source'" ng-class="{reverse{{int_object['type']}}: interaction_obj_sort_dict[int_object['type']].reverse}"></span></th>
                     </tr>
-                    <tr dir-paginate="iden in int_object.identifier_array | filter: interaction_obj_sort_dict[int_object.type].q | orderBy:interaction_obj_sort_dict[int_object.type].propertyName:interaction_obj_sort_dict[int_object.type].reverse | itemsPerPage: interaction_obj_sort_dict[int_object.type].pageSize" pagination-id="int_object.type" current-page="interaction_obj_sort_dict[int_object.type].currentPage">
+                    <tr dir-paginate="iden in int_object.identifier_array | filter: interaction_obj_sort_dict[int_object['type']].q | orderBy:interaction_obj_sort_dict[int_object['type']].propertyName:interaction_obj_sort_dict[int_object['type']].reverse | itemsPerPage: interaction_obj_sort_dict[int_object['type']].pageSize" pagination-id="int_object['type']" current-page="interaction_obj_sort_dict[int_object['type']].currentPage">
                         <td>{{iden.identifier_type}}</td>
-                        <td id="obj-identifer"><a href="#/object?identifier={{iden.identifier}}&identifier_type={{iden.identifier_type}}&language={{iden.language}}&source={{iden.source}}&object={{int_object.type}}">{{iden.identifier}}</a></td>
+                        <td id="obj-identifer"><a href="#/object?identifier={{iden.identifier}}&identifier_type={{iden.identifier_type}}&language={{iden.language}}&taxon={{iden.taxon}}&source={{iden.source}}&object={{int_object['type']}}">{{iden.identifier}}</a></td>
                         <td>{{iden.language}}</td>
+                        <td><i>{{iden.taxon}}</i></td>
                         <td>{{iden.source}}</td>
                     </tr>
                 </table>
             
             </div>
-            <div class="tab-pane" id="5a">Links</div>
+            <div class="tab-pane" id="5a">Links
+                
+                <ol>
+                    <li ng-repeat="url in urls"><a onclick="return shell.openExternal('{{url.url}}');" style="cursor:pointer;"></a>{{url.name}}</li>
+                </ol>
+            
+            </div>
             <div class="tab-pane" id="5a">Downloads</div>
         </div>
     </div>

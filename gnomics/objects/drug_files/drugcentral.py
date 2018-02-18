@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,7 @@
 
 #
 #   IMPORT SOURCES:
+#       
 #
 
 #
@@ -32,9 +35,11 @@ def main():
 
 #   Get DrugCentral ID.
 def get_drugcentral_id(drug):
-    for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "drug central accession" or ident["identifier_type"].lower() == "drugcentral accession" or ident["identifier_type"].lower() == "drugcentral" or ident["identifier_type"].lower() == "drugcentral id" or ident["identifier_type"].lower() == "drugcentral identifier":
-            return ident["identifier"]
+    drugcentral_array = []
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(drug.identifiers, ["drug central accession", "drugcentral accession", "drug central", "drugcentral", "drugcentral id", "drugcentral identifier"]):
+        if iden["identifier"] not in drugcentral_array:
+            drugcentral_array.append(iden["identifier"])
+    return drugcentral_array
 
 #   UNIT TESTS
 def drugcentral_unit_tests():

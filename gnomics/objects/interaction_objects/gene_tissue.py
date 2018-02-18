@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,7 @@
 
 #
 #   IMPORT SOURCES:
+#
 #
 
 #
@@ -32,6 +35,7 @@ import gnomics.objects.tissue
 import json
 import numpy
 import requests
+import timeit
 import xml.etree.ElementTree as ET
 
 #   MAIN
@@ -42,11 +46,13 @@ def main():
 def get_tissue_expression(gene):
     tiss_array = []
     tiss_dict = {}
+    
     for ident in gene.identifiers:
-        if ident["identifier_type"].lower() == "ensembl" or ident["identifier_type"].lower() == "ensembl id" or ident["identifier_type"].lower() == "ensembl identifier" or ident["identifier_type"].lower() == "ensembl gene id" or ident["identifier_type"].lower() == "ensembl gene identifier":
+        if ident["identifier_type"].lower() in ["ensembl", "ensembl id", "ensembl identifier", "ensembl gene id", "ensembl gene identifier"]:
             server = "https://www.proteinatlas.org/"
             ext = ident["identifier"] + ".xml"
             r = requests.get(server+ext)
+            
             if not r.ok:
                 continue
             else:   
@@ -81,6 +87,7 @@ def get_tissue_expression(gene):
                                             'source': exp_source,
                                             'technology': exp_tech
                                         }
+    
     return tiss_dict
         
 #   UNIT TESTS
@@ -88,7 +95,13 @@ def gene_tissue_unit_tests(ensembl_ids):
     for ensembl_gene_id in ensembl_ids:
         ensembl_gene = gnomics.objects.gene.Gene(identifier = ensembl_gene_id, identifier_type = "Ensembl Gene ID", language = None, taxon = "Homo sapiens", source = "Ensembl")
         print("Getting tissue gene expression from Ensembl Gene ID (%s):" % ensembl_gene_id)
-        for key, val in get_tissue_expression(ensembl_gene).items():
+        
+        start = timeit.timeit()
+        all_tiss = get_tissue_expression(ensembl_gene)
+        end = timeit.timeit()
+        print("TIME ELAPSED: %s seconds." % str(end - start))
+
+        for key, val in all_tiss.items():
             print("- %s" % key)
             print("  - method: %s" % val["method"])
             print("  - type: %s" % val["type"])

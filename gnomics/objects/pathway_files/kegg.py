@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,8 +8,7 @@
 
 #
 #   IMPORT SOURCES:
-#       BIOSERVICES
-#           https://pythonhosted.org/bioservices/
+#
 #
 
 #
@@ -41,7 +42,7 @@ def get_kegg_map_pathway(path):
     kegg_map_pathway_array = []
     for path_obj in path.pathway_objects:
         if 'object_type' in path_obj:
-            if path_obj['object_type'].lower() == 'kegg map' or path_obj['object_type'].lower() == 'kegg map pathway' or path_obj['object_type'].lower() == 'map pathway':
+            if path_obj['object_type'].lower() in ["kegg map", "kegg map pathway", "kegg map pathway id", "kegg map pathway identifier", "map pathway"]:
                 kegg_map_pathway_obj_array.append(path_obj['object'])
                 kegg_map_pathway_array.append(path_obj['identifier'])
     for iden in get_kegg_map_pathway_id(path):
@@ -61,9 +62,10 @@ def get_kegg_map_pathway(path):
 #   Get KEGG PATHWAY ID (map).
 def get_kegg_map_pathway_id(path):
     kegg_map_pathway_array = []
-    for ident in self.identifiers:
-        if ident["identifier_type"].lower() == "kegg map pathway" or ident["identifier_type"].lower() == "kegg map pathway id" or ident["identifier_type"].lower() == "kegg map pathway identifier":
-            kegg_map_pathway_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(path.identifiers, ["kegg map", "kegg map pathway", "kegg map pathway id", "kegg map pathway identifier", "map pathway"]):
+        if iden["identifier"] not in kegg_map_pathway_array:
+            kegg_map_pathway_array.append(iden["identifier"])
+    
     return kegg_map_pathway_array
     
 #   Get KEGG PATHWAY (ko).
@@ -72,7 +74,7 @@ def get_kegg_ko_pathway(path):
     kegg_ko_pathway_array = []
     for path_obj in path.pathway_objects:
         if 'object_type' in path_obj:
-            if path_obj['object_type'].lower() == 'kegg ko' or path_obj['object_type'].lower() == 'kegg ko pathway' or path_obj['object_type'].lower() == 'ko pathway':
+            if path_obj['object_type'].lower() in ["kegg ko", "kegg ko pathway", "kegg ko pathway id", "kegg ko pathway identifier", "ko pathway"]:
                 kegg_ko_pathway_obj_array.append(path_obj['object'])
                 kegg_ko_pathway_array.append(path_obj['identifier'])
     for iden in get_kegg_ko_pathway_id(path):
@@ -94,21 +96,22 @@ def get_kegg_ko_pathway_id(path):
     kegg_ko_pathway_array = []
     for ident in path.identifiers:
         if ident["identifier_type"] is not None:
-            if ident["identifier_type"].lower() == "kegg ko pathway" or ident["identifier_type"].lower() == "kegg ko pathway id" or ident["identifier_type"].lower() == "kegg ko pathway identifier":
+            if ident["identifier_type"].lower() in ["kegg ko", "kegg ko pathway", "kegg ko pathway id", "kegg ko pathway identifier", "ko pathway"]:
                 if ident["identifier"] not in kegg_ko_pathway_array:
                     kegg_ko_pathway_array.append(ident["identifier"])
     for ident in path.identifiers:    
         if ident["identifier_type"] is not None:
-            if ident["identifier_type"].lower() == "kegg map pathway" or ident["identifier_type"].lower() == "kegg map pathway id" or ident["identifier_type"].lower() == "kegg map pathway identifier":
-                for ko in kegg_map_pathway:
+            if ident["identifier_type"].lower() in ["kegg map", "kegg map pathway", "kegg map pathway id", "kegg map pathway identifier", "map pathway"]:
+                for ko in get_kegg_map_pathway(path):
                     if ko["KO_PATHWAY"] not in kegg_ko_pathway_array:
                         path.identifiers.append({
                             'identifier': ko["KO_PATHWAY"],
                             'language': None,
-                            'identifier_type': "KEGG ko",
+                            'identifier_type': "KEGG KO PATHWAY ID",
                             'source': "KEGG"
                         })
                         kegg_ko_pathway_array.append(ko["KO_PATHWAY"])
+                        
     for related_obj in path.related_objects:
         if 'object_type' in related_obj:
             if related_obj['object_type'].lower() == 'kegg orthology':
@@ -119,7 +122,7 @@ def get_kegg_ko_pathway_id(path):
                             path.identifiers.append({
                                 'identifier': key,
                                 'language': None,
-                                'identifier_type': "KEGG ko",
+                                'identifier_type': "KEGG KO PATHWAY ID",
                                 'source': "KEGG"
                             })
     return kegg_ko_pathway_array

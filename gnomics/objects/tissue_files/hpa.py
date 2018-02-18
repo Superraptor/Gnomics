@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -31,17 +33,18 @@ import gnomics.objects.tissue
 #   Other imports.
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
     hpa_unit_tests()
     
 # Return HPA accession.
-def get_hpa_accession(tissue):
+def get_hpa_accession(tissue, user=None):
     hpa_array = []
-    for ident in tissue.identifiers:
-        if ident["identifier_type"].lower() == "hpa id" or ident["identifier_type"].lower() == "hpa identifier" or ident["identifier_type"].lower() == "hpa identifier" or ident["identifier_type"].lower() == "the human protein atlas accession" or ident["identifier_type"].lower() == "human protein atlas accession" or ident["identifier_type"].lower() == "human protein atlas id":
-            hpa_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(tissue.identifiers, ["hpa", "hpa accession", "hpa id", "hpa identifier", "human protein atlas", "human protein atlas accession", "human protein atlas id", "human protein atlas identifier"]):
+        if iden["identifier"] not in hpa_array:
+            hpa_array.append(iden["identifier"])
     return hpa_array
     
 #   UNIT TESTS

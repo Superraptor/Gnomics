@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,7 @@
 
 #
 #   IMPORT SOURCES:
+#
 #
 
 #
@@ -31,6 +34,7 @@ import gnomics.objects.taxon
 #   Other imports.
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
@@ -39,20 +43,27 @@ def main():
 #   Get phenotypes.
 def get_phenotypes(taxon):
     phenotype_array = []
+    
     for ident in taxon.identifiers:
-        if ident["identifier_type"].lower() == "vto" or ident["identifier_type"].lower() == "vto identifier" or ident["identifier_type"].lower() == "vto id":
+        if ident["identifier_type"].lower() in ["vto", "vto identifier", "vto id"]:
             base = "http://kb.phenoscape.org/api/taxon/"
             ext = "phenotypes?taxon=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2F" + ident["identifier"]
+
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = json.loads(r.text)
+            
             for result in decoded["results"]:
                 phenoscape_uuid = result["phenotype"]["@id"].split("/phenoscape/uuid/")[1]
                 phenoscape_name = result["phenotype"]["label"]
+                
                 temp_phen = gnomics.objects.phenotype.Phenotype(identifier = phenoscape_uuid, identifier_type = "Phenoscape UUID", source = "Phenoscape Knowledgebase", name = phenoscape_name)
                 phenotype_array.append(temp_phen)
+            
     return phenotype_array
     
 #   UNIT TESTS

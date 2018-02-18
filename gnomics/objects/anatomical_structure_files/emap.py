@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -7,7 +9,7 @@
 #
 #   IMPORT SOURCES:
 #
-
+#
 
 #
 #   EMAP/EMAPA ID.
@@ -27,29 +29,31 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 #   Import modules.
 from gnomics.objects.user import User
 import gnomics.objects.anatomical_structure
+import gnomics.objects.auxiliary_files.identifier
 
 #   Other imports.
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
     emap_unit_tests()
     
 # Return EMAP ID.
-def get_emap_id(anat):
+def get_emap_id(anat, user=None):
     emap_array = []
-    for ident in anat.identifiers:
-        if ident["identifier_type"].lower() == "emap id" or ident["identifier_type"].lower() == "emap identifier":
-            emap_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(anat.identifiers, ["emap", "emap id", "emap identifier"]):
+        if iden["identifier"] not in emap_array:
+            emap_array.append(iden["identifier"])   
     return emap_array
 
 # Return EMAPA ID.
-def get_emapa_id(anat):
+def get_emapa_id(anat, user=None):
     emapa_array = []
-    for ident in anat.identifiers:
-        if ident["identifier_type"].lower() == "emapa id" or ident["identifier_type"].lower() == "emapa identifier":
-            emapa_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(anat.identifiers, ["emapa", "emapa id", "emapa identifier"]):
+        if iden["identifier"] not in emapa_array:
+            emapa_array.append(iden["identifier"])
     return emapa_array
     
 #   UNIT TESTS

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,7 @@
 
 #
 #   IMPORT SOURCES:
+#
 #
 
 #
@@ -32,6 +35,7 @@ import gnomics.objects.phenotype
 import json
 import re
 import requests
+import timeit
 
 #   MAIN
 def main():
@@ -40,15 +44,21 @@ def main():
 #   Get anatomical structures from phenotype.
 def get_anatomical_structures(phenotype):
     anat_array = []
+    
     for ident in phenotype.identifiers:
-        if ident["identifier_type"].lower() == "hp id" or ident["identifier_type"].lower() == "hpo identifier" or ident["identifier_type"].lower() == "hpo id" or ident["identifier_type"].lower() == "hp identifier":
+        if ident["identifier_type"].lower() in ["hp id", "hpo identifier", "hpo id", "hp identifier"]:
+
             base = "https://raw.githubusercontent.com/obophenotype/"
             ext = "human-phenotype-ontology/master/scratch/hp-equivalence-axioms.obo"
+
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+                
             decoded = r.text.split("\n")
+            
             proc_ident = ident["identifier"]
             if "_" in proc_ident:
                 proc_ident = proc_ident.replace("_", ":")
@@ -62,7 +72,8 @@ def get_anatomical_structures(phenotype):
                     match = re.findall('UBERON:\d+', line)
                     if match:
                         temp_anat = gnomics.objects.anatomical_structure.AnatomicalStructure(identifier = match[0], identifier_type = "UBERON ID", source = "Human Phenotype Ontology")
-                        anat_array.append(temp_anat)   
+                        anat_array.append(temp_anat)
+                   
     return anat_array
     
 #   UNIT TESTS

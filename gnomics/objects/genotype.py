@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,7 +8,7 @@
 
 #
 #   IMPORT SOURCES:
-#       
+#
 #
 
 #
@@ -19,15 +21,25 @@ faulthandler.enable()
 
 #   IMPORTS
 
+#   Other imports.
+import timeit
+
 #   MAIN
 def main():
-    print("NOT FUNCTIONAL.")
+    genotype_unit_tests()
 
 #   GENOTYPE CLASS
 class Genotype:
     """
         Genotype class
+        
+        A genotype is the part of the genetic makeup of 
+        a cell which determines a specific characteristic 
+        of that cell, organism, or individual.
     """
+    
+    # GENO BioPortal PURL.
+    geno_bioportal_purl = "http://purl.bioontology.org/ontology/GENO"
     
     """
         Genotype attributes:
@@ -48,15 +60,17 @@ class Genotype:
     def __init__(self, identifier = None, identifier_type = None, language = None, source = None, name = None):
         
         # Initialize dictionary of identifiers.
-        self.identifiers = [
-            {
-                'identifier': identifier,
-                'language': language,
-                'identifier_type': identifier_type,
-                'source': source,
-                'name': name
-            }
-        ]
+        self.identifiers = []
+        if identifier is not None:
+            self.identifiers = [
+                {
+                    'identifier': identifier,
+                    'language': language,
+                    'identifier_type': identifier_type,
+                    'source': source,
+                    'name': name
+                }
+            ]
         
         # Initialize dictionary of enzyme objects.
         self.genotype_objects = []
@@ -86,7 +100,9 @@ class Genotype:
     
     """
     
-    
+    # Return all identifiers.
+    def all_identifiers(genotype, user = None):
+        return genotype.identifiers
     
     """
         Interaction objects
@@ -105,11 +121,14 @@ class Genotype:
         return property_dict
     
     """
-        Enzyme URLs
+        Genotype URLs
         
     """
     
-    
+    # Return links.
+    def all_urls(genotype, user=None):
+        url_dict = {}
+        return url_dict
     
     """
         Auxiliary functions
@@ -127,6 +146,8 @@ class Genotype:
     """
 
 #   UNIT TESTS
+def genotype_unit_tests():
+    print("NOT FUNCTIONAL.")
 
 #   MAIN
 if __name__ == "__main__": main()

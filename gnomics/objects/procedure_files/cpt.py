@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,7 @@
 
 #
 #   IMPORT SOURCES:
+#       
 #
 
 #
@@ -35,30 +38,35 @@ import requests
 def main():
     basic_search_unit_tests("C0042014", "")
     
-# Return CPT ID.
-def get_cpt_id(procedure, user):
+# Return procedure.
+def get_cpt_id(procedure, user=None):
+    
     for iden in procedure.identifiers:
-        if iden["identifier_type"].lower() == "umls cui" or iden["identifier_type"].lower() == "umls":
-            proc_array = []
-            umls_tgt = User.umls_tgt(user)
-            page_num = 0
-            base = "https://uts-ws.nlm.nih.gov/rest"
-            ext = "/search/current?string=" + iden["identifier"] + "inputType=sourceUi&searchType=exact&sabs=MTH"
-            while True:
-                tick = User.umls_st(umls_tgt)
-                page_num += 1
-                query = {"string": query, "ticket": tick, "pageNumber": page_num}
-                r = requests.get(base+ext, params=query)
-                r.encoding = 'utf-8'
-                print(r.text)
-                items = json.loads(r.text)
-                json_data = items["result"]
-                for rep in json_data["results"]:
-                    if rep["ui"] not in proc_array and rep["ui"] != "NONE":
-                        proc_array.append(rep["ui"])
-                if json_data["results"][0]["ui"] == "NONE":
-                    break
-            return proc_array
+        if iden["identifier_type"].lower() in ["umls concept uid", "umls concept unique id", "umls concept unique identifier", "umls cui", "umls id", "umls identifier"]:
+            if user is not None:
+                proc_array = []
+                umls_tgt = User.umls_tgt(user)
+                page_num = 0
+                base = "https://uts-ws.nlm.nih.gov/rest"
+                ext = "/search/current?string=" + iden["identifier"] + "inputType=sourceUi&searchType=exact&sabs=MTH"
+
+                while True:
+                    tick = User.umls_st(umls_tgt)
+                    page_num += 1
+                    query = {"string": query, "ticket": tick, "pageNumber": page_num}
+                    r = requests.get(base+ext, params=query)
+                    r.encoding = 'utf-8'
+                    print(r.text)
+                    items = json.loads(r.text)
+                    json_data = items["result"]
+                    for rep in json_data["results"]:
+                        if rep["ui"] not in proc_array and rep["ui"] != "NONE":
+                            proc_array.append(rep["ui"])
+
+                    if json_data["results"][0]["ui"] == "NONE":
+                        break
+
+                return proc_array
     
 #   UNIT TESTS
 def basic_search_unit_tests(umls_cui, umls_api_key):

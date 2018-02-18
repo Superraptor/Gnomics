@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,8 +8,7 @@
 
 #
 #   IMPORT SOURCES:
-#       CHEMBL
-#           https://github.com/chembl/chembl_webresource_client
+#
 #
 
 #
@@ -42,28 +43,27 @@ def get_lincs_obj(cell_line):
     lincs_obj_array = []
     for lincs_obj in cell_line.cell_line_objects:
         if 'object_type' in lincs_obj:
-            if lincs_obj['object_type'].lower() == 'lincs object' or lincs_obj['object_type'].lower() == 'lincs':
+            if lincs_obj['object_type'].lower() in ['lincs object', 'lincs']:
                 lincs_obj_array.append(lincs_obj['object'])
+    
     if lincs_obj_array:
         return lincs_obj_array
+    
     for lincs_id in get_lincs_id(cell_line):
         temp_cell_line = new_client.cell_line
         res = temp_cell_line.filter(cl_lincs_id = lincs_id)
-        cell_line.cell_line_objects.append(
-            {
-                'object': res,
-                'object_type': "LINCS Object"
-            }
-        )
-        lincs_obj_array.append(res)
+        for sub_res in res:
+            gnomics.objects.cell_line.CellLine.add_object(cell_line, obj=sub_res, object_type="LINCS Object")
+            lincs_obj_array.append(sub_res)
+        
     return lincs_obj_array
 
 #   Get LINCS ID.
 def get_lincs_id(cell_line):
     lincs_array = []
-    for ident in cell_line.identifiers:
-        if ident["identifier_type"].lower() == "lincs" or ident["identifier_type"].lower() == "lincs id" or ident["identifier_type"].lower() == "lincs identifier":
-            lincs_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(cell_line.identifiers, ["lincs", "lincs id", "lincs identifier", "cell line lincs", "cell line lincs id", "cell line lincs identifier"]):
+        if iden["identifier"] not in lincs_array:
+            lincs_array.append(iden["identifier"])
     return lincs_array
 
 #   UNIT TESTS

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -26,10 +28,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 
 #   Import modules.
 from gnomics.objects.user import User
+import gnomics.objects.gene
 import gnomics.objects.taxon
 
 #   Other imports.
 import json
+import pubchempy as pubchem
 import requests
 import urllib.error
 import urllib.parse
@@ -37,8 +41,7 @@ import urllib.request
 
 #   MAIN
 def main():
-    # 1045608 (Apis)
-    eol_unit_tests("328067", "180542", "180542", "180542", "180542", "Q15978631")
+    eol_unit_tests("328067", "180542", "180542", "180542", "180542", "Q15978631", eol_api_key = "")
     
 #   Get EOL object.
 #
@@ -150,127 +153,391 @@ def main():
 #   - zh-Hans [Simplified Chinese]
 #   - zh-Hant [Traditional Chinese]
 #   - ko [Korean]
-def get_eol_object(taxon, batch = False, images_per_page = 1, images_page = 1, videos_per_page = 1, videos_page = 1, sounds_per_page = 1, sounds_page = 1, maps_per_page = 1, maps_page = 1, texts_per_page = 2, texts_page = 1, subjects = "overview", licenses = "all", details = True, common_names = True, synonyms = True, references = True, taxonomy = True, vetted = 0, cache_ttl = None, language = "en", result_format = "JSON"):
+def get_eol_object(taxon, batch=False, images_per_page=1, images_page=1, videos_per_page=1, videos_page=1, sounds_per_page=1, sounds_page=1, maps_per_page=1, maps_page=1, texts_per_page=2, texts_page=1, subjects="overview", licenses="all", details=True, common_names=True, synonyms=True, references=True, taxonomy=True, vetted=0, cache_ttl=None, language="en", result_format="JSON", user=None):
+    
     eol_obj_array = []
+    
     for tax_obj in taxon.taxon_objects:
         if 'object_type' in tax_obj:
-            if tax_obj['object_type'].lower() == 'eol page' or tax_obj['object_type'].lower() == 'eol':
+            if tax_obj['object_type'].lower() in ['eol', 'eol page']:
                 eol_obj_array.append(tax_obj['object'])
+            
     if eol_obj_array:
         return eol_obj_array
+            
+    ids_completed = []
     for ident in taxon.identifiers:
-        if ident["identifier_type"].lower() == "eol" or ident["identifier_type"].lower() == "eol id":
-            base_url = "http://eol.org/api/pages/1.0.json?"
-            ext_url = "batch=" + str(batch).lower() + "&" + "id=" + str(get_eol_id(taxon)) + "&" + "images_per_page=" + str(images_per_page) + "&" + "images_page=" + str(images_page) + "&" + "videos_per_page=" + str(videos_per_page) + "&" + "videos_page=" + str(videos_page) + "&" + "sounds_per_page=" + str(sounds_per_page) + "&" + "sounds_page=" + str(sounds_page) + "&" + "maps_per_page=" + str(maps_per_page) + "&" + "maps_page=" + str(maps_page) + "&" + "texts_per_page=" + str(texts_per_page) + "&" + "texts_page=" + str(texts_page) + "&" + "subjects=" + str(subjects) + "&" + "licences=" + str(licenses) + "&" + "details=" + str(details).lower() + "&" + "common_names=" + str(common_names).lower() + "&" + "synonyms=" + str(synonyms).lower() + "&" + "references=" + str(references).lower() + "&" + "taxonomy=" + str(taxonomy).lower() + "&" + "vetted=" + str(vetted) + "&" + "cache_ttl=" + "&" + "language=" + str(language)
-            r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
-            if not r.ok:
-                r.raise_for_status()
-                sys.exit()
-            decoded = r.json()
-            taxon.taxon_objects.append({
-                'object': decoded,
-                'object_type': "EOL page"
-            })
-            eol_obj_array.append(decoded)
+        if ident["identifier_type"].lower() in ["eol", "eol id", "eol identifier"] and ident["identifier"] not in ids_completed:
+            ids_completed.append(ident["identifier"])
+            
+            if user is not None:
+                if user.eol_api_key is not None:
+        
+                    base_url = "http://eol.org/api/pages/1.0.json?"
+                    ext_url = "batch=" + str(batch).lower() + "&" + "id=" + str(ident["identifier"]) + "&" + "images_per_page=" + str(images_per_page) + "&" + "images_page=" + str(images_page) + "&" + "videos_per_page=" + str(videos_per_page) + "&" + "videos_page=" + str(videos_page) + "&" + "sounds_per_page=" + str(sounds_per_page) + "&" + "sounds_page=" + str(sounds_page) + "&" + "maps_per_page=" + str(maps_per_page) + "&" + "maps_page=" + str(maps_page) + "&" + "texts_per_page=" + str(texts_per_page) + "&" + "texts_page=" + str(texts_page) + "&" + "subjects=" + str(subjects) + "&" + "licences=" + str(licenses) + "&" + "details=" + str(details).lower() + "&" + "common_names=" + str(common_names).lower() + "&" + "synonyms=" + str(synonyms).lower() + "&" + "references=" + str(references).lower() + "&" + "taxonomy=" + str(taxonomy).lower() + "&" + "vetted=" + str(vetted) + "&" + "cache_ttl=" + "&" + "language=" + str(language) + "&key=" + str(user.eol_api_key)
+
+                    r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                    if not r.ok:
+                        r.raise_for_status()
+                        sys.exit()
+                    else:
+                        decoded = r.json()
+                        gnomics.objects.taxon.Taxon.add_object(taxon, obj = decoded, object_type = "EOL Page")
+                        eol_obj_array.append(decoded)
+                        
+                else:
+                    
+                    base_url = "http://eol.org/api/pages/1.0.json?"
+                    ext_url = "batch=" + str(batch).lower() + "&" + "id=" + str(ident["identifier"]) + "&" + "images_per_page=" + str(images_per_page) + "&" + "images_page=" + str(images_page) + "&" + "videos_per_page=" + str(videos_per_page) + "&" + "videos_page=" + str(videos_page) + "&" + "sounds_per_page=" + str(sounds_per_page) + "&" + "sounds_page=" + str(sounds_page) + "&" + "maps_per_page=" + str(maps_per_page) + "&" + "maps_page=" + str(maps_page) + "&" + "texts_per_page=" + str(texts_per_page) + "&" + "texts_page=" + str(texts_page) + "&" + "subjects=" + str(subjects) + "&" + "licences=" + str(licenses) + "&" + "details=" + str(details).lower() + "&" + "common_names=" + str(common_names).lower() + "&" + "synonyms=" + str(synonyms).lower() + "&" + "references=" + str(references).lower() + "&" + "taxonomy=" + str(taxonomy).lower() + "&" + "vetted=" + str(vetted) + "&" + "cache_ttl=" + "&" + "language=" + str(language)
+
+                    r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                    if not r.ok:
+                        r.raise_for_status()
+                        sys.exit()
+                    else:
+                        decoded = r.json()
+                        gnomics.objects.taxon.Taxon.add_object(taxon, obj = decoded, object_type = "EOL Page")
+                        eol_obj_array.append(decoded)
+                
+            else:
+                
+                base_url = "http://eol.org/api/pages/1.0.json?"
+                ext_url = "batch=" + str(batch).lower() + "&" + "id=" + str(ident["identifier"]) + "&" + "images_per_page=" + str(images_per_page) + "&" + "images_page=" + str(images_page) + "&" + "videos_per_page=" + str(videos_per_page) + "&" + "videos_page=" + str(videos_page) + "&" + "sounds_per_page=" + str(sounds_per_page) + "&" + "sounds_page=" + str(sounds_page) + "&" + "maps_per_page=" + str(maps_per_page) + "&" + "maps_page=" + str(maps_page) + "&" + "texts_per_page=" + str(texts_per_page) + "&" + "texts_page=" + str(texts_page) + "&" + "subjects=" + str(subjects) + "&" + "licences=" + str(licenses) + "&" + "details=" + str(details).lower() + "&" + "common_names=" + str(common_names).lower() + "&" + "synonyms=" + str(synonyms).lower() + "&" + "references=" + str(references).lower() + "&" + "taxonomy=" + str(taxonomy).lower() + "&" + "vetted=" + str(vetted) + "&" + "cache_ttl=" + "&" + "language=" + str(language)
+
+                r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                if not r.ok:
+                    r.raise_for_status()
+                    sys.exit()
+                else:
+                    decoded = r.json()
+                    gnomics.objects.taxon.Taxon.add_object(taxon, obj = decoded, object_type = "EOL Page")
+                    eol_obj_array.append(decoded)
+            
     for ident in taxon.identifiers:
-        if ident["identifier_type"].lower() == "ncbi" or ident["identifier_type"].lower() == "ncbi taxonomy id" or ident["identifier_type"].lower() == "ncbi taxonomy identifier" or ident["identifier_type"].lower() == "ncbi taxonomy":
-            base_url = "http://eol.org/api/pages/1.0.json?"
-            ext_url = "batch=" + str(batch).lower() + "&" + "id=" + str(get_eol_id(taxon)) + "&" + "images_per_page=" + str(images_per_page) + "&" + "images_page=" + str(images_page) + "&" + "videos_per_page=" + str(videos_per_page) + "&" + "videos_page=" + str(videos_page) + "&" + "sounds_per_page=" + str(sounds_per_page) + "&" + "sounds_page=" + str(sounds_page) + "&" + "maps_per_page=" + str(maps_per_page) + "&" + "maps_page=" + str(maps_page) + "&" + "texts_per_page=" + str(texts_per_page) + "&" + "texts_page=" + str(texts_page) + "&" + "subjects=" + str(subjects) + "&" + "licences=" + str(licenses) + "&" + "details=" + str(details).lower() + "&" + "common_names=" + str(common_names).lower() + "&" + "synonyms=" + str(synonyms).lower() + "&" + "references=" + str(references).lower() + "&" + "taxonomy=" + str(taxonomy).lower() + "&" + "vetted=" + str(vetted) + "&" + "cache_ttl=" + "&" + "language=" + str(language)
-            r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
-            if not r.ok:
-                r.raise_for_status()
-                sys.exit()
-            decoded = r.json()
-            taxon.taxon_objects.append({
-                'object': decoded,
-                'object_type': "EOL page"
-            })
-            eol_obj_array.append(decoded)
+        if ident["identifier_type"].lower() in ["ncbi", "ncbi taxid", "ncbi taxon", "ncbi taxon id", "ncbi taxon identifier", "ncbi taxonomy", "ncbi taxonomy id", "ncbi taxonomy identifier", "ncbitaxon", "ncbitaxon id", "ncbitaxon identifier"] and ident["identifier"] not in ids_completed:
+            ids_completed.append(ident["identifier"])
+            
+            if user is not None:
+                if user.eol_api_key is not None:
+        
+                    base_url = "http://eol.org/api/pages/1.0.json?"
+                    ext_url = "batch=" + str(batch).lower() + "&" + "id=" + str(get_eol_id(taxon)) + "&" + "images_per_page=" + str(images_per_page) + "&" + "images_page=" + str(images_page) + "&" + "videos_per_page=" + str(videos_per_page) + "&" + "videos_page=" + str(videos_page) + "&" + "sounds_per_page=" + str(sounds_per_page) + "&" + "sounds_page=" + str(sounds_page) + "&" + "maps_per_page=" + str(maps_per_page) + "&" + "maps_page=" + str(maps_page) + "&" + "texts_per_page=" + str(texts_per_page) + "&" + "texts_page=" + str(texts_page) + "&" + "subjects=" + str(subjects) + "&" + "licences=" + str(licenses) + "&" + "details=" + str(details).lower() + "&" + "common_names=" + str(common_names).lower() + "&" + "synonyms=" + str(synonyms).lower() + "&" + "references=" + str(references).lower() + "&" + "taxonomy=" + str(taxonomy).lower() + "&" + "vetted=" + str(vetted) + "&" + "cache_ttl=" + "&" + "language=" + str(language) + "&key=" + str(user.eol_api_key)
+
+                    r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                    if not r.ok:
+                        r.raise_for_status()
+                        sys.exit()
+                    else:
+                        decoded = r.json()
+                        gnomics.objects.taxon.Taxon.add_object(taxon, obj = decoded, object_type = "EOL Page")
+                        eol_obj_array.append(decoded)
+                        
+                else:
+                    
+                    base_url = "http://eol.org/api/pages/1.0.json?"
+                    ext_url = "batch=" + str(batch).lower() + "&" + "id=" + str(get_eol_id(taxon)) + "&" + "images_per_page=" + str(images_per_page) + "&" + "images_page=" + str(images_page) + "&" + "videos_per_page=" + str(videos_per_page) + "&" + "videos_page=" + str(videos_page) + "&" + "sounds_per_page=" + str(sounds_per_page) + "&" + "sounds_page=" + str(sounds_page) + "&" + "maps_per_page=" + str(maps_per_page) + "&" + "maps_page=" + str(maps_page) + "&" + "texts_per_page=" + str(texts_per_page) + "&" + "texts_page=" + str(texts_page) + "&" + "subjects=" + str(subjects) + "&" + "licences=" + str(licenses) + "&" + "details=" + str(details).lower() + "&" + "common_names=" + str(common_names).lower() + "&" + "synonyms=" + str(synonyms).lower() + "&" + "references=" + str(references).lower() + "&" + "taxonomy=" + str(taxonomy).lower() + "&" + "vetted=" + str(vetted) + "&" + "cache_ttl=" + "&" + "language=" + str(language)
+
+                    r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                    if not r.ok:
+                        r.raise_for_status()
+                        sys.exit()
+                    else:
+                        decoded = r.json()
+                        gnomics.objects.taxon.Taxon.add_object(taxon, obj = decoded, object_type = "EOL Page")
+                        eol_obj_array.append(decoded)
+                        
+            else:
+                
+                base_url = "http://eol.org/api/pages/1.0.json?"
+                ext_url = "batch=" + str(batch).lower() + "&" + "id=" + str(get_eol_id(taxon)) + "&" + "images_per_page=" + str(images_per_page) + "&" + "images_page=" + str(images_page) + "&" + "videos_per_page=" + str(videos_per_page) + "&" + "videos_page=" + str(videos_page) + "&" + "sounds_per_page=" + str(sounds_per_page) + "&" + "sounds_page=" + str(sounds_page) + "&" + "maps_per_page=" + str(maps_per_page) + "&" + "maps_page=" + str(maps_page) + "&" + "texts_per_page=" + str(texts_per_page) + "&" + "texts_page=" + str(texts_page) + "&" + "subjects=" + str(subjects) + "&" + "licences=" + str(licenses) + "&" + "details=" + str(details).lower() + "&" + "common_names=" + str(common_names).lower() + "&" + "synonyms=" + str(synonyms).lower() + "&" + "references=" + str(references).lower() + "&" + "taxonomy=" + str(taxonomy).lower() + "&" + "vetted=" + str(vetted) + "&" + "cache_ttl=" + "&" + "language=" + str(language)
+
+                r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                if not r.ok:
+                    r.raise_for_status()
+                    sys.exit()
+                else:
+                    decoded = r.json()
+                    gnomics.objects.taxon.Taxon.add_object(taxon, obj = decoded, object_type = "EOL Page")
+                    eol_obj_array.append(decoded)
+    
     return eol_obj_array
 
 #   Get EOL Traitbank object.
 def get_eol_traitbank_object(taxon):
+    eol_obj_array = []
+    
     for tax_obj in taxon.taxon_objects:
         if 'object_type' in tax_obj:
-            if tax_obj['object_type'].lower() == 'eol traitbank' or tax_obj['object_type'].lower() == 'traitbank':
-                return tax_obj['object']
+            if tax_obj['object_type'].lower() in ['eol traitbank', 'traitbank']:
+                eol_obj_array.append(tax_obj['object'])
+                
+    if eol_obj_array:
+        return eol_obj_array
+            
+    ids_completed = []
+    
     base_url = "http://eol.org/api/"
-    ext_url = "traits/" + get_eol_id(taxon)
-    r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
-    if not r.ok:
-        r.raise_for_status()
-        sys.exit()
-    decoded = r.json()
-    taxon.taxon_objects.append({
-        'object': decoded,
-        'object_type': "EOL Traitbank"
-    })
-    return decoded
+    for eol_id in get_eol_id(taxon):
+        if eol_id not in ids_completed:
+            ids_completed.append(eol_id)
+            ext_url = "traits/" + str(eol_id)
+            r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+            if not r.ok:
+                r.raise_for_status()
+                sys.exit()
+            else:
+                decoded = r.json()
+                gnomics.objects.taxon.Taxon.add_object(taxon, obj = decoded, object_type = "EOL Traitbank")
+                eol_obj_array.append(decoded)
+
+    return eol_obj_array
     
 #   Get EOL identifier.
-def get_eol_id(taxon):
+def get_eol_id(taxon, user=None):
+    eol_array = []
+    
     for ident in taxon.identifiers:
-        if ident["identifier_type"].lower() == "eol" or ident["identifier_type"].lower() == "eol id":
-            return ident["identifier"]
+        if ident["identifier_type"].lower() in ["eol", "eol id", "eol identifier"] and ident["identifier"] not in eol_array:
+            eol_array.append(ident["identifier"])
+            
+    if eol_array:
+        return eol_array
+        
+    ids_completed = []
     for ident in taxon.identifiers:
-        if ident["identifier_type"].lower() == "tsn" or ident["identifier_type"].lower() == "itis tsn" or ident["identifier_type"].lower() == "itis taxonomic serial number" or ident["identifier_type"].lower() == "taxonomic serial number":
-            base_url = "http://eol.org/api/"
-            ext_url = "search_by_provider/1.0.json?batch=false&id=" + ident["identifier"] + "&hierarchy_id=903&cache_ttl="
-            r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
-            if not r.ok:
-                r.raise_for_status()
-                sys.exit()
-            decoded = r.json()
-            return decoded[0]["eol_page_id"]
-        elif ident["identifier_type"].lower() == "index fungorum" or ident["identifier_type"].lower() == "index fungorum id" or ident["identifier_type"].lower() == "index fungorum identifier":
-            base_url = "http://eol.org/api/"
-            ext_url = "search_by_provider/1.0.json?batch=false&id=" + ident["identifier"] + "&hierarchy_id=596&cache_ttl="
-            r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
-            if not r.ok:
-                r.raise_for_status()
-                sys.exit()
-            decoded = r.json()
-            return decoded[0]["eol_page_id"]
-        elif ident["identifier_type"].lower() == "paleobiology database" or ident["identifier_type"].lower() == "paleobiology database id" or ident["identifier_type"].lower() == "paleobiology database identifier":
-            base_url = "http://eol.org/api/"
-            ext_url = "search_by_provider/1.0.json?batch=false&id=" + ident["identifier"] + "&hierarchy_id=967&cache_ttl="
-            r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
-            if not r.ok:
-                r.raise_for_status()
-                sys.exit()
-            decoded = r.json()
-            return decoded[0]["eol_page_id"]
-        elif ident["identifier_type"].lower() == "ncbi" or ident["identifier_type"].lower() == "ncbi taxonomy id" or ident["identifier_type"].lower() == "ncbi taxonomy identifier" or ident["identifier_type"].lower() == "ncbi taxonomy":
-            base_url = "http://eol.org/api/"
-            ext_url = "search_by_provider/1.0.json?batch=false&id=" + ident["identifier"] + "&hierarchy_id=1172&cache_ttl="
-            r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
-            if not r.ok:
-                r.raise_for_status()
-                sys.exit()
-            decoded = r.json()
-            return decoded[0]["eol_page_id"]
-        elif ident["identifier_type"].lower() == "wikidata" or ident["identifier_type"].lower() == "wikidata id" or ident["identifier_type"].lower() == "wikidata identifier" or ident["identifier_type"].lower() == "wikidata accession":
-            for stuff in gnomics.objects.taxon.Taxon.wikidata(taxon):
-                for prop_id, prop_dict in stuff["claims"].items():
-                    base = "https://www.wikidata.org/w/api.php"
-                    ext = "?action=wbgetentities&ids=" + prop_id + "&format=json"
-                    r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+        if ident["identifier_type"].lower() in ["itis", "itis taxonomic serial number", "itis tsn", "taxonomic serial number", "tsn"] and ident["identifier"] not in ids_completed:
+            ids_completed.append(ident["identifier"])
+            
+            if user is not None:
+                if user.eol_api_key is not None:
+            
+                    base_url = "http://eol.org/api/"
+                    ext_url = "search_by_provider/1.0.json?batch=false&id=" + ident["identifier"] + "&hierarchy_id=903" + "&key=" + str(user.eol_api_key) + "&cache_ttl="
+
+                    r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
                     if not r.ok:
                         r.raise_for_status()
                         sys.exit()
+                    else:
+                        decoded = r.json()
+                        if decoded[0]["eol_page_id"] not in eol_array:
+                            eol_array.append(decoded[0]["eol_page_id"])
+                            gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier = decoded[0]["eol_page_id"], identifier_type = "EOL ID", language = None, source = "EOL")
+                            
+                else:
+                    
+                    base_url = "http://eol.org/api/"
+                    ext_url = "search_by_provider/1.0.json?batch=false&id=" + ident["identifier"] + "&hierarchy_id=903&cache_ttl="
+
+                    r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                    if not r.ok:
+                        r.raise_for_status()
+                        sys.exit()
+                    else:
+                        decoded = r.json()
+                        if decoded[0]["eol_page_id"] not in eol_array:
+                            eol_array.append(decoded[0]["eol_page_id"])
+                            gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier = decoded[0]["eol_page_id"], identifier_type = "EOL ID", language = None, source = "EOL")
+                            
+            else:
+                
+                base_url = "http://eol.org/api/"
+                ext_url = "search_by_provider/1.0.json?batch=false&id=" + ident["identifier"] + "&hierarchy_id=903&cache_ttl="
+
+                r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                if not r.ok:
+                    r.raise_for_status()
+                    sys.exit()
+                else:
+                    decoded = r.json()
+                    if decoded[0]["eol_page_id"] not in eol_array:
+                        eol_array.append(decoded[0]["eol_page_id"])
+                        gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier = decoded[0]["eol_page_id"], identifier_type = "EOL ID", language = None, source = "EOL")
+        
+        elif ident["identifier_type"].lower() in ["index fungorum", "index fungorum id", "index fungorum identifier"] and ident["identifier"] not in ids_completed:
+            ids_completed.append(ident["identifier"])
+            
+            if user is not None:
+                if user.eol_api_key is not None:
+            
+                    base_url = "http://eol.org/api/"
+                    ext_url = "search_by_provider/1.0.json?batch=false&id=" + ident["identifier"] + "&hierarchy_id=596" + "&key=" + str(user.eol_api_key) + "&cache_ttl="
+
+                    r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                    if not r.ok:
+                        r.raise_for_status()
+                        sys.exit()
+                    else:
+                        decoded = r.json()
+                        if decoded[0]["eol_page_id"] not in eol_array:
+                            eol_array.append(decoded[0]["eol_page_id"])
+                            gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier = decoded[0]["eol_page_id"], identifier_type = "EOL ID", language = None, source = "EOL")
+                            
+                else:
+                    
+                    base_url = "http://eol.org/api/"
+                    ext_url = "search_by_provider/1.0.json?batch=false&id=" + ident["identifier"] + "&hierarchy_id=596&cache_ttl="
+
+                    r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                    if not r.ok:
+                        r.raise_for_status()
+                        sys.exit()
+                    else:
+                        decoded = r.json()
+                        if decoded[0]["eol_page_id"] not in eol_array:
+                            eol_array.append(decoded[0]["eol_page_id"])
+                            gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier = decoded[0]["eol_page_id"], identifier_type = "EOL ID", language = None, source = "EOL")
+                            
+            else:
+                
+                base_url = "http://eol.org/api/"
+                ext_url = "search_by_provider/1.0.json?batch=false&id=" + ident["identifier"] + "&hierarchy_id=596&cache_ttl="
+
+                r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                if not r.ok:
+                    r.raise_for_status()
+                    sys.exit()
+                else:
+                    decoded = r.json()
+                    if decoded[0]["eol_page_id"] not in eol_array:
+                        eol_array.append(decoded[0]["eol_page_id"])
+                        gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier = decoded[0]["eol_page_id"], identifier_type = "EOL ID", language = None, source = "EOL")
+        
+        elif ident["identifier_type"].lower() in ["paleobiology database", "paleobiology database id", "paleobiology database identifier"] and ident["identifier"] not in ids_completed:
+            ids_completed.append(ident["identifier"])
+            
+            if user is not None:
+                if user.eol_api_key is not None:
+            
+                    base_url = "http://eol.org/api/"
+                    ext_url = "search_by_provider/1.0.json?batch=false&id=" + ident["identifier"] + "&hierarchy_id=967" + "&key=" + str(user.eol_api_key) + "&cache_ttl="
+
+                    r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                    if not r.ok:
+                        r.raise_for_status()
+                        sys.exit()
+                    else:
+                        decoded = r.json()
+                        if decoded[0]["eol_page_id"] not in eol_array:
+                            eol_array.append(decoded[0]["eol_page_id"])
+                            gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier = decoded[0]["eol_page_id"], identifier_type = "EOL ID", language = None, source = "EOL")
+                            
+                else:
+                    
+                    base_url = "http://eol.org/api/"
+                    ext_url = "search_by_provider/1.0.json?batch=false&id=" + ident["identifier"] + "&hierarchy_id=967&cache_ttl="
+
+                    r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                    if not r.ok:
+                        r.raise_for_status()
+                        sys.exit()
+                    else:
+                        decoded = r.json()
+                        if decoded[0]["eol_page_id"] not in eol_array:
+                            eol_array.append(decoded[0]["eol_page_id"])
+                            gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier = decoded[0]["eol_page_id"], identifier_type = "EOL ID", language = None, source = "EOL")
+                            
+            else:
+                
+                base_url = "http://eol.org/api/"
+                ext_url = "search_by_provider/1.0.json?batch=false&id=" + ident["identifier"] + "&hierarchy_id=967&cache_ttl="
+
+                r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                if not r.ok:
+                    r.raise_for_status()
+                    sys.exit()
+                else:
+                    decoded = r.json()
+                    if decoded[0]["eol_page_id"] not in eol_array:
+                        eol_array.append(decoded[0]["eol_page_id"])
+                        gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier = decoded[0]["eol_page_id"], identifier_type = "EOL ID", language = None, source = "EOL")
+        
+        elif ident["identifier_type"].lower() in ["ncbi", "ncbi taxid", "ncbi taxon", "ncbi taxon id", "ncbi taxon identifier", "ncbi taxonomy", "ncbi taxonomy id", "ncbi taxonomy identifier", "ncbitaxon", "ncbitaxon id", "ncbitaxon identifier"] and ident["identifier"] not in ids_completed:
+            ids_completed.append(ident["identifier"])
+            
+            if user is not None:
+                if user.eol_api_key is not None:
+            
+                    base_url = "http://eol.org/api/"
+                    ext_url = "search_by_provider/1.0.json?batch=false&id=" + ident["identifier"] + "&hierarchy_id=1172" + "&key=" + str(user.eol_api_key) + "&cache_ttl="
+
+                    r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                    if not r.ok:
+                        r.raise_for_status()
+                        sys.exit()
+                    else:
+                        decoded = r.json()
+                        if decoded[0]["eol_page_id"] not in eol_array:
+                            eol_array.append(decoded[0]["eol_page_id"])
+                            gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier = decoded[0]["eol_page_id"], identifier_type = "EOL ID", language = None, source = "EOL")
+                        
+                else:
+                    
+                    base_url = "http://eol.org/api/"
+                    ext_url = "search_by_provider/1.0.json?batch=false&id=" + ident["identifier"] + "&hierarchy_id=1172&cache_ttl="
+
+                    r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                    if not r.ok:
+                        r.raise_for_status()
+                        sys.exit()
+                    else:
+                        decoded = r.json()
+                        if decoded[0]["eol_page_id"] not in eol_array:
+                            eol_array.append(decoded[0]["eol_page_id"])
+                            gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier = decoded[0]["eol_page_id"], identifier_type = "EOL ID", language = None, source = "EOL")
+                            
+            else:
+                
+                base_url = "http://eol.org/api/"
+                ext_url = "search_by_provider/1.0.json?batch=false&id=" + ident["identifier"] + "&hierarchy_id=1172&cache_ttl="
+
+                r = requests.get(base_url+ext_url, headers={"Content-Type": "application/json"})
+                if not r.ok:
+                    r.raise_for_status()
+                    sys.exit()
+                else:
+                    decoded = r.json()
+                    if decoded[0]["eol_page_id"] not in eol_array:
+                        eol_array.append(decoded[0]["eol_page_id"])
+                        gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier = decoded[0]["eol_page_id"], identifier_type = "EOL ID", language = None, source = "EOL")
+        
+        elif ident["identifier_type"].lower() in ["wikidata", "wikidata accession", "wikidata id", "wikidata identifier"] and ident["identifier"] not in ids_completed:
+            ids_completed.append(ident["identifier"])
+            
+            for stuff in gnomics.objects.taxon.Taxon.wikidata(taxon):
+                
+                for prop_id, prop_dict in stuff["claims"].items():
+
+                    base = "https://www.wikidata.org/w/api.php"
+                    ext = "?action=wbgetentities&ids=" + prop_id + "&format=json"
+                    
+                    r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
+                    if not r.ok:
+                        r.raise_for_status()
+                        sys.exit()
+
                     decoded = json.loads(r.text)
                     en_prop_name = decoded["entities"][prop_id]["labels"]["en"]["value"]
+
                     if en_prop_name.lower() == "encyclopedia of life id":
                         for x in prop_dict:
-                            gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier = x["mainsnak"]["datavalue"]["value"], identifier_type = "EOL ID", language = None, source = "Wikidata")
-                            return x["mainsnak"]["datavalue"]["value"]
-
+                            if x["mainsnak"]["datavalue"]["value"] not in eol_array:
+                                gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier = x["mainsnak"]["datavalue"]["value"], identifier_type = "EOL ID", language = None, source = "Wikidata")
+                                eol_array.append(x["mainsnak"]["datavalue"]["value"])
+                                
+    return eol_array
+        
 #   Get EOL URL.
 def get_eol_url(taxon):
+    url_array = []
+    
     for ident in taxon.identifiers:
-        if ident["identifier_type"].lower() == "eol" or ident["identifier_type"].lower() == "eol id":
+        if ident["identifier_type"].lower() in ["eol", "eol id", "eol identifier"]:
             url = "http://eol.org/pages/%s/overview" % ident["identifier"]
-            return url
+            url_array.append(url)
+            
+    return url
 
 #   UNIT TESTS
 def eol_unit_tests(eol_id, tsn, index_fungorum_id, paleobiology_db_id, ncbi_taxonomy_id, wikidata_accession, eol_api_key = None):

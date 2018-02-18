@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -27,15 +29,25 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 #   Import modules.
 import gnomics.objects.protein
 
+#   Other imports.
+import timeit
+
+#   Import sub-methods.
+
+#   Import further methods.
+from gnomics.objects.interaction_objects.protein_family_protein import get_proteins
+
 #   MAIN
 def main():
-    print("NOT FUNCTIONAL.")
+    protein_family_unit_tests()
 
 #   PROTEIN FAMILY CLASS
 class ProteinFamily():
     """
         Protein family class
         
+        A protein family is a group of evolutionarily-related
+        proteins.
     """
     
     """
@@ -58,26 +70,25 @@ class ProteinFamily():
     """
     
     # Initialize the protein family.
-    def __init__(self, identifier = None, identifier_type = None, language = None, taxon = None, source = None, name = None):
+    def __init__(self, identifier=None, identifier_type=None, language=None, taxon=None, source=None, name=None):
         
         # Initialize dictionary of identifiers.
-        self.identifiers = [
-            {
+        self.identifiers = []
+        if identifier is not None:
+            self.identifiers = [{
                 'identifier': str(identifier),
                 'language': language,
                 'identifier_type': identifier_type,
                 'taxon': taxon,
                 'source': source,
                 'name': name
-            }
-        ]
+            }]
         
         # Initialize dictionary of protein family objects.
         self.protein_family_objects = []
         
     # Add an identifier to a protein family.
-    def add_identifier(protein_famliy, identifier = None, identifier_type = None, taxon = None, language = None, source = None, name = None):
-        
+    def add_identifier(protein_famliy, identifier=None, identifier_type=None, taxon=None, language=None, source=None, name=None):
         protein_family.identifiers.append({
             'identifier': str(identifier),
             'language': language,
@@ -96,31 +107,50 @@ class ProteinFamily():
     """
         Protein family identifiers:
         
+        InterPro ID
         Pfam ID
         TIGRFAM ID
 
     """
     
+    # Return all identifiers.
+    def all_identifiers(protein_family, user=None):
+        return protein_family.identifiers
+    
+    # Return InterPro ID
+    def interpro_id(prot, user=None):
+        print("NOT FUNCTIONAL.")
+    
     # Return Pfam ID.
-    def pfam_id(prot):
+    def pfam_id(prot, user=None):
         print("NOT FUNCTIONAL.")
         
     # Return TIGRFAM ID.
-    def tigrfam_id(prot):
+    def tigrfam_id(prot, user=None):
         print("NOT FUNCTIONAL.")
     
     """
         Interaction objects:
         
+        Proteins
     """
     
+    # Return interaction objects.
+    def all_interaction_objects(protein_family, user=None):
+        interaction_obj = {}
+        interaction_obj["Proteins"] = ProteinFamily.proteins(protein_family, user=user)
+        return interaction_obj
+    
+    # Return proteins.
+    def proteins(protein_family, user=None):
+        return get_proteins(protein_family)
     
     """
         Other properties:
         
     """
     
-    def all_properties(protein_family, user = None):
+    def all_properties(protein_family, user=None):
         property_dict = {}
         return property_dict
     
@@ -129,7 +159,10 @@ class ProteinFamily():
         
     """
     
-    
+    # Return links.
+    def all_urls(protein_family, user=None):
+        url_dict = {}
+        return url_dict
     
     """
         Auxiliary functions:
@@ -138,7 +171,7 @@ class ProteinFamily():
         
     """
     
-    def search(query):
+    def search(query, user=None):
         print("NOT FUNCTIONAL.")
         
     """
@@ -147,6 +180,8 @@ class ProteinFamily():
     """
 
 #   UNIT TESTS
+def protein_family_unit_tests():
+    print("NOT FUNCTIONAL.")
 
 #   MAIN
 if __name__ == "__main__": main()

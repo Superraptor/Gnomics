@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,7 @@
 
 #
 #   IMPORT SOURCES:
+#
 #
 
 #
@@ -30,7 +33,9 @@ import gnomics.objects.tissue
 
 #   Other imports.
 import json
+import pubchempy as pubchem
 import requests
+import timeit
 
 #   MAIN
 def main():
@@ -38,20 +43,24 @@ def main():
      
 #   Get tissues.
 def get_tissues(taxon):
+    tiss_array = []
+    
     for ident in taxon.identifiers:
-        if ident["identifier_type"].lower() == "scientific name" or ident["identifier_type"].lower() == "binomial name":
+        if ident["identifier_type"].lower() in ["scientific name", "binomial name"]:
             server = "https://rest.ensembl.org"
             ext = "/eqtl/tissue/" + ident["identifier"].lower().replace(" ", "_") + "?"
             r = requests.get(server+ext, headers={ "Content-Type" : "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = r.json()
-            tiss_array = []
             for key, val in decoded.items():
                 temp_tiss = gnomics.objects.tissue.Tissue(identifier = key, identifier_type = "Ensembl Accession", source = "Ensembl", language = "en")
                 tiss_array.append(temp_tiss)
-            return tiss_array
+
+    return tiss_array
     
 #   UNIT TESTS
 def taxon_tissue_unit_tests(sci_name):

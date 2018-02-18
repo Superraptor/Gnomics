@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,7 +8,7 @@
 
 #
 #   IMPORT SOURCES:
-#   
+#
 #
 
 #
@@ -38,22 +40,27 @@ import xml.etree.ElementTree
 
 #   MAIN
 def main():
-    print("NOT FUNCTIONAL.")
+    citation_unit_tests()
 
 #   Get identifiers from citation.
 #
 #   Parameters:
 #   - score_threshold
 #   - normalized_score_threshold
-def parse_citation(citation, score_threshold = None, normalized_score_threshold = 100): 
+def parse_citation(citation, score_threshold=None, normalized_score_threshold=100): 
+    
     # Find DOI from CrossRef.
     base = "http://search.crossref.org"
     ext = "/dois?q=" + citation
+    
     r = requests.get(base+ext, headers = {"Content-Type": "application/json"})
+        
     if not r.ok:
         r.raise_for_status()
         sys.ext()
+
     decoded = r.json()
+    
     doi_list = []
     for potential_ref in decoded:
         if normalized_score_threshold is not None and score_threshold is None:
@@ -68,10 +75,12 @@ def parse_citation(citation, score_threshold = None, normalized_score_threshold 
             if potential_ref["score"] >= score_threshold and potential_ref["normalizedScore"] >= normalized_score_threshold:
                 print(potential_ref["score"])
                 doi_list.append(potential_ref["doi"].split("http://dx.doi.org/")[1])
+            
     final_refs = []
     for doi in doi_list:
         temp_ref = gnomics.objects.reference.Reference(identifier = doi, identifier_type = "DOI", source = "CrossRef")
         final_refs.append(temp_ref)
+                    
     return final_refs
         
 #   UNIT TESTS

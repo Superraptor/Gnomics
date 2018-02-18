@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,7 @@
 
 #
 #   IMPORT SOURCES:
+#
 #
 
 #
@@ -33,9 +36,9 @@ def main():
 #   Get ATC codes.
 def get_atc_codes(drug):
     atc_array = []
-    for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "atc" or ident["identifier_type"].lower() == "atc code" or ident["identifier_type"].lower() == "atc classification":
-            atc_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(drug.identifiers, ["atc", "atc id", "atc identifier", "atc code", "atc classification", "atc classification code"]):
+        if iden["identifier"] not in atc_array:
+            atc_array.append(iden["identifier"])
     return atc_array
 
 #   UNIT TESTS

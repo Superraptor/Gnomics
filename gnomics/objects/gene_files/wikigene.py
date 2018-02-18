@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,7 +8,8 @@
 
 #
 #   IMPORT SOURCES:
-#
+#       MYGENE
+#           https://pypi.python.org/pypi/mygene
 #
 
 #
@@ -28,6 +31,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 import gnomics.objects.gene
 
 #   Other imports.
+import mygene
 import requests
 
 #   MAIN
@@ -37,10 +41,10 @@ def main():
 # Returns WikiGene identifier.
 def get_wikigene_id(gene):
     for ident in gene.identifiers:
-        if ident["identifier_type"].lower() == "wikigene" or ident["identifier_type"].lower() == "wikigene id" or ident["identifier_type"].lower() == "wikigene identifier":
+        if ident["identifier_type"].lower() in ["wikigene", "wikigene id", "wikigene identifier"]:
             return ident["identifier"]
     for ident in gene.identifiers:
-        if ident["identifier_type"].lower() == "ensembl gene" or ident["identifier_type"].lower() == "ensembl gene id" or ident["identifier_type"].lower() == "ensembl gene identifier" or ident["identifier_type"].lower() == "ensembl":
+        if ident["identifier_type"].lower() in ["ensembl gene", "ensembl gene id", "ensembl gene identifier", "ensembl"]:
             server = "https://rest.ensembl.org"
             ext = "/xrefs/id/" + ident["identifier"]
             r = requests.get(server+ext, headers={"Content-Type": "application/json"})
@@ -50,13 +54,7 @@ def get_wikigene_id(gene):
             decoded = r.json()
             for new_id in decoded:
                 if new_id["dbname"] == "WikiGene":
-                    gene.identifiers.append({
-                        'identifier': new_id["primary_id"],
-                        'language': None,
-                        'identifier_type': "WikiGene identifier",
-                        'taxon': "Homo sapiens",
-                        'source': "Ensembl"
-                    })
+                    gnomics.objects.gene.Gene.add_identifier(gene, identifier = new_id["primary_id"], identifier_type = "WikiGene identifier", taxon = "Homo sapiens", source = "Ensembl", name = new_id["display_id"])
                     return new_id["primary_id"]
         
 #   UNIT TESTS

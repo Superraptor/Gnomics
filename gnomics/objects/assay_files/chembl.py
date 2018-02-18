@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -27,6 +29,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 
 #   Import modules.
 from gnomics.objects.user import User
+import gnomics.objects.compound
 import gnomics.objects.assay
 
 #   Other imports.
@@ -43,28 +46,29 @@ def get_chembl_assay(assay):
     assay_obj_array = []
     for assay_obj in assay.assay_objects:
         if 'object_type' in assay_obj:
-            if assay_obj['object_type'].lower() == 'chembl assay' or assay_obj['object_type'].lower() == 'chembl':
+            if assay_obj['object_type'].lower() in ['chembl assay', 'chembl']:
                 assay_obj_array.append(assay_obj['object'])
+    
     if assay_obj_array:
         return assay_obj_array
+    
     for chembl_id in get_chembl_id(assay):
         assay_obj = new_client.assay
         result = assay_obj.filter(assay_chembl_id=chembl_id)
-        assay.assay_objects.append(
-            {
-                'object': result[0],
-                'object_type': "ChEMBL Assay"
-            }
-        )
+        assay.assay_objects.append({
+            'object': result[0],
+            'object_type': "ChEMBL Assay"
+        })
         assay_obj_array.append(result[0])
+        
     return assay_obj_array
     
 #   Get ChEMBL ID.
 def get_chembl_id(assay):
     chembl_array = []
-    for ident in assay.identifiers:
-        if ident["identifier_type"].lower() == "chembl" or ident["identifier_type"].lower() == "chembl id":
-            chembl_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(assay.identifiers, ["chembl", "chembl id", "chembl identifier", "chembl assay", "chembl assay id", "chembl assay identifier"]):
+        if iden["identifier"] not in chembl_array:
+            chembl_array.append(iden["identifier"])
     return chembl_array
 
 #   UNIT TESTS

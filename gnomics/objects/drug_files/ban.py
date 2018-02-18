@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,7 @@
 
 #
 #   IMPORT SOURCES:
+#       
 #
 
 #
@@ -33,9 +36,9 @@ def main():
 #   Get BAN.
 def get_ban(com):
     ban_array = []
-    for ident in com.identifiers:
-        if ident["identifier_type"].lower() == "ban":
-            ban_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(drug.identifiers, ["ban", "british accepted name"]):
+        if iden["identifier"] not in ban_array:
+            ban_array.append(iden["identifier"])
     return ban_array
 
 #   UNIT TESTS

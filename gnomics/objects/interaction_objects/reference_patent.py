@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -32,6 +34,7 @@ import gnomics.objects.reference
 #   Other imports.
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
@@ -41,11 +44,12 @@ def main():
 def get_patents(reference, user = None):
     patent_array = []
     for ident in reference.identifiers:
-        if ident["identifier_type"].lower() == "chembl" or ident["identifier_type"].lower() == "chembl id" or ident["identifier_type"].lower() == "chembl identifier":
+        if ident["identifier_type"].lower() in ["chembl", "chembl id", "chembl identifier"]:
             for item in gnomics.objects.reference.Reference.chembl_document(reference):
                 if "patent_id" in item:
                     temp_patent = gnomics.objects.patent.Patent(identifier = item["patent_id"], identifier_type = "Patent ID", source = "ChEMBL")
                     patent_array.append(temp_patent)
+                    
     return patent_array
     
 #   UNIT TESTS

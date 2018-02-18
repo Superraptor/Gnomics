@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -34,6 +36,7 @@ import gnomics.objects.patent
 import pubchempy as pubchem
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
@@ -44,14 +47,15 @@ def get_patents(com):
     patent_array = []
     patent_obj_array = []
     for ident in com.identifiers:
-        if ident["identifier_type"].lower() == "chebi" or ident["identifier_type"].lower() == "chebi id":
+        if ident["identifier_type"].lower() in ["chebi", "chebi id"]:
             db_accessions = gnomics.objects.compound.Compound.chebi_entity(com).get_database_accessions()
             for accession in db_accessions:
                 if accession._DatabaseAccession__typ.lower() == "patent accession" and accession._DatabaseAccession__accession_number not in patent_array:
                     temp_patent = gnomics.objects.patent.Patent(identifier=accession._DatabaseAccession__accession_number, language=None, identifier_type="Patent accession", source="ChEBI")
                     patent_obj_array.append(temp_patent)
                     patent_array.append(accession._DatabaseAccession__accession_number)
-        elif ident["identifier_type"].lower() == "pubchem sid" or ident["identifier_type"].lower() == "pubchem substance":
+                    
+        elif ident["identifier_type"].lower() in ["pubchem sid", "pubchem substance"]:
             server = "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
             ext = "/substance/sid/" + str(ident["identifier"]) + "/xrefs/PatentID/JSONP"
             r = requests.get(server+ext, headers={"Content-Type": "application/json"})
@@ -71,10 +75,13 @@ def get_patents(com):
                 patents = result["PatentID"]
                 for patent in patents:
                     if patent not in patent_array:
+                        
                         temp_patent = gnomics.objects.patent.Patent(identifier=patent, language=None, identifier_type="Patent ID", source="PubChem")
                         patent_obj_array.append(temp_patent)
+                        
                         patent_array.append(patent)
-        elif ident["identifier_type"].lower() == "pubchem cid" or ident["identifier_type"].lower() == "cid":
+
+        elif ident["identifier_type"].lower() in ["pubchem cid", "cid"]:
             server = "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
             ext = "/compound/cid/" + str(ident["identifier"]) + "/xrefs/PatentID/JSONP"
             r = requests.get(server+ext, headers={"Content-Type": "application/json"})
@@ -94,15 +101,19 @@ def get_patents(com):
                 patents = result["PatentID"]
                 for patent in patents:
                     if patent not in patent_array:
+                        
                         temp_patent = gnomics.objects.patent.Patent(identifier=patent, language=None, identifier_type="Patent ID", source="PubChem")
                         patent_obj_array.append(temp_patent)
+                        
                         patent_array.append(patent)
+                
     if patent_array:
         return patent_obj_array
     for ident in com.identifiers:
-        if ident["identifier_type"].lower() == "kegg compound" or ident["identifier_type"].lower() == "kegg compound id" or ident["identifier_type"].lower() == "kegg compound accession":
+        if ident["identifier_type"].lower() in ["kegg compound", "kegg compound id", "kegg compound accession"]:
             gnomics.objects.compound.Compound.chebi_id(com)
             return get_patents(com)
+    
 
 #   UNIT TESTS
 def patent_unit_tests(chebi_id, pubchem_cid, pubchem_sid, kegg_compound_id):
@@ -126,7 +137,13 @@ def patent_unit_tests(chebi_id, pubchem_cid, pubchem_sid, kegg_compound_id):
         
     kegg_com = gnomics.objects.compound.Compound(identifier = str(kegg_compound_id), identifier_type = "KEGG Compound ID", source = "KEGG")
     print("\nGetting patent accessions from KEGG Compound ID (%s):" % kegg_compound_id)
-    for acc in get_patents(kegg_com):
+    
+    start = timeit.timeit()
+    all_patents = get_patents(kegg_com)
+    end = timeit.timeit()
+    print("TIME ELAPSED: %s seconds." % str(end - start))
+    
+    for acc in all_patents:
         for iden in acc.identifiers:
             print("- %s" % str(iden["identifier"]))
 

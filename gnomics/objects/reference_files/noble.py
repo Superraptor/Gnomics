@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -10,7 +12,7 @@
 #
 
 #
-#   Get NOBLE results.
+#   Get Noble results.
 #
 
 #   PRE-CODE
@@ -26,9 +28,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 
 #   Import modules.
 from gnomics.objects.user import User
+import gnomics.objects.disease
+import gnomics.objects.pathway
 import gnomics.objects.reference
 
 #   Other imports.
+from bioservices import *
 import json
 import re
 import requests
@@ -81,14 +86,18 @@ def noble(pubmed_ref = None, pmid = None, input_terminology = "NCI_Thesaurus"): 
     if pmid is not None:
         pubmed_ref = gnomics.objects.reference.Reference(identifier = pmid, identifier_type = "PMID", language = None, source = "PubMed")
         abstract_text = gnomics.objects.reference.Reference.abstract(pubmed_ref)
+        
         # Save abstract text to a temp file.
         commandname = "cat"
         f = tempfile.NamedTemporaryFile(delete=False)
         f.write(bytes(abstract_text, "UTF-8"))
         f.close()
+
         # Run subprocess.
         subprocess.call(['java', '-jar', '../../NobleCoder-1.0.jar', '-terminology', input_terminology, '-input', f.name, '-output', './noble_output']) # , '<options>'])
+        
         # java -jar NobleCoderTool.jar -terminology <name> -input <dir> -output <dir> [options]
+        
         # Read info from output files.
         code_dict = {}
         with open("./noble_output/RESULTS.tsv") as f:
@@ -108,25 +117,36 @@ def noble(pubmed_ref = None, pmid = None, input_terminology = "NCI_Thesaurus"): 
                 permanence = line_array[11]
                 polarity = line_array[12]
                 temporality = line_array[13]
+                
                 code_dict[code] = concept_name
+        
         # Delete abstract text file.
         os.unlink(f.name)
+        
         # Delete results directory.
         shutil.rmtree("./noble_output")
+        
         # Return dictionary.
         return code_dict
+        
     elif pubmed_ref is not None:
+        print("NOT FUNCTIONAL.")
+        
         for ident in pubmed_ref.identifiers:
-            if ident["identifier_type"].lower() == "pmid" or ident["identifier_type"].lower() == "pubmed id" or ident["identifier_type"].lower() == "pubmed identifier" or ident["identifier_type"].lower() == "pubmed":
+            if ident["identifier_type"].lower() in ["pmid", "pubmed", "pubmed id", "pubmed identifier"]:
                 abstract_text = gnomics.objects.reference.Reference.abstract(pubmed_ref)
+        
                 # Save abstract text to a temp file.
                 commandname = "cat"
                 f = tempfile.NamedTemporaryFile(delete=False)
                 f.write(bytes(abstract_text, "UTF-8"))
                 f.close()
+
                 # Run subprocess.
-                subprocess.call(['java', '-jar', '../../NobleCoder-1.0.jar', '-terminology', input_terminology, '-input', f.name, '-output', './noble_output'])
+                subprocess.call(['java', '-jar', '../../NobleCoder-1.0.jar', '-terminology', input_terminology, '-input', f.name, '-output', './noble_output']) # , '<options>'])
+
                 # java -jar NobleCoderTool.jar -terminology <name> -input <dir> -output <dir> [options]
+
                 # Read info from output files.
                 code_dict = {}
                 with open("./noble_output/RESULTS.tsv") as f:
@@ -146,13 +166,18 @@ def noble(pubmed_ref = None, pmid = None, input_terminology = "NCI_Thesaurus"): 
                         permanence = line_array[11]
                         polarity = line_array[12]
                         temporality = line_array[13]
+
                         code_dict[code] = concept_name
+
                 # Delete abstract text file.
                 os.unlink(f.name)
+
                 # Delete results directory.
                 shutil.rmtree("./noble_output")
+
                 # Return dictionary.
                 return code_dict
+            
     elif pubmed_ref is None and pmid is None:
         print("A PubMed reference object or a PMID must be provided in order to use PubTator.")
         return ""
@@ -165,10 +190,12 @@ def noble_unit_tests(pmid):
     print("Getting Noble results from raw PMID...")
     for code, term in noble(pmid = pmid).items():
         print("- %s, %s" % (code, term))
+    
     print("\nGetting Noble results from PubMed reference...")
     pubmed_ref = gnomics.objects.reference.Reference(identifier = pmid, identifier_type = "PMID", language = None, source = "PubMed")
     for code, term in noble(pubmed_ref = pubmed_ref).items():
         print("- %s, %s" % (code, term))
+    
 
 #   MAIN
 if __name__ == "__main__": main()

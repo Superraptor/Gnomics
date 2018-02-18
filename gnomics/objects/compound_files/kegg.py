@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -8,12 +10,10 @@
 #   IMPORT SOURCES:
 #       BIOSERVICES
 #           https://pythonhosted.org/bioservices/
-#       PUBCHEMPY
-#           https://pypi.python.org/pypi/PubChemPy/1.0
 #
 
 #
-#   Get KEGG compound identifiers.
+#   Get various KEGG compound identifiers.
 #
 
 #   PRE-CODE
@@ -33,54 +33,73 @@ import gnomics.objects.compound
 
 #   Other imports.
 from bioservices import *
-import pubchempy as pubchem
+import timeit
 
 #   MAIN
 def main():
     kegg_unit_tests("CHEBI:4911", "C01576")
     
 #   KEGG database entry (for compound).
-def get_kegg_compound_db_entry(compound):
+def get_kegg_compound_db_entry(compound, user=None):
+    kegg_array = []
+    
     for com_obj in compound.compound_objects:
         if 'object_type' in com_obj:
-            if com_obj['object_type'].lower() == 'kegg compound':
-                return com_obj['object']
-    s = KEGG()
-    res = s.get("cpd:" + gnomics.objects.compound.Compound.kegg_compound_id(compound))
-    parsed_obj = s.parse(res)
-    compound.compound_objects.append(
-        {
-            'object': parsed_obj,
-            'object_type': "KEGG COMPOUND"
-        }
-    )
-    return parsed_obj
+            if com_obj['object_type'].lower() in ['kegg compound', 'kegg compound object']:
+                kegg_array.append(com_obj['object'])
+                
+    if kegg_array:
+        return kegg_array
+    
+    for kegg_id in gnomics.objects.compound.Compound.kegg_compound_id(compound):
+                
+        s = KEGG()
+        res = s.get("cpd:" + str(kegg_id))
+        parsed_obj = s.parse(res)
+        gnomics.objects.compound.Compound.add_object(compound, obj=parsed_obj, object_type="KEGG COMPOUND")
+        kegg_array.append(parsed_obj)
+        
+    return kegg_array
 
 #   Get KEGG compound identifier.
-def get_kegg_compound_id(com):
-    for ident in com.identifiers:
-        if ident["identifier_type"].lower() == "kegg compound" or ident["identifier_type"].lower() == "kegg compound id" or ident["identifier_type"].lower() == "kegg compound accession":
-            return ident["identifier"]
-    for ident in com.identifiers:
-        if ident["identifier_type"].lower() == "chebi" or ident["identifier_type"].lower() == "chebi id" or ident["identifier_type"].lower() == "chebi identifier":
-            db_accessions = gnomics.objects.compound.Compound.chebi_entity(com).get_database_accessions()
-            for accession in db_accessions:
-                if accession._DatabaseAccession__typ.lower() == "kegg compound accession":
-                    com.identifiers.append(
-                        {
-                            'identifier': accession._DatabaseAccession__accession_number,
-                            'language': None,
-                            'identifier_type': "KEGG COMPOUND accession",
-                            'source': "ChEBI"
-                        }
-                    )
-                    return accession._DatabaseAccession__accession_number
+def get_kegg_compound_id(com, user=None):
+    kegg_array = []
+    
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(com.identifiers, ["kegg compound", "kegg compound id", "kegg compound identifier", "kegg", "kegg compound accession", "kegg id", "kegg identifier", "kegg accession"]):
+        if iden["identifier"] not in kegg_array:
+            kegg_array.append(iden["identifier"])
+            
+    if kegg_array:
+        return kegg_array
+            
+    ids_completed = []
+    
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(com.identifiers, ["chebi", "chebi id", "chebi identifier"]):
+        if iden["identifier"] not in ids_completed:
+            ids_completed.append(iden["identifier"])
+            for sub_com in gnomics.objects.compound.Compound.chebi_entity(com):
+                db_accessions = sub_com.get_database_accessions()
+                for accession in db_accessions:
+                    if accession._DatabaseAccession__typ.lower() == "kegg compound accession" and accession._DatabaseAccession__accession_number not in kegg_array:
+
+                        gnomics.objects.compound.Compound.add_identifier(com, identifier = accession._DatabaseAccession__accession_number, identifier_type = "KEGG COMPOUND Accession", language = None, source = "ChEBI")
+
+                        kegg_array.append(accession._DatabaseAccession__accession_number)
+
+    return kegg_array
 
 #   UNIT TESTS
 def kegg_unit_tests(chebi_id, kegg_compound_id):
     chebi_com = gnomics.objects.compound.Compound(identifier = str(chebi_id), identifier_type = "ChEBI ID", source = "ChEBI")
-    print("Getting KEGG Compound ID from ChEBI ID (%s):" % chebi_id)
-    print("- %s" % str(get_kegg_compound_id(chebi_com)))
+    
+    print("\nGetting KEGG Compound ID from ChEBI ID (%s):" % chebi_id)
+    start = timeit.timeit()
+    kegg_array = get_kegg_compound_id(chebi_com)
+    end = timeit.timeit()
+    print("\tTIME ELAPSED: %s seconds." % str(end - start))
+    print("\tRESULTS:")
+    for com in kegg_array:
+        print("\t- %s" % str(com))
 
 #   MAIN
 if __name__ == "__main__": main()

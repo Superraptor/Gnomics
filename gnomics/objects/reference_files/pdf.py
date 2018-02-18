@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -8,8 +10,6 @@
 #   IMPORT SOURCES:
 #       METAPUB
 #           https://pypi.python.org/pypi/metapub
-#       PDFX
-#           https://pypi.python.org/pypi/pdfx
 #
 
 #
@@ -29,8 +29,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 
 #   Import modules.
 from gnomics.objects.user import User
-import gnomics.objects.disease
-import gnomics.objects.pathway
 import gnomics.objects.reference
 
 #   Other imports.
@@ -42,27 +40,32 @@ import requests
 import shutil
 import subprocess
 import tempfile
+import urllib.request
 
 #   MAIN
 def main():
     pdf_unit_tests("28723805", "10.1038/nature23305")
 
 #   Get PDF URL.
-def get_pdf(ref): 
+def get_pdf_url(ref): 
     pdf_array = []
     for ident in ref.identifiers:
-        if ident["identifier_type"].lower() == "pmid" or ident["identifier_type"].lower() == "pubmed id" or ident["identifier_type"].lower() == "pubmed identifier":
+        if ident["identifier_type"].lower() in ["pmid", "pubmed", "pubmed id", "pubmed identifier"]:
+            
             src = FindIt(ident["identifier"])
             if src.url is None:
                 print(src.reason)
             elif src.url not in pdf_array:
                 pdf_array.append(src.url)
-        elif ident["identifier_type"].lower() == "doi" or ident["identifier_type"].lower() == "digital object id" or ident["identifier_type"].lower() == "digital object identifier":
+            
+        elif ident["identifier_type"].lower() in ["doi", "digital object id", "digital object identifier"]:
+            
             src = FindIt(doi=ident["identifier"])
             if src.url is None:
                 print(src.reason)
             elif src.url not in pdf_array:
                 pdf_array.append(src.url)
+            
     return pdf_array
 
 #   Extract information from PDF.
@@ -83,9 +86,13 @@ def pdf_references(pdf_url, return_type="dict"):
     else:
         print("The given return type, '%s', is not available... Returning a dictionary instead...")
         pdf_references(pdf_url, return_type="dict")
-        
+
+#   Download PDF from URL.
+def download_pdf(pdf_url, target_directory="../../data"):
+    urllib.request.urlretrieve(pdf_url, target_directory)
+    
 #   Download all reference PDFs.
-def pdf_reference_pdfs(pdf_url, target_directory="../../data")
+def pdf_reference_pdfs(pdf_url, target_directory="../../data"):
     pdf = pdfx.PDFx(pdf_url)
     pdf.download_pdfs(target_directory)
         
@@ -93,12 +100,14 @@ def pdf_reference_pdfs(pdf_url, target_directory="../../data")
 def pdf_unit_tests(pmid, doi):
     print("Getting PDF from PubMed ID (%s):" % pmid)
     pubmed_ref = gnomics.objects.reference.Reference(identifier = pmid, identifier_type = "PMID", language = None, source = "PubMed")
-    for pdf in get_pdf(pubmed_ref):
+    for pdf in get_pdf_url(pubmed_ref):
         print("- %s" % pdf)
+        
     print("Getting PDF from DOI (%s):" % doi)
     doi_ref = gnomics.objects.reference.Reference(identifier = doi, identifier_type = "DOI", language = None, source = "PubMed")
-    for pdf in get_pdf(doi_ref):
+    for pdf in get_pdf_url(doi_ref):
         print("- %s" % pdf)
+    
 
 #   MAIN
 if __name__ == "__main__": main()

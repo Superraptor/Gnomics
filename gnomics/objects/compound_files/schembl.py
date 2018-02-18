@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,10 +8,11 @@
 
 #
 #   IMPORT SOURCES:
+#       
 #
 
 #
-#   Get ChemSpider identifier.
+#   Get SCHEMBL identifier.
 #
 
 #   PRE-CODE
@@ -28,16 +31,19 @@ from gnomics.objects.user import User
 import gnomics.objects.compound
 
 #   Other imports.
+import timeit
 
 #   MAIN
 def main():
     schembl_unit_tests()
 
 #   Get SCHEMBL ID.
-def get_schembl_id(com, user = None):
-    for ident in com.identifiers:
-        if ident["identifier_type"].lower() == "schembl" or ident["identifier_type"].lower() == "schembl id" or ident["identifier_type"].lower() == "schembl identifier":
-            return ident["identifier"]
+def get_schembl_id(com, user=None):
+    schembl_array = []
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(com.identifiers, ["schembl", "schembl id", "schembl identifier"]):
+        if iden["identifier"] not in schembl_array:
+            schembl_array.append(iden["identifier"])
+    return schembl_array
 
 #   UNIT TESTS
 def schembl_unit_tests():

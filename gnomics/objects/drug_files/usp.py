@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,7 @@
 
 #
 #   IMPORT SOURCES:
+#
 #
 
 #
@@ -34,13 +37,13 @@ def main():
 #   Get USP.
 def get_usp(com):
     usp_array = []
-    for ident in com.identifiers:
-        if ident["identifier_type"].lower() == "usp":
-            usp_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(drug.identifiers, ["usp", "u.s. pharmacopeia", "united states pharmacopeia", "us pharmacopeia"]):
+        if iden["identifier"] not in usp_array:
+            usp_array.append(iden["identifier"])
     return usp_array
 
 #   UNIT TESTS
-def usp_unit_tests(chembl_id):
+def usp_unit_tests():
     print("NOT FUNCTIONAL.")
 
 #   MAIN

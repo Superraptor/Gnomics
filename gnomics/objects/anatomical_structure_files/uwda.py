@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -7,7 +9,7 @@
 #
 #   IMPORT SOURCES:
 #
-
+#
 
 #
 #   Get UWDA identifiers.
@@ -27,52 +29,44 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 #   Import modules.
 from gnomics.objects.user import User
 import gnomics.objects.anatomical_structure
+import gnomics.objects.auxiliary_files.identifier
+import gnomics.objects.auxiliary_files.umls
 
 #   Other imports.
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
-    uwda_unit_tests("21", "c8ec0cca-e10f-485b-bf82-ea0e07000f4f")
+    uwda_unit_tests("21", "")
 
 # Return UWDA ID.
-def get_uwda_id(anat, user = None, source = "umls"):
+def get_uwda_id(anat, user=None, source="umls"):
     
-    for iden in anat.identifiers:
-        if iden["identifier_type"].lower() == "neu id" or iden["identifier_type"].lower() == "neu identifier":
+    uwda_array = []
     
-            if source == "umls":
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(anat.identifiers, ["uwda", "uwda id", "uwda identifier"]):
+        if iden["identifier"] not in uwda_array:
+            uwda_array.append(iden["identifier"])
+            
+    if uwda_array:
+        return uwda_array
+    
+    ids_completed = []
+    
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(anat.identifiers, ["neu", "neu id", "neu identifier", "neuronames brain hierarchy id", "neuronames brain hierarchy identifier"]):
+        if iden["identifier"] not in ids_completed and source == "umls":
+            ids_completed.append(iden["identifier"])
+            
+            found_array = gnomics.objects.auxiliary_files.umls.umls_crosswalk(user, "NEU", "UWDA", iden["identifier"])
+            
+            for x in found_array:
+                if x not in uwda_array:
+                    uwda_array.append(x)
+                    gnomics.objects.anatomical_structure.AnatomicalStructure.add_identifier(anat, identifier=x, identifier_type="UWDA ID", language=None, source="UMLS Metathesaurus")
 
-                anat_array = []
-
-                umls_tgt = User.umls_tgt(user)
-                page_num = 0
-                base = "https://uts-ws.nlm.nih.gov/rest"
-                ext = "/crosswalk/current/source/NEU/" + iden["identifier"]
-
-                print(base+ext)
-
-                while True:
-                    tick = User.umls_st(umls_tgt)
-                    page_num += 1
-                    query = {"ticket": tick, "pageNumber": page_num}
-                    r = requests.get(base+ext, params=query)
-                    r.encoding = 'utf-8'
-                    items = json.loads(r.text)
-                    json_data = items["result"]
-                    for rep in json_data:
-                        if rep["ui"] not in anat_array and rep["ui"] != "NONE":
-
-                            # Digital Anatomist.
-                            if rep["rootSource"] == "UWDA":
-                                anat_array.append(rep["ui"])
-                                gnomics.objects.anatomical_structure.AnatomicalStructure.add_identifier(anat, identifier=rep["ui"], identifier_type="UWDA ID", language=None, source="UMLS Metathesaurus")
-
-                    if not json_data:
-                        break
-
-                return anat_array
+    return uwda_array
     
 #   UNIT TESTS
 def uwda_unit_tests(neu_id, umls_api_key):

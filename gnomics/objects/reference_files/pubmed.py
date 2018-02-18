@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,7 +8,8 @@
 
 #
 #   IMPORT SOURCES:
-#
+#       METAPUB
+#           https://pypi.python.org/pypi/metapub
 #
 
 #
@@ -26,9 +29,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 
 #   Import modules.
 from gnomics.objects.user import User
+import gnomics.objects.disease
+import gnomics.objects.pathway
 import gnomics.objects.reference
 
 #   Other imports.
+from metapub import FindIt
 import json
 import pdfx
 import re
@@ -45,14 +51,20 @@ def main():
 #   Get PMID.
 def get_pmid(ref): 
     pmid_array = []
-    for ident in ref.identifiers:
-        if ident["identifier_type"].lower() == "pmid" or ident["identifier_type"].lower() == "pubmed id" or ident["identifier_type"].lower() == "pubmed identifier":
-            pmid_array.append(ident["identifier"])
+    
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(ref.identifiers, ["pmid", "pubmed", "pubmed id", "pubmed identifier"]):
+        if iden["identifier"] not in pmid_array:
+            pmid_array.append(iden["identifier"])
+        
+    if pmid_array:
+        return pmid_array
+    
     for ident in ref.identifiers:   
-        if ident["identifier_type"].lower() == "chembl" or ident["identifier_type"].lower() == "chembl id" or ident["identifier_type"].lower() == "chembl identifier":
+        if ident["identifier_type"].lower() in ["chembl", "chembl document", "chembl document id", "chembl document identifier", "chembl id", "chembl identifier"]:
             for obj in gnomics.objects.reference.Reference.chembl_document(ref):
                 if "pubmed_id" in obj:
                     pmid_array.append(obj["pubmed_id"])
+            
     return pmid_array
         
 #   UNIT TESTS

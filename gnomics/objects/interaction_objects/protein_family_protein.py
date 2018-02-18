@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -43,21 +45,24 @@ def main():
 def get_proteins(prot_fam):
     prot_id_array = []
     prot_obj_array = []
+            
     for ident in prot_fam.identifiers:
-        if ident["identifier_type"].lower() == "panther id" or ident["identifier_type"].lower() == "panther identifier" or ident["identifier_type"].lower() == "ensembl id" or ident["identifier_type"].lower() == "ensembl identifier" or ident["identifier_type"].lower() == "ensembl family id" or ident["identifier_type"].lower() == "ensembl family identifier":
-            import requests, sys
+        if ident["identifier_type"].lower() in ["panther id", "panther identifier", "ensembl id", "ensembl identifier", "ensembl family id", "ensembl family identifier"]:
             server = "https://rest.ensembl.org"
             ext = "/family/id/" + str(ident["identifier"]) + "?"
             r = requests.get(server+ext, headers={ "Content-Type" : "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+
             decoded = r.json()
             for x in decoded["MEMBERS"]["UNIPROT_proteins"]:
                 if x["protein_stable_id"] not in prot_id_array:
                     temp_prot = gnomics.objects.protein.Protein(identifier = x["protein_stable_id"], identifier_type = "UniProt Accession", source = "Ensembl")
                     prot_id_array.append(x["protein_stable_id"])
                     prot_obj_array.append(temp_prot)
+            
     return prot_obj_array
     
 #   UNIT TESTS

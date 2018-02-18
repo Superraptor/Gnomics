@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -19,14 +21,31 @@ import faulthandler
 faulthandler.enable()
 
 #   IMPORTS
+
+#   Imports for recognizing modules.
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
+
+#   Import modules.
+from gnomics.objects.user import User
+import gnomics.objects.compound
+import gnomics.objects.disease
+import gnomics.objects.drug
+import gnomics.objects.pathway
+import gnomics.objects.phenotype
+
+#   Other imports.
 import clinical_trials
+import timeit
 
 #   Import sub-methods.
-from gnomics.objects.clinical_trial_files.nct import get_nct_id, get_nct_obj
+from gnomics.objects.clinical_trial_files.nct import get_nct_obj, get_nct_id
 from gnomics.objects.clinical_trial_files.search import search
 
 #   MAIN
 def main():
+    print("NOT FUNCTIONAL.")
     clinical_trial_unit_tests("NCT03270111")
 
 #   CLINICAL TRIAL CLASS
@@ -58,18 +77,18 @@ class ClinicalTrial:
     """
         
     # Initialize the clinical trial.
-    def __init__(self, identifier = None, identifier_type = None, language = None, source = None, name = None):
+    def __init__(self, identifier=None, identifier_type=None, language=None, source=None, name=None):
         
         # Initialize dictionary of identifiers.
-        self.identifiers = [
-            {
+        self.identifiers = []
+        if identifier is not None:
+            self.identifiers = [{
                 'identifier': str(identifier),
                 'language': language,
                 'identifier_type': identifier_type,
                 'source': source,
                 'name': name
-            }
-        ]
+            }]
         
         # Initialize dictionary of clinical trial objects.
         self.clinical_trial_objects = []
@@ -78,7 +97,7 @@ class ClinicalTrial:
         self.related_objects = []
         
     # Add an identifier to a clinical trial.
-    def add_identifier(clinical_trial, identifier = None, identifier_type = None, language = None, source = None, name = None):
+    def add_identifier(clinical_trial, identifier=None, identifier_type=None, language=None, source=None, name=None):
         clinical_trial.identifiers.append({
             'identifier': str(identifier),
             'language': language,
@@ -88,7 +107,7 @@ class ClinicalTrial:
         })
         
     # Add an object to a clinical trial.
-    def add_object(clinical_trial, obj = None, object_type = None):
+    def add_object(clinical_trial, obj=None, object_type=None):
         clinical_trial.clinical_trial_objects.append({
             'object': obj,
             'object_type': object_type
@@ -101,7 +120,7 @@ class ClinicalTrial:
     """
     
     # Return ClinicalTrials.gov Object.
-    def clinicaltrials_gov_obj(clinical_trial):
+    def clinicaltrials_gov_obj(clinical_trial, user=None):
         return get_nct_obj(clinical_trial) 
         
     """
@@ -112,17 +131,17 @@ class ClinicalTrial:
     """
     
     # Return all identifiers.
-    def all_identifiers(clinical_trial, user = None):
-        ClinicalTrial.nci_id(clinical_trial)
-        ClinicalTrial.nct_id(clinical_trial)
+    def all_identifiers(clinical_trial, user=None):
+        ClinicalTrial.nci_id(clinical_trial, user=user)
+        ClinicalTrial.nct_id(clinical_trial, user=user)
         return clinical_trial.identifiers
     
     # Return NCI ID.
-    def nci_id(clinical_trial):
+    def nci_id(clinical_trial, user=None):
         print("NOT FUNCTIONAL.")
     
     # Return NCT ID.
-    def nct_id(clinical_trial):
+    def nct_id(clinical_trial, user=None):
         return get_nct_id(clinical_trial)
     
     """
@@ -132,7 +151,7 @@ class ClinicalTrial:
     """
     
     # Return interaction objects.
-    def all_interaction_objects(clinical_trial, user = None):
+    def all_interaction_objects(clinical_trial, user=None):
         interaction_obj = {}
         return interaction_obj
     
@@ -157,156 +176,156 @@ class ClinicalTrial:
         Title
     """
     
-    def all_properties(clinical_trial, user = None):
+    def all_properties(clinical_trial, user=None):
         property_dict = {}
-        property_dict["Brief Summary"] = ClinicalTrial.brief_summary(clinical_trial)
-        property_dict["Brief Title"] = ClinicalTrial.brief_title(clinical_trial)
-        property_dict["Completion Date"] = ClinicalTrial.completion_date(clinical_trial)
-        property_dict["Country"] = ClinicalTrial.country(clinical_trial)
-        property_dict["Detailed Description"] = ClinicalTrial.detailed_description(clinical_trial)
-        property_dict["First Received Date"] = ClinicalTrial.first_received_date(clinical_trial)
-        property_dict["Official Title"] = ClinicalTrial.official_title(clinical_trial)
-        property_dict["Overall Status"] = ClinicalTrial.overall_status(clinical_trial)
-        property_dict["Phase"] = ClinicalTrial.phase(clinical_trial)
-        property_dict["Primary Completion Date"] = ClinicalTrial.primary_completion_date(clinical_trial)
-        property_dict["Start Date"] = ClinicalTrial.start_date(clinical_trial)
-        property_dict["Study Type"] = ClinicalTrial.study_type(clinical_trial)
-        property_dict["Status"] = ClinicalTrial.status(clinical_trial)
+        property_dict["Brief Summary"] = ClinicalTrial.brief_summary(clinical_trial, user=user)
+        property_dict["Brief Title"] = ClinicalTrial.brief_title(clinical_trial, user=user)
+        property_dict["Completion Date"] = ClinicalTrial.completion_date(clinical_trial, user=user)
+        property_dict["Country"] = ClinicalTrial.country(clinical_trial, user=user)
+        property_dict["Detailed Description"] = ClinicalTrial.detailed_description(clinical_trial, user=user)
+        property_dict["First Received Date"] = ClinicalTrial.first_received_date(clinical_trial, user=user)
+        property_dict["Official Title"] = ClinicalTrial.official_title(clinical_trial, user=user)
+        property_dict["Overall Status"] = ClinicalTrial.overall_status(clinical_trial, user=user)
+        property_dict["Phase"] = ClinicalTrial.phase(clinical_trial, user=user)
+        property_dict["Primary Completion Date"] = ClinicalTrial.primary_completion_date(clinical_trial, user=user)
+        property_dict["Start Date"] = ClinicalTrial.start_date(clinical_trial, user=user)
+        property_dict["Study Type"] = ClinicalTrial.study_type(clinical_trial, user=user)
+        property_dict["Status"] = ClinicalTrial.status(clinical_trial, user=user)
         return property_dict
     
     # Get brief summary.
-    def brief_summary(clinical_trial):
+    def brief_summary(clinical_trial, user=None):
         prop_array = []
         for obj in ClinicalTrial.clinicaltrials_gov_obj(clinical_trial):
             prop_array.extend(obj["brief_summary"])
         return prop_array
         
     # Get brief title.
-    def brief_title(clinical_trial):
+    def brief_title(clinical_trial, user=None):
         prop_array = []
         for obj in ClinicalTrial.clinicaltrials_gov_obj(clinical_trial):
             prop_array.extend(obj["brief_title"])
         return prop_array
     
     # Get trial completion date.
-    def completion_date(clinical_trial):
+    def completion_date(clinical_trial, user=None):
         prop_array = []
         for obj in ClinicalTrial.clinicaltrials_gov_obj(clinical_trial):
             prop_array.extend(obj["completion_date"])
         return prop_array
     
     # Get condition summary.
-    def condition_summary():
+    def condition_summary(clinical_trial, user=None):
         print("NOT FUNCTIONAL.")
     
     # Get country in which trial takes place.
-    def country(clinical_trial):
+    def country(clinical_trial, user=None):
         prop_array = []
         for obj in ClinicalTrial.clinicaltrials_gov_obj(clinical_trial):
             prop_array.extend(obj["country"])
         return prop_array
     
     # Get detailed description.
-    def detailed_description(clinical_trial):
+    def detailed_description(clinical_trial, user=None):
         prop_array = []
         for obj in ClinicalTrial.clinicaltrials_gov_obj(clinical_trial):
             prop_array.extend(obj["detailed_description"])
         return prop_array
     
     # Get date first received.
-    def first_received_date(clinical_trial):
+    def first_received_date(clinical_trial, user=None):
         prop_array = []
         for obj in ClinicalTrial.clinicaltrials_gov_obj(clinical_trial):
             prop_array.extend(obj["firstreceived_date"])
         return prop_array
     
     # Get intervention summary.
-    def intervention_summary():
+    def intervention_summary(clinical_trial, user=None):
         print("NOT FUNCTIONAL.")
         
     # Get date entry was last changed.
-    def last_changed():
+    def last_changed(clinical_trial, user=None):
         print("NOT FUNCTIONAL.")
         
     # Get date last update was posted for entry.
-    def last_update_posted():
+    def last_update_posted(clinical_trial, user=None):
         print("NOT FUNCTIONAL.")
         
     # Get date last update was submitted for entry.
-    def last_update_submitted():
+    def last_update_submitted(clinical_trial, user=None):
         print("NOT FUNCTIONAL.")
     
     # Get lead sponsor.
-    def lead_sponsor():
+    def lead_sponsor(clinical_trial, user=None):
         print("NOT FUNCTIONAL.")
     
     # Get official title.
-    def official_title(clinical_trial):
+    def official_title(clinical_trial, user=None):
         prop_array = []
         for obj in ClinicalTrial.clinicaltrials_gov_obj(clinical_trial):
             prop_array.extend(obj["official_title"])
         return prop_array
     
     # Get order.
-    def order():
+    def order(clinical_trial, user=None):
         print("NOT FUNCTIONAL.")
     
     # Get overall status.
-    def overall_status(clinical_trial):
+    def overall_status(clinical_trial, user=None):
         prop_array = []
         for obj in ClinicalTrial.clinicaltrials_gov_obj(clinical_trial):
             prop_array.extend(obj["overall_status"])
         return prop_array
     
     # Get trial phase.
-    def phase(clinical_trial):
+    def phase(clinical_trial, user=None):
         prop_array = []
         for obj in ClinicalTrial.clinicaltrials_gov_obj(clinical_trial):
             prop_array.extend(obj["phase"])
         return prop_array
     
     # Get primary completion date.
-    def primary_completion_date(clinical_trial):
+    def primary_completion_date(clinical_trial, user=None):
         prop_array = []
         for obj in ClinicalTrial.clinicaltrials_gov_obj(clinical_trial):
             prop_array.extend(obj["primary_completion_date"])
         return prop_array
         
     # Get procedure.
-    def procedure():
+    def procedure(clinical_trial, user=None):
         print("NOT FUNCTIONAL.")
     
     # Get clinical trial score.
-    def score():
+    def score(clinical_trial, user=None):
         print("NOT FUNCTIONAL.")
         
     # Get sponsors.
-    def sponsors():
+    def sponsors(clinical_trial, user=None):
         print("NOT FUNCTIONAL.")
         
     # Get trial start date.
-    def start_date(clinical_trial):
+    def start_date(clinical_trial, user=None):
         prop_array = []
         for obj in ClinicalTrial.clinicaltrials_gov_obj(clinical_trial):
             prop_array.extend(obj["start_date"])
         return prop_array
     
     # Get study type.
-    def study_type(clinical_trial):
+    def study_type(clinical_trial, user=None):
         prop_array = []
         for obj in ClinicalTrial.clinicaltrials_gov_obj(clinical_trial):
             prop_array.extend(obj["study_type"])
         return prop_array
         
     # Get clinical trial status.
-    def status(clinical_trial):
+    def status(clinical_trial, user=None):
         prop_array = []
         for obj in ClinicalTrial.clinicaltrials_gov_obj(clinical_trial):
             prop_array.extend(obj["status"])
         return prop_array
         
     # Get clinical trial title.
-    def title():
+    def title(clinical_trial, user=None):
         print("NOT FUNCTIONAL.")
     
     """
@@ -315,8 +334,14 @@ class ClinicalTrial:
         ClinicalTrials.gov URL
     """
     
+    # Return links.
+    def all_urls(clinical_trial, user=None):
+        url_dict = {}
+        url_dict["ClinicalTrials.gov"] = clinicaltrials_gov_url(clinical_trial, user=user)
+        return url_dict
+    
     # Get URL at ClinicalTrials.gov.
-    def clinicaltrials_gov_url(clinical_trial):
+    def clinicaltrials_gov_url(clinical_trial, user=None):
         prop_array = []
         for obj in ClinicalTrial.clinicaltrials_gov_obj(clinical_trial):
             prop_array.extend(obj["url"])
@@ -335,7 +360,27 @@ class ClinicalTrial:
 
 #   UNIT TESTS
 def clinical_trial_unit_tests(nct_id):
-    print("NOT FUNCTIONAL.")
+    nct_trial = ClinicalTrial(identifier = nct_id, identifier_type = "NCT ID", language = None, source = "ClinicalTrials.gov")
+    
+    # Get all identifiers.
+    print("Getting clinical trial identifiers from NCT ID (%s)..." % nct_id)
+    start = timeit.timeit()
+    results_array = ClinicalTrial.all_identifiers(nct_trial)
+    end = timeit.timeit()
+    print("\tTIME ELAPSED: %s seconds." % str(end - start))
+    print("\tRESULTS:")
+    for iden in results_array:
+        print("\t- %s: %s (%s)" % (iden["identifier_type"], str(iden["identifier"]).encode('ascii', 'ignore').decode(), iden["source"]))
+    
+    # Get all properties.
+    print("\nGetting clinical trial properties from NCT ID (%s)..." % nct_id)
+    start = timeit.timeit()
+    results_dict = ClinicalTrial.all_properties(nct_trial)
+    end = timeit.timeit()
+    print("\tTIME ELAPSED: %s seconds." % str(end - start))
+    print("\tRESULTS:")
+    for prop_type, prop in results_dict.items():
+        print("\t- %s: %s" % (prop_type, str(prop).encode('ascii', 'ignore').decode()))
 
 #   MAIN
 if __name__ == "__main__": main()

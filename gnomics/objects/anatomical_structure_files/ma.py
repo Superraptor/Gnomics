@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -7,7 +9,7 @@
 #
 #   IMPORT SOURCES:
 #
-
+#
 
 #
 #   MA ID.
@@ -27,21 +29,23 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 #   Import modules.
 from gnomics.objects.user import User
 import gnomics.objects.anatomical_structure
+import gnomics.objects.auxiliary_files.identifier
 
 #   Other imports.
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
     ma_unit_tests()
     
 # Return MA ID.
-def get_ma_id(anat):
+def get_ma_id(anat, user=None):
     ma_array = []
-    for ident in anat.identifiers:
-        if ident["identifier_type"].lower() == "ma id" or ident["identifier_type"].lower() == "ma identifier":
-            ma_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(anat.identifiers, ["ma", "ma id", "ma identifier"]):
+        if iden["identifier"] not in ma_array:
+            ma_array.append(iden["identifier"])
     return ma_array
     
 #   UNIT TESTS

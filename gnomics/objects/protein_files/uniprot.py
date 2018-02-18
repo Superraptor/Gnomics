@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -25,10 +27,11 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 
 #   Import modules.
-import gnomics.objects.protein
+import gnomics.objects.compound
 
 #   Other imports.
 import json
+import pubchempy as pubchem
 import requests
 import urllib.error
 import urllib.parse
@@ -42,24 +45,34 @@ def main():
 #   Get UniProt object.
 def get_uniprot_obj(prot):
     prot_obj_array = []
+    
     for prot_obj in prot.protein_objects:
         if 'object_type' in prot_obj:
-            if prot_obj['object_type'].lower() == 'uniprot object' or prot_obj['object_type'].lower() == 'uniprot':
-                return prot_obj['object']
+            if prot_obj['object_type'].lower() in ['uniprot object', 'uniprot']:
+                prot_obj_array.append(prot_obj['object'])
+    
     if prot_obj_array:
         return prot_obj_array
+    
     for uniprot_id in get_uniprot_kb_ac(prot):
+        
         # Download XML
         base = "http://www.uniprot.org/uniprot/"
         ext = uniprot_id + ".xml"
+
         r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
         if not r.ok:
             r.raise_for_status()
             sys.exit()
+        
         tree = ET.ElementTree(ET.fromstring(r.text))
+        
         # Parse XML into dictionary
         xml_result_obj = {}
+        
         root = tree.getroot()
+        
         for child in root:
             for subchild in child:
                 if subchild.tag == "{http://uniprot.org/uniprot}sequence":
@@ -179,6 +192,7 @@ def get_uniprot_obj(prot):
                     comment_dict["type"] = subchild.attrib["type"]
                     if "evidence" in subchild.attrib:
                         comment_dict["evidence"] = subchild.attrib["evidence"]
+                    
                     for infrachild in subchild:
                         if infrachild.tag == "{http://uniprot.org/uniprot}text":
                             if "evidence" in infrachild.attrib:
@@ -206,10 +220,13 @@ def get_uniprot_obj(prot):
                                     if "evidence" in subinfrachild.attrib:
                                         comment_dict["topology_evidence"] = subinfrachild.attrib["evidence"]
                                     comment_dict["topology"] = subinfrachild.text
+                    
                     if "comment" in xml_result_obj:
                         xml_result_obj["comment"].append(comment_dict)
                     else:
                         xml_result_obj["comment"] = [comment_dict]
+                        
+                    
                 for infrachild in subchild:
                     if subchild.tag == "{http://uniprot.org/uniprot}dbReference":
                         if "db_reference" in xml_result_obj:
@@ -247,6 +264,8 @@ def get_uniprot_obj(prot):
                                 xml_result_obj["gene_synonym"] = infrachild.text
                             elif infrachild.attrib["type"] == "ORF":
                                 xml_result_obj["gene_orf"] = infrachild.text
+
+
                     for subinfrachild in infrachild:
                         if infrachild.tag == "{http://uniprot.org/uniprot}lineage" and subinfrachild.tag == "{http://uniprot.org/uniprot}taxon":
                             if "lineage" in xml_result_obj:
@@ -279,30 +298,41 @@ def get_uniprot_obj(prot):
                                     'db_ref_type': subinfrachild.attrib["type"],
                                     'id': subinfrachild.attrib["id"]
                                 }]
-        prot.protein_objects.append(
-            {
-                'object': xml_result_obj,
-                'object_type': "UniProt"
-            }
-        )
+
+        prot.protein_objects.append({
+            'object': xml_result_obj,
+            'object_type': "UniProt"
+        })
         prot_obj_array.append(xml_result_obj)
+    
     return prot_obj_array
+    
+#   Get UniProtKB AC/ID (accession/identifier).
+def get_uniprot_kb_ac_id(prot):
+    print("NOT FUNCTIONAL.")
 
 #   Get UniProtKB AC (accession).
 def get_uniprot_kb_ac(prot):
     uniprot_array = []
+    
     for ident in prot.identifiers:
-        if ident["identifier_type"].lower() == "uniprotkb ac" or ident["identifier_type"].lower() == "acc" or ident["identifier_type"].lower() == "uniprot accession":
+        if ident["identifier_type"].lower() in ["acc", "uniprot ac", "uniprot acc", "uniprot accession", "uniprotkb ac", "uniprotkb acc", "uniprotkb accession"]:
             uniprot_array.append(ident["identifier"])
+            
+    if uniprot_array:
+        return uniprot_array
+            
     for ident in prot.identifiers:
-        if ident["identifier_type"].lower() == "uniprotkb ac+id":
+        if ident["identifier_type"].lower() in ["uniprotkb ac+id", "uniprotkb ac+identifier", "uniprotkb ac/id", "uniprotkb ac/identifier", "uniprotkb acc+id", "uniprotkb acc+identifier", "uniprotkb acc/id", "uniprotkb acc/identifier", "uniprotkb accession+id", "uniprotkb accession+identifier", "uniprotkb accession/id", "uniprotkb accession/identifier"]:
+    
             url = "http://www.uniprot.org/uploadlists/"
             params = {
                 "from": "ACC+ID",
                 "to": "ACC",
                 "format": "tab",
-                "query": ident["identifier"]
+                "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -310,6 +340,7 @@ def get_uniprot_kb_ac(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -317,14 +348,17 @@ def get_uniprot_kb_ac(prot):
             new_id = newline_sp[1].split("\t")[1].strip()
             if new_id not in uniprot_array:
                 uniprot_array.append(new_id)
-        elif ident["identifier_type"].lower() == "uniprotkb id" or ident["identifier_type"].lower() == "uniprotkb identifier" or ident["identifier_type"].lower() == "uniprot id" or ident["identifier_type"].lower() == "uniprot identifier":
+            
+        elif ident["identifier_type"].lower() in ["uniprotkb id", "uniprotkb identifier", "uniprot id", "uniprot identifier"]:
+    
             url = "http://www.uniprot.org/uploadlists/"
             params = {
                 "from": "ID",
                 "to": "ACC",
                 "format": "tab",
-                "query": ident["identifier"]
+                "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -332,6 +366,7 @@ def get_uniprot_kb_ac(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[3].strip()
             id_to = newline_sp[0].split("\t")[2].strip()
@@ -339,14 +374,17 @@ def get_uniprot_kb_ac(prot):
             new_id = newline_sp[1].split("\t")[2].strip()
             if new_id not in uniprot_array:
                 uniprot_array.append(new_id)
-        elif ident["identifier_type"].lower() == "uniparc" or ident["identifier_type"].lower() == "uparc":
+            
+        elif ident["identifier_type"].lower() in ["uniparc", "uniparc id", "uniparc identifier", "uparc", "uparc id", "uparc identifier", "upi"]:
+    
             url = "http://www.uniprot.org/uploadlists/"
             params = {
                 "from": "UPARC",
                 "to": "ACC",
                 "format": "tab",
-                "query": ident["identifier"]
+                "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -354,6 +392,7 @@ def get_uniprot_kb_ac(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -361,14 +400,17 @@ def get_uniprot_kb_ac(prot):
             new_id = newline_sp[1].split("\t")[1].strip()
             if new_id not in uniprot_array:
                 uniprot_array.append(new_id)
-        elif ident["identifier_type"].lower() == "uniref50" or ident["identifier_type"].lower() == "nf50":
+                
+        elif ident["identifier_type"].lower() in ["nf50", "nf50 id", "nf50 identifier", "uniref50", "uniref50 id", "uniref50 identifier"]:
+    
             url = "http://www.uniprot.org/uploadlists/"
             params = {
                 "from": "NF50",
                 "to": "ACC",
                 "format": "tab",
-                "query": ident["identifier"]
+                "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -376,6 +418,7 @@ def get_uniprot_kb_ac(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -383,14 +426,17 @@ def get_uniprot_kb_ac(prot):
             new_id = newline_sp[1].split("\t")[1].strip()
             if new_id not in uniprot_array:
                 uniprot_array.append(new_id)
-        elif ident["identifier_type"].lower() == "uniref90" or ident["identifier_type"].lower() == "nf90":
+            
+        elif ident["identifier_type"].lower() in ["nf90", "nf90 id", "nf90 identifier", "uniref90", "uniref90 id", "uniref90 identifier"]:
+    
             url = "http://www.uniprot.org/uploadlists/"
             params = {
                 "from": "NF90",
                 "to": "ACC",
                 "format": "tab",
-                "query": ident["identifier"]
+                "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -398,6 +444,7 @@ def get_uniprot_kb_ac(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -405,14 +452,17 @@ def get_uniprot_kb_ac(prot):
             new_id = newline_sp[1].split("\t")[1].strip()
             if new_id not in uniprot_array:
                 uniprot_array.append(new_id)
-        elif ident["identifier_type"].lower() == "uniref100" or ident["identifier_type"].lower() == "nf100":
+            
+        elif ident["identifier_type"].lower() in ["nf100", "nf100 id", "nf100 identifier", "uniref100", "uniref100 id", "uniref100 identifier"]:
+    
             url = "http://www.uniprot.org/uploadlists/"
             params = {
                 "from": "NF100",
                 "to": "ACC",
                 "format": "tab",
-                "query": ident["identifier"]
+                "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -420,6 +470,7 @@ def get_uniprot_kb_ac(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -427,14 +478,17 @@ def get_uniprot_kb_ac(prot):
             new_id = newline_sp[1].split("\t")[1].strip()
             if new_id not in uniprot_array:
                 uniprot_array.append(new_id)
-        elif ident["identifier_type"].lower() == "crc64":
+            
+        elif ident["identifier_type"].lower() in ["crc64", "crc64 checksum", "crc64 checksum value"]:
+    
             url = "http://www.uniprot.org/uploadlists/"
             params = {
                 "from": "CRC64",
                 "to": "ACC",
                 "format": "tab",
-                "query": ident["identifier"]
+                "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -442,6 +496,7 @@ def get_uniprot_kb_ac(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -449,16 +504,20 @@ def get_uniprot_kb_ac(prot):
             new_id = newline_sp[1].split("\t")[1].strip()
             if new_id not in uniprot_array:
                 uniprot_array.append(new_id)
+            
     return uniprot_array
     
 #   Get UniProtKB ID (identifier).
 def get_uniprot_kb_id(prot):
     uniprot_array = []
+    
     for ident in prot.identifiers:
         if ident["identifier_type"].lower() == "uniprotkb ac" or ident["identifier_type"].lower() == "acc":
             uniprot_array.append(ident["identifier"])
+            
     for ident in prot.identifiers:
         if ident["identifier_type"].lower() == "uniprotkb ac+id":
+    
             url = "http://www.uniprot.org/uploadlists/"
             params = {
                 "from": "ACC+ID",
@@ -466,6 +525,7 @@ def get_uniprot_kb_id(prot):
                 "format": "tab",
                 "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -473,6 +533,7 @@ def get_uniprot_kb_id(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -480,14 +541,17 @@ def get_uniprot_kb_id(prot):
             new_id = newline_sp[1].split("\t")[1].strip()
             if new_id not in uniprot_array:
                 uniprot_array.append(new_id)
+            
         elif ident["identifier_type"].lower() == "uniprotkb ac" or ident["identifier_type"].lower() == "uniprotkb acc" or ident["identifier_type"].lower() == "uniprotkb accession" or ident["identifier_type"].lower() == "uniprot accession":
+    
             url = "http://www.uniprot.org/uploadlists/"
             params = {
                 "from": "ACC",
                 "to": "ID",
                 "format": "tab",
-                "query": ident["identifier"]
+                "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -495,6 +559,7 @@ def get_uniprot_kb_id(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -502,6 +567,7 @@ def get_uniprot_kb_id(prot):
             new_id = newline_sp[1].split("\t")[1].strip()
             if new_id not in uniprot_array:
                 uniprot_array.append(new_id)
+            
     return uniprot_array
 
 #   UNIT TESTS
@@ -510,6 +576,7 @@ def uniprot_unit_tests(uniprot_kb_ac_id, uniprot_kb_ac, uniprot_kb_id):
     print("Getting UniProtKB ID from UniProtKB accession (%s):" % uniprot_kb_ac)
     for iden in get_uniprot_kb_id(uniprot_kb_ac_prot):
         print("- " + str(iden))
+    
     uniprot_kb_id_prot = gnomics.objects.protein.Protein(identifier = uniprot_kb_id, language = None, identifier_type = "UniProt identifier", source = "UniProt", taxon = "Homo sapiens")
     print("\nGetting UniProtKB accession from UniProtKB identifier (%s):" % uniprot_kb_id)
     for iden in get_uniprot_kb_ac(uniprot_kb_id_prot):

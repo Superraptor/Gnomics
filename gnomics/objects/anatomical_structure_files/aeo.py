@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -7,7 +9,7 @@
 #
 #   IMPORT SOURCES:
 #
-
+#
 
 #
 #   Anatomical Entity Ontology (AEO).
@@ -27,21 +29,23 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 #   Import modules.
 from gnomics.objects.user import User
 import gnomics.objects.anatomical_structure
+import gnomics.objects.auxiliary_files.identifier
 
 #   Other imports.
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
     aeo_unit_tests()
     
 # Return AEO ID.
-def get_aeo_id(anat, user = None):
+def get_aeo_id(anat, user=None):
     aeo_array = []
-    for ident in anat.identifiers:
-        if ident["identifier_type"].lower() == "aeo id" or ident["identifier_type"].lower() == "aeo identifier":
-            aeo_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(anat.identifiers, ["aeo", "aeo id", "aeo identifier", "anatomical entity ontology id", "anatomical entity ontology identifier"]):
+        if iden["identifier"] not in aeo_array:
+            aeo_array.append(iden["identifier"])
     return aeo_array
     
 #   UNIT TESTS

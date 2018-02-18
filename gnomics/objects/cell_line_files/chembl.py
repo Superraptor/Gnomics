@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,8 +8,7 @@
 
 #
 #   IMPORT SOURCES:
-#       CHEMBL
-#           https://github.com/chembl/chembl_webresource_client
+#
 #
 
 #
@@ -44,38 +45,46 @@ def get_chembl_obj(cell_line):
         if 'object_type' in chembl_obj:
             if chembl_obj['object_type'].lower() == 'chembl object' or chembl_obj['object_type'].lower() == 'chembl':
                 chembl_obj_array.append(chembl_obj['object'])
+    
     if chembl_obj_array:
         return chembl_obj_array
+    
     for chembl_id in get_chembl_id(cell_line):
         temp_cell_line = new_client.cell_line
         res = temp_cell_line.filter(chembl_id = chembl_id)
-        cell_line.cell_line_objects.append(
-            {
-                'object': res,
-                'object_type': "ChEMBL Object"
-            }
-        )
+        cell_line.cell_line_objects.append({
+            'object': res,
+            'object_type': "ChEMBL Object"
+        })
         chembl_obj_array.append(res)
+        
     return chembl_obj_array
 
 #   Get ChEMBL ID.
 def get_chembl_id(cell_line):
     chembl_array = []
-    for ident in cell_line.identifiers:
-        if ident["identifier_type"].lower() == "chembl" or ident["identifier_type"].lower() == "chembl id" or ident["identifier_type"].lower() == "chembl identifier":
-            chembl_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(cell_line.identifiers, ["chembl", "chembl id", "chembl identifier", "cell chembl id", "cell chembl identifier"]):
+        if iden["identifier"] not in chembl_array:
+            chembl_array.append(iden["identifier"])
+            
     if chembl_array:
         return chembl_array
-    for ident in cell_line.identifiers:
-        if ident["identifier_type"].lower() == "cellosaurus" or ident["identifier_type"].lower() == "cellosaurus id" or ident["identifier_type"].lower() == "cellosaurus identifier":
+    
+    ids_completed = []
+    
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(cell_line.identifiers, ["cellosaurus", "cellosaurus id", "cellosaurus identifier"]):
+        if iden["identifier"] not in ids_completed:
+            ids_completed.append(iden["identifier"])
             for cello_obj in gnomics.objects.cell_line.CellLine.cellosaurus_obj(cell_line):
                 chembl_array.append(cello_obj["cell_chembl_id"])
+            
     return chembl_array
 
 #   UNIT TESTS
 def chembl_unit_tests(chembl_id, cellosaurus_id):
     chembl_cell_line = gnomics.objects.cell_line.CellLine(identifier = chembl_id, identifier_type = "ChEMBL ID", language = None, source = "ChEMBL")
     get_chembl_obj(chembl_cell_line)
+    
     cello_cell_line = gnomics.objects.cell_line.CellLine(identifier = str(cellosaurus_id), identifier_type = "Cellosaurus ID", source = "ChEMBL")
     print("Getting ChEMBL ID from Cellosaurus ID (%s):" % cellosaurus_id)
     for cl in get_chembl_id(cello_cell_line):

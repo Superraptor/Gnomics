@@ -1,6 +1,13 @@
+#!/usr/bin/env python
+
 #
 #
 #
+#
+#
+
+#
+#   IMPORT SOURCES:
 #
 #
 
@@ -23,16 +30,24 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 from gnomics.objects.user import User
 import gnomics.objects.compound
 
+#   Other imports.
+import timeit
+
+#   Import sub-methods.
+
 #   MAIN
 def main():
-    print("NOT FUNCTIONAL.")
+    patent_unit_tests()
 
 #   PATENT CLASS
 class Patent:
     """
         Patent class
         
-        
+        A patent is a set of exclusive rights granted by a
+        sovereign state to an inventor or assignee for a 
+        limited period of time in exchange for detailed 
+        public disclosure of an invention.
     """
     
     """
@@ -50,24 +65,24 @@ class Patent:
                           essentially, a short citation.
     """
     
-    def __init__(self, identifier = None, identifier_type = None, language = None, source = None, name = None):
+    def __init__(self, identifier=None, identifier_type=None, language=None, source=None, name=None):
         
         # Initialize dictionary of identifiers.
-        self.identifiers = [
-            {
+        self.identifiers = []
+        if identifier is not None:
+            self.identifiers = [{
                 'identifier': str(identifier),
                 'language': language,
                 'identifier_type': identifier_type,
                 'source': source,
                 'name': name
-            }
-        ]
+            }]
         
         # Initialize dictionary of patent objects.
         self.patent_objects = []
         
     # Add an identifier to a patent.
-    def add_identifier(patent, identifier = None, identifier_type = None, language = None, source = None, name = None):
+    def add_identifier(patent, identifier=None, identifier_type=None, language=None, source=None, name=None):
         patent.identifiers.append({
             'identifier': str(identifier),
             'language': language,
@@ -90,12 +105,12 @@ class Patent:
     """
     
     # Return all identifiers.
-    def all_identifiers(patent, user = None):
-        Patent.patent_id(patent)
+    def all_identifiers(patent, user=None):
+        Patent.patent_id(patent, user=user)
         return patent.identifiers
     
     # Returns Patent ID.
-    def patent_id(patent):
+    def patent_id(patent, user=None):
         return get_patent_id(patent)
     
     """
@@ -110,7 +125,7 @@ class Patent:
         
     """
     
-    def all_properties(molecular_function, user = None):
+    def all_properties(patent, user=None):
         property_dict = {}
         return property_dict
     
@@ -119,7 +134,10 @@ class Patent:
         
     """
     
-    
+    # Return links.
+    def all_urls(patent, user=None):
+        url_dict = {}
+        return url_dict
     
     """
         Auxiliary functions
@@ -137,6 +155,8 @@ class Patent:
     """
         
 #   UNIT TESTS
+def patent_unit_tests():
+    print("NOT FUNCTIONAL.")
 
 #   MAIN
 if __name__ == "__main__": main()

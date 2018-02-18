@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -9,7 +11,6 @@
 #       CLINICAL_TRIALS
 #           https://pypi.python.org/pypi/clinical_trials/1.1
 #
-
 
 #
 #   Search for clinical trials.
@@ -31,9 +32,11 @@ from gnomics.objects.user import User
 import gnomics.objects.clinical_trial
 
 #   Other imports.
+from bioservices import *
 import clinical_trials
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
@@ -53,6 +56,7 @@ def main():
 #   - Download
 def search(query=None, condition=None, count=None, intervention=None, recruiting=None, sponsor=None, output_format=None, state=None, country=None, download=None, size=None, from_result=None, include=None, exclude=None, fulltext=None, org_name_fulltext=None, trialids=None, nci_id=None, nct_id=None, protocol_id=None, ccr_id=None, ctep_id=None, dcp_id=None, current_trial_status=None, phase=None, study_protocol_type=None, brief_title=None, brief_summary=None, official_title=None, primary_purpose_code=None, accepts_healthy_volunteers_indicator=None, acronym=None, amendment_date=None, anatomic_sites=None, arm_description=None, arm_name=None, arm_type=None, intervention_code=None, intervention_description=None, intervention_type=None, intervention_synonyms=None, study_id=None, study_id_type=None, gender=None, max_age_in_years_lte=None, max_age_in_years_gte=None, min_age_in_years_lte=None, min_age_in_years_gte=None, min_age_unit=None, max_age_unit=None, max_age_number_lte=None, max_age_number_gte=None, min_age_number_lte=None, min_age_number_gte=None, current_trial_status_date_lte=None, current_trial_status_date_gte=None, record_verification_date_lte=None, record_vertification_date_gte=None, org_coordinates_lat=None, org_coordinates_lon=None, contact_email=None, contact_name=None, contact_phone=None, generic_contact=None, org_address_line_1=None, org_address_line_2=None, org_city=None, org_postal_code=None, org_state_or_province=None, org_country=None, org_email=None, org_family=None, org_fax=None, org_name=None, org_phone=None, org_status=None, org_status_date=None, org_to_family_relationship=None, org_tty=None, recruitment_status=None, recruitment_status_date=None, source="ClinicalTrials.gov"):
     search_results = []
+    
     if source == "ClinicalTrials.gov":
         t = clinical_trials.Trials()
         if query:
@@ -85,6 +89,7 @@ def search(query=None, condition=None, count=None, intervention=None, recruiting
                         print("Currently, this function can only support up to 3 states.")
                 else:
                     return t.search(query, state=state)
+                
                 return t.search(query, state=state)
             elif country:
                 if type(country) is list:
@@ -104,8 +109,11 @@ def search(query=None, condition=None, count=None, intervention=None, recruiting
                     for study in res["search_results"]["clinical_study"]:
                         temp_study = gnomics.objects.clinical_trial.ClinicalTrial(identifier=study["nct_id"], identifier_type="NCT ID", language=None, source="ClinicalTrials.gov", name=study["title"])
                         gnomics.objects.clinical_trial.ClinicalTrial.add_object(temp_study, obj=study, object_type="ClinicalTrials.gov")
+
                         search_results.append(temp_study)
+                
                 return search_results
+                    
         elif condition:
             return t.search(condition=condition)
         elif intervention:
@@ -113,8 +121,10 @@ def search(query=None, condition=None, count=None, intervention=None, recruiting
         else:
             print("No correct parameters were provided. Ending search.")
             return []
+    
     elif source == "NCI Clinical Trials":
         print("NOT FUNCTIONAL.")
+    
     else:
         print("The source provided does not have a search option.")
         print("Searching using ClinicalTrials.gov instead...")
@@ -122,7 +132,11 @@ def search(query=None, condition=None, count=None, intervention=None, recruiting
             
 #   UNIT TESTS
 def search_unit_tests(query):
+    start = timeit.timeit()
     query_result = search(query=query)
+    end = timeit.timeit()
+    print("TIME ELAPSED: %s seconds." % str(end - start))
+    
     for res in query_result:
         for ident in res.identifiers:
             if ident["identifier_type"] == "NCT ID":

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -26,11 +28,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 
 #   Import modules.
 import gnomics.objects.drug
-import gnomics.objects.protein
 
 #   Other imports.
 import json
+import pubchempy as pubchem
 import requests
+import timeit
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -43,8 +46,10 @@ def main():
 def get_drugs(prot):
     drug_id_array = []
     drug_obj_array = []
+            
     for ident in prot.identifiers:
-        if ident["identifier_type"].lower() == "uniprotkb id" or ident["identifier_type"].lower() == "uniprotkb identifier" or ident["identifier_type"].lower() == "uniprot id" or ident["identifier_type"].lower() == "uniprot identifier":
+        if ident["identifier_type"].lower() in ["uniprotkb id", "uniprotkb identifier", "uniprot id", "uniprot identifier"]:
+    
             # DrugBank
             url = "http://www.uniprot.org/uploadlists/"
             params = {
@@ -53,6 +58,7 @@ def get_drugs(prot):
                 "format": "tab",
                 "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -60,6 +66,7 @@ def get_drugs(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -71,6 +78,7 @@ def get_drugs(prot):
                         drug_id_array.append(new_id)
                         temp_drug = gnomics.objects.drug.Drug(identifier = new_id, identifier_type = "DrugBank ID", source = "UniProt")
                         drug_obj_array.append(temp_drug)
+            
             # GuidetoPHARMACOLOGY
             url = "http://www.uniprot.org/uploadlists/"
             params = {
@@ -79,6 +87,7 @@ def get_drugs(prot):
                 "format": "tab",
                 "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -86,6 +95,7 @@ def get_drugs(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -97,7 +107,9 @@ def get_drugs(prot):
                         drug_id_array.append(new_id)
                         temp_drug = gnomics.objects.drug.Drug(identifier = new_id, identifier_type = "GuidetoPHARMACOLOGY ID", source = "UniProt")
                         drug_obj_array.append(temp_drug)
-        elif ident["identifier_type"].lower() == "uniprotkb ac" or ident["identifier_type"].lower() == "uniprotkb acc" or ident["identifier_type"].lower() == "uniprotkb accession" or ident["identifier_type"].lower() == "uniprot accession":
+            
+        elif ident["identifier_type"].lower() in ["uniprotkb ac", "uniprotkb acc", "uniprotkb accession", "uniprot accession"]:
+    
             # DrugBank
             url = "http://www.uniprot.org/uploadlists/"
             params = {
@@ -106,6 +118,7 @@ def get_drugs(prot):
                 "format": "tab",
                 "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -113,6 +126,7 @@ def get_drugs(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -124,6 +138,7 @@ def get_drugs(prot):
                         drug_id_array.append(new_id)
                         temp_drug = gnomics.objects.drug.Drug(identifier = new_id, identifier_type = "DrugBank ID", source = "UniProt")
                         drug_obj_array.append(temp_drug)
+                        
             # GuidetoPHARMACOLOGY
             url = "http://www.uniprot.org/uploadlists/"
             params = {
@@ -132,6 +147,7 @@ def get_drugs(prot):
                 "format": "tab",
                 "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -139,6 +155,7 @@ def get_drugs(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -150,6 +167,7 @@ def get_drugs(prot):
                         drug_id_array.append(new_id)
                         temp_drug = gnomics.objects.drug.Drug(identifier = new_id, identifier_type = "GuidetoPHARMACOLOGY ID", source = "UniProt")
                         drug_obj_array.append(temp_drug)
+            
     return drug_obj_array
     
 #   UNIT TESTS
@@ -159,6 +177,7 @@ def protein_drug_unit_tests(uniprot_kb_ac, uniprot_kb_id):
     for obj in get_drugs(uniprot_kb_ac_prot):
         for iden in obj.identifiers:
             print("- %s (%s)" % (str(iden["identifier"]), iden["identifier_type"]))
+    
     uniprot_kb_id_prot = gnomics.objects.protein.Protein(identifier = uniprot_kb_id, language = None, identifier_type = "UniProt identifier", source = "UniProt", taxon = "Homo sapiens")
     print("\nGetting drugs from UniProtKB identifier (%s):" % uniprot_kb_id)
     for obj in get_drugs(uniprot_kb_id_prot):

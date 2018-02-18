@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,7 @@
 
 #
 #   IMPORT SOURCES:
+#
 #
 
 #
@@ -34,9 +37,9 @@ def main():
 #   Get USAN.
 def get_usan(drug):
     usan_array = []
-    for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "usan":
-            usan_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(drug.identifiers, ["usan", "us adopted name", "u.s. adopted name", "united states adopted name"]):
+        if iden["identifier"] not in usan_array:
+            usan_array.append(iden["identifier"])
     return usan_array
 
 #   UNIT TESTS

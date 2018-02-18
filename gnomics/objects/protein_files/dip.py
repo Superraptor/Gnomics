@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -25,10 +27,11 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 
 #   Import modules.
-import gnomics.objects.protein
+import gnomics.objects.compound
 
 #   Other imports.
 import json
+import pubchempy as pubchem
 import requests
 import urllib.error
 import urllib.parse
@@ -41,11 +44,17 @@ def main():
 #   Get DIP ID.
 def get_dip_id(prot):
     dip_array = []
+    
     for ident in prot.identifiers:
-        if ident["identifier_type"].lower() == "mint" or ident["identifier_type"].lower() == "mint identifier" or ident["identifier_type"].lower() == "mint id":
+        if ident["identifier_type"].lower() in ["dip", "dip id", "dip identifier"]:
             dip_array.append(ident["identifier"])
+            
+    if dip_array:
+        return dip_array
+            
     for ident in prot.identifiers:
-        if ident["identifier_type"].lower() == "uniprotkb id" or ident["identifier_type"].lower() == "uniprotkb identifier" or ident["identifier_type"].lower() == "uniprot id" or ident["identifier_type"].lower() == "uniprot identifier":
+        if ident["identifier_type"].lower() in ["uniprotkb id", "uniprotkb identifier", "uniprot id", "uniprot identifier"]:
+    
             url = "http://www.uniprot.org/uploadlists/"
             params = {
                 "from": "ID",
@@ -53,6 +62,7 @@ def get_dip_id(prot):
                 "format": "tab",
                 "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -60,6 +70,7 @@ def get_dip_id(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -67,7 +78,9 @@ def get_dip_id(prot):
             new_id = newline_sp[1].split("\t")[1].strip()
             if new_id not in dip_array:
                 dip_array.append(new_id)
-        elif ident["identifier_type"].lower() == "uniprotkb ac" or ident["identifier_type"].lower() == "uniprotkb acc" or ident["identifier_type"].lower() == "uniprotkb accession" or ident["identifier_type"].lower() == "uniprot accession":
+            
+        elif ident["identifier_type"].lower() in ["acc", "uniprot ac", "uniprot acc", "uniprot accession", "uniprotkb ac", "uniprotkb acc", "uniprotkb accession"]:
+    
             url = "http://www.uniprot.org/uploadlists/"
             params = {
                 "from": "ACC",
@@ -75,6 +88,7 @@ def get_dip_id(prot):
                 "format": "tab",
                 "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -82,6 +96,7 @@ def get_dip_id(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -89,6 +104,7 @@ def get_dip_id(prot):
             new_id = newline_sp[1].split("\t")[1].strip()
             if new_id not in dip_array:
                 dip_array.append(new_id)
+            
     return dip_array
     
 #   UNIT TESTS
@@ -97,6 +113,7 @@ def dip_unit_tests(uniprot_kb_ac, uniprot_kb_id):
     print("Getting DIP ID from UniProtKB accession (%s):" % uniprot_kb_ac)
     for iden in get_dip_id(uniprot_kb_ac_prot):
         print("- " + str(iden))
+    
     uniprot_kb_id_prot = gnomics.objects.protein.Protein(identifier = uniprot_kb_id, language = None, identifier_type = "UniProt identifier", source = "UniProt", taxon = "Homo sapiens")
     print("\nGetting DIP ID from UniProtKB identifier (%s):" % uniprot_kb_id)
     for iden in get_dip_id(uniprot_kb_id_prot):

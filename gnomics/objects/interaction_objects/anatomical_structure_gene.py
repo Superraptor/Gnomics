@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,7 @@
 
 #
 #   IMPORT SOURCES:
+#
 #
 
 #
@@ -31,61 +34,104 @@ import gnomics.objects.gene
 #   Other imports.
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
-    anatomical_structure_gene_unit_tests("UBERON_0003097")
+    anatomical_structure_gene_unit_tests("UBERON_0003097", "UBERON_0002389")
      
 #   Get genes affecting entity phenotype.
-def get_genes_affecting_phenotype_of(anatomical_structure):
+def get_genes_affecting_phenotype_of(anatomical_structure, user=None):
+    
     gene_array = []
-    for ident in anatomical_structure.identifiers:
-        if ident["identifier_type"].lower() == "uberon" or ident["identifier_type"].lower() == "uberon identifier" or ident["identifier_type"].lower() == "uberon id":
+    
+    ids_completed = []
+    
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(anatomical_structure.identifiers, ["uberon", "uberon id", "uberon identifier"]):
+        if iden["identifier"] not in ids_completed:
+            ids_completed.append(iden["identifier"])
+            
+            proc_id = iden["identifier"]
+            if ":" in proc_id:
+                proc_id = proc_id.replace(":", "_")
+                
             base = "http://kb.phenoscape.org/api/gene/"
-            ext = "affecting_entity_phenotype?iri=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2F" + ident["identifier"]
+            ext = "affecting_entity_phenotype?iri=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2F" + str(proc_id) + "&limit=100"
+
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
-                r.raise_for_status()
-                sys.exit()
-            decoded = json.loads(r.text)
-            for result in decoded["results"]:
-                gene_name = result["label"]
-                gene_taxon = result["taxon"]["label"]
-                if "zfin" in result["@id"]:
-                    zfin_id = result["@id"].split("http://zfin.org/")[1]
-                    temp_gene = gnomics.objects.gene.Gene(identifier = zfin_id, identifier_type = "ZFIN ID", source = "Phenoscape Knowledgebase", taxon = gene_taxon)
-                    gene_array.append(temp_gene)
+                print("It appears something went wrong.")
+            else:
+
+                decoded = json.loads(r.text)
+
+                for result in decoded["results"]:
+                    gene_name = result["label"]
+                    gene_taxon = result["taxon"]["label"]
+
+                    if "zfin" in result["@id"]:
+                        zfin_id = result["@id"].split("http://zfin.org/")[1]
+                        temp_gene = gnomics.objects.gene.Gene(identifier = zfin_id, identifier_type = "ZFIN ID", source = "Phenoscape Knowledgebase", taxon = gene_taxon)
+                        gene_array.append(temp_gene)
+            
     return gene_array
 
 #   Get genes expressed within entity.
-def get_genes_expressed_within(anatomical_structure):
+def get_genes_expressed_within(anatomical_structure, user=None):
     gene_array = []
-    for ident in anatomical_structure.identifiers:
-        if ident["identifier_type"].lower() == "uberon" or ident["identifier_type"].lower() == "uberon identifier" or ident["identifier_type"].lower() == "uberon id":
-            base = "http://kb.phenoscape.org/api/taxon/"
-            ext = "with_phenotype?entity=%3Chttp%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FBFO_0000050%3E%20some%20%3Chttp%3A%2F%2Fpurl.obolibrary.org%2Fobo%2F" + ident["identifier"] + "%3E&quality=%3Chttp%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FPATO_0000052%3E&parts=false&limit=20&offset=0&total=false"
+    
+    ids_completed = []
+    
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(anatomical_structure.identifiers, ["uberon", "uberon id", "uberon identifier"]):
+        if iden["identifier"] not in ids_completed:
+            ids_completed.append(iden["identifier"])
+            
+            proc_id = iden["identifier"]
+            if ":" in proc_id:
+                proc_id = proc_id.replace(":", "_")
+            
+            base = "http://kb.phenoscape.org/api/gene/"
+            ext = "expressed_within_entity?iri=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2F" + str(proc_id) + "&limit=0"
+
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
-                r.raise_for_status()
-                sys.exit()
-            decoded = json.loads(r.text)
-            for result in decoded["results"]:
-                vto_id = result["@id"].split("/obo/")[1]
-                sci_name = result["label"]
-                temp_taxon = gnomics.objects.taxon.Taxon(identifier = vto_id, identifier_type = "VTO ID", source = "Phenoscape Knowledgebase")
-                gnomics.objects.taxon.Taxon.add_identifier(temp_taxon, identifier = sci_name, identifier_type = "Scientific Name", language = "la", source = "Phenoscape Knowledgebase")
-                taxa_array.append(temp_taxon)
+                print("It appears something went wrong.")
+            else:
+
+                decoded = json.loads(r.text)
+
+                for result in decoded["results"]:
+
+                    if "/marker/" in result["@id"]:
+                        mousemine_primary_gene_id = result["@id"].split("/marker/")[1]
+
+                        temp_gene = gnomics.objects.gene.Gene(identifier=mousemine_primary_gene_id, identifier_type="MouseMine Primary Gene ID", language=None, name=result["label"], taxon=result["taxon"]["label"])
+
+                        gene_array.append(temp_gene)
+            
     return gene_array
     
 #   UNIT TESTS
-def anatomical_structure_gene_unit_tests(uberon_id):
-    uberon_anat = gnomics.objects.tissue.Tissue(identifier = uberon_id, identifier_type = "UBERON ID", source = "Phenoscape Knowledgebase")
-    print("\nGetting gene identifiers which affect UBERON identifier (%s) entity phenotypes:" % uberon_id)
-    for gene in get_genes_affecting_phenotype_of(uberon_anat):
+def anatomical_structure_gene_unit_tests(uberon_id_1, uberon_id_2):
+    uberon_anat = gnomics.objects.tissue.Tissue(identifier = uberon_id_1, identifier_type = "UBERON ID", source = "Phenoscape Knowledgebase")
+    print("\nGetting gene identifiers which affect UBERON identifier (%s) entity phenotypes:" % uberon_id_1)
+    start = timeit.timeit()
+    phenotypes_affecting = get_genes_affecting_phenotype_of(uberon_anat)
+    end = timeit.timeit()
+    print("TIME ELAPSED: %s seconds." % str(end - start))
+    for gene in phenotypes_affecting:
         for iden in gene.identifiers:
             print("- %s (%s)" % (str(iden["identifier"]), iden["identifier_type"]))
-    print("\nGetting gene identifiers expressed within UBERON identifier (%s) entity:" % uberon_id)
-    for gene in get_genes_expressed_within(uberon_anat):
+            
+    uberon_anat = gnomics.objects.tissue.Tissue(identifier = uberon_id_2, identifier_type = "UBERON ID", source = "Phenoscape Knowledgebase")
+    print("\nGetting gene identifiers expressed within UBERON identifier (%s) entity:" % uberon_id_2)
+    start = timeit.timeit()
+    phenotypes_expressed = get_genes_expressed_within(uberon_anat)
+    end = timeit.timeit()
+    print("TIME ELAPSED: %s seconds." % str(end - start))
+    for gene in phenotypes_expressed:
         for iden in gene.identifiers:
             print("- %s (%s)" % (str(iden["identifier"]), iden["identifier_type"]))
 

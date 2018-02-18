@@ -273,7 +273,7 @@ const remote = require('electron').remote;
                         if (error) {
                            console.error(error);
                         } else {
-                            console.log(res);
+                            //console.log(res);
                             var search_content = document.getElementsByClassName("result-set");
 
                             var temp_html_string = '';
@@ -285,8 +285,8 @@ const remote = require('electron').remote;
                                 }
                                 for (var i = 0, l = res[key].length; i < l; i++) {
                                     for (var j = 0, m = res[key][i].length; j < m; j++) {
-                                        console.log(res[key][i][j].identifier)
-                                        temp_html_string += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[key][i][j].identifier + "&identifier_type=" + res[key][i][j].identifier_type + "&language=" + (res[key][i][j].language || "") + "&source=" + res[key][i][j].source + "&object=" + key + "'>" + res[key][i][j].identifier_type + ": " + res[key][i][j].identifier + " " + "(" + res[key][i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[key][i][j].name == null ? '' : res[key][i][j].name) + "</div></div>";
+                                        //console.log(res[key][i][j].identifier)
+                                        temp_html_string += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[key][i][j].identifier + "&identifier_type=" + res[key][i][j].identifier_type + "&language=" + (res[key][i][j].language || "") + "&taxon=" + res[key][i][j].taxon + "&source=" + res[key][i][j].source + "&object=" + key + "'>" + res[key][i][j].identifier_type + ": " + res[key][i][j].identifier + " " + "(" + res[key][i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[key][i][j].name == null ? '' : res[key][i][j].name) + "</div></div>";
                                     };
                                 };
                                 if (res[key] && res[key].length && res[key][0] && res[key][0].length) {
@@ -300,22 +300,21 @@ const remote = require('electron').remote;
                         };
                     });
                 } else if ($scope.searchQuery && $scope.searchType == "adverse_event") {
-                    console.log("TO DO: NOT COMPLETED.");
                     client.invoke("search", $scope.searchDict, (error, res) => {
                         if (error) {
                            console.error(error);
                         } else {
-                            console.log(res);
+                            //console.log(res);
                             var search_content = document.getElementsByClassName("result-set");
 
                             /* Delete content and then add content. */
                             search_content[0].innerHTML = '';
                             loader.style.visibility = "hidden";
                             for (var i = 0, l = res.length; i < l; i++) {
-                                console.log(res[i])
+                                //console.log(res[i])
                                 for (var j = 0, m = res[i].length; j < m; j++) {
-                                    console.log(res[i][j].identifier)
-                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&source=" + res[i][j].source + "&object=adverse event'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=adverse event'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
                                 };
                             };
                         };
@@ -325,17 +324,17 @@ const remote = require('electron').remote;
                         if (error) {
                            console.error(error);
                         } else {
-                            console.log(res);
+                            //console.log(res);
                             var search_content = document.getElementsByClassName("result-set");
 
                             /* Delete content and then add content. */
                             search_content[0].innerHTML = '';
                             loader.style.visibility = "hidden";
                             for (var i = 0, l = res.length; i < l; i++) {
-                                console.log(res[i])
+                                //console.log(res[i])
                                 for (var j = 0, m = res[i].length; j < m; j++) {
-                                    console.log(res[i][j].identifier)
-                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&source=" + res[i][j].source + "&object=anatomical structure'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=anatomical structure'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
                                 };
                             };
                         };
@@ -345,38 +344,97 @@ const remote = require('electron').remote;
                         if (error) {
                            console.error(error);
                         } else {
-                            console.log(res);
+                            //console.log(res);
                             var search_content = document.getElementsByClassName("result-set");
 
                             /* Delete content and then add content. */
                             search_content[0].innerHTML = '';
                             loader.style.visibility = "hidden";
                             for (var i = 0, l = res.length; i < l; i++) {
-                                console.log(res[i])
+                                //console.log(res[i])
                                 for (var j = 0, m = res[i].length; j < m; j++) {
-                                    console.log(res[i][j].identifier)
-                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&source=" + res[i][j].source + "&object=assay'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=assay'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                };
+                            };
+                        };
+                    });
+                } else if ($scope.searchQuery && $scope.searchType == "biological_process") {
+                    client.invoke("search", $scope.searchDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            var search_content = document.getElementsByClassName("result-set");
+
+                            /* Delete content and then add content. */
+                            search_content[0].innerHTML = '';
+                            loader.style.visibility = "hidden";
+                            for (var i = 0, l = res.length; i < l; i++) {
+                                //console.log(res[i])
+                                for (var j = 0, m = res[i].length; j < m; j++) {
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=biological process'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                };
+                            };
+                        };
+                    });
+                } else if ($scope.searchQuery && $scope.searchType == "cell_line") {
+                    client.invoke("search", $scope.searchDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            var search_content = document.getElementsByClassName("result-set");
+
+                            /* Delete content and then add content. */
+                            search_content[0].innerHTML = '';
+                            loader.style.visibility = "hidden";
+                            for (var i = 0, l = res.length; i < l; i++) {
+                                //console.log(res[i])
+                                for (var j = 0, m = res[i].length; j < m; j++) {
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=cell line'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                };
+                            };
+                        };
+                    });
+                } else if ($scope.searchQuery && $scope.searchType == "cellular_component") {
+                    client.invoke("search", $scope.searchDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            var search_content = document.getElementsByClassName("result-set");
+
+                            /* Delete content and then add content. */
+                            search_content[0].innerHTML = '';
+                            loader.style.visibility = "hidden";
+                            for (var i = 0, l = res.length; i < l; i++) {
+                                //console.log(res[i])
+                                for (var j = 0, m = res[i].length; j < m; j++) {
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=cellular component'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
                                 };
                             };
                         };
                     });
                 } else if ($scope.searchQuery && $scope.searchType == "clinical_trial") {
-                    console.log("TO DO: NOT COMPLETED.");
                     client.invoke("search", $scope.searchDict, (error, res) => {
                         if (error) {
                            console.error(error);
                         } else {
-                            console.log(res);
+                            //console.log(res);
                             var search_content = document.getElementsByClassName("result-set");
 
                             /* Delete content and then add content. */
                             search_content[0].innerHTML = '';
                             loader.style.visibility = "hidden";
                             for (var i = 0, l = res.length; i < l; i++) {
-                                console.log(res[i])
+                                //console.log(res[i])
                                 for (var j = 0, m = res[i].length; j < m; j++) {
-                                    console.log(res[i][j].identifier)
-                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&source=" + res[i][j].source + "&object=clinical trial'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=clinical trial'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
                                 };
                             };
                         };
@@ -386,59 +444,57 @@ const remote = require('electron').remote;
                         if (error) {
                            console.error(error);
                         } else {
-                            console.log(res);
+                            //console.log(res);
                             var search_content = document.getElementsByClassName("result-set");
 
                             /* Delete content and then add content. */
                             search_content[0].innerHTML = '';
                             loader.style.visibility = "hidden";
                             for (var i = 0, l = res.length; i < l; i++) {
-                                console.log(res[i])
+                                //console.log(res[i])
                                 for (var j = 0, m = res[i].length; j < m; j++) {
-                                    console.log(res[i][j].identifier)
-                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&source=" + res[i][j].source + "&object=compound'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=compound'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
                                 };
                             };
                         };
                     });
                 } else if ($scope.searchQuery && $scope.searchType == "disease") {
-                    console.log("TO DO: NOT COMPLETED.");
                     client.invoke("search", $scope.searchDict, (error, res) => {
                         if (error) {
                            console.error(error);
                         } else {
-                            console.log(res);
+                            //console.log(res);
                             var search_content = document.getElementsByClassName("result-set");
 
                             /* Delete content and then add content. */
                             search_content[0].innerHTML = '';
                             loader.style.visibility = "hidden";
                             for (var i = 0, l = res.length; i < l; i++) {
-                                console.log(res[i])
+                                //console.log(res[i])
                                 for (var j = 0, m = res[i].length; j < m; j++) {
-                                    console.log(res[i][j].identifier)
-                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&source=" + res[i][j].source + "&object=disease'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=disease'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
                                 };
                             };
                         };
                     });
                 } else if ($scope.searchQuery && $scope.searchType == "drug") {
-                    console.log("TO DO: NOT COMPLETED.");
                     client.invoke("search", $scope.searchDict, (error, res) => {
                         if (error) {
                            console.error(error);
                         } else {
-                            console.log(res);
+                            //console.log(res);
                             var search_content = document.getElementsByClassName("result-set");
 
                             /* Delete content and then add content. */
                             search_content[0].innerHTML = '';
                             loader.style.visibility = "hidden";
                             for (var i = 0, l = res.length; i < l; i++) {
-                                console.log(res[i])
+                                //console.log(res[i])
                                 for (var j = 0, m = res[i].length; j < m; j++) {
-                                    console.log(res[i][j].identifier)
-                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&source=" + res[i][j].source + "&object=drug'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=drug'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
                                 };
                             };
                         };
@@ -446,133 +502,241 @@ const remote = require('electron').remote;
                 } else if ($scope.searchQuery && $scope.searchType == "enzyme") {
                     console.log("TO DO: NOT COMPLETED.");
                 } else if ($scope.searchQuery && $scope.searchType == "gene") {
-                    console.log("TO DO: NOT COMPLETED.");
                     client.invoke("search", $scope.searchDict, (error, res) => {
                         if (error) {
                            console.error(error);
                         } else {
-                            console.log(res);
+                            //console.log(res);
                             var search_content = document.getElementsByClassName("result-set");
 
                             /* Delete content and then add content. */
                             search_content[0].innerHTML = '';
                             loader.style.visibility = "hidden";
                             for (var i = 0, l = res.length; i < l; i++) {
-                                console.log(res[i])
+                                //console.log(res[i])
                                 for (var j = 0, m = res[i].length; j < m; j++) {
-                                    console.log(res[i][j].identifier)
-                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&source=" + res[i][j].source + "&object=gene'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=gene'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
                                 };
                             };
                         };
                     });
-                } else if ($scope.searchQuery && $scope.searchType == "mutation") {
-                    console.log("TO DO: NOT COMPLETED.");
-                } else if ($scope.searchQuery && $scope.searchType == "pathway") {
-                    console.log("TO DO: NOT COMPLETED.");
-                } else if ($scope.searchQuery && $scope.searchType == "phenotype") {
-                    console.log("TO DO: NOT COMPLETED.");
+                } else if ($scope.searchQuery && $scope.searchType == "molecular_function") {
                     client.invoke("search", $scope.searchDict, (error, res) => {
                         if (error) {
                            console.error(error);
                         } else {
-                            console.log(res);
+                            //console.log(res);
                             var search_content = document.getElementsByClassName("result-set");
 
                             /* Delete content and then add content. */
                             search_content[0].innerHTML = '';
                             loader.style.visibility = "hidden";
                             for (var i = 0, l = res.length; i < l; i++) {
-                                console.log(res[i])
+                                //console.log(res[i])
                                 for (var j = 0, m = res[i].length; j < m; j++) {
-                                    console.log(res[i][j].identifier)
-                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&source=" + res[i][j].source + "&object=phenotype'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=molecular function'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                };
+                            };
+                        };
+                    });
+                } else if ($scope.searchQuery && $scope.searchType == "pathway") {
+                    client.invoke("search", $scope.searchDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            var search_content = document.getElementsByClassName("result-set");
+
+                            /* Delete content and then add content. */
+                            search_content[0].innerHTML = '';
+                            loader.style.visibility = "hidden";
+                            for (var i = 0, l = res.length; i < l; i++) {
+                                //console.log(res[i])
+                                for (var j = 0, m = res[i].length; j < m; j++) {
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=pathway'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                };
+                            };
+                        };
+                    });
+                } else if ($scope.searchQuery && $scope.searchType == "phenotype") {
+                    client.invoke("search", $scope.searchDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            var search_content = document.getElementsByClassName("result-set");
+
+                            /* Delete content and then add content. */
+                            search_content[0].innerHTML = '';
+                            loader.style.visibility = "hidden";
+                            for (var i = 0, l = res.length; i < l; i++) {
+                                //console.log(res[i])
+                                for (var j = 0, m = res[i].length; j < m; j++) {
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=phenotype'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
                                 };
                             };
                         };
                     });
                 } else if ($scope.searchQuery && $scope.searchType == "procedure") {
-                    console.log("TO DO: NOT COMPLETED.");
                     client.invoke("search", $scope.searchDict, (error, res) => {
                         if (error) {
                            console.error(error);
                         } else {
-                            console.log(res);
+                            //console.log(res);
                             var search_content = document.getElementsByClassName("result-set");
 
                             /* Delete content and then add content. */
                             search_content[0].innerHTML = '';
                             loader.style.visibility = "hidden";
                             for (var i = 0, l = res.length; i < l; i++) {
-                                console.log(res[i])
+                                //console.log(res[i])
                                 for (var j = 0, m = res[i].length; j < m; j++) {
-                                    console.log(res[i][j].identifier)
-                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&source=" + res[i][j].source + "&object=procedure'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=procedure'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
                                 };
                             };
                         };
                     });
                 } else if ($scope.searchQuery && $scope.searchType == "protein") {
-                    console.log("TO DO: NOT COMPLETED.");
-                } else if ($scope.searchQuery && $scope.searchType == "symptom") {
-                    console.log("TO DO: NOT COMPLETED.");
                     client.invoke("search", $scope.searchDict, (error, res) => {
                         if (error) {
                            console.error(error);
                         } else {
-                            console.log(res);
+                            //console.log(res);
                             var search_content = document.getElementsByClassName("result-set");
 
                             /* Delete content and then add content. */
                             search_content[0].innerHTML = '';
                             loader.style.visibility = "hidden";
                             for (var i = 0, l = res.length; i < l; i++) {
-                                console.log(res[i])
+                                //console.log(res[i])
                                 for (var j = 0, m = res[i].length; j < m; j++) {
-                                    console.log(res[i][j].identifier)
-                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&source=" + res[i][j].source + "&object=symptom'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=protein'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
                                 };
                             };
                         };
                     });
                 } else if ($scope.searchQuery && $scope.searchType == "reference") {
-                    console.log("TO DO: NOT COMPLETED.");
                     client.invoke("search", $scope.searchDict, (error, res) => {
                         if (error) {
                            console.error(error);
                         } else {
-                            console.log(res);
+                            //console.log(res);
                             var search_content = document.getElementsByClassName("result-set");
 
                             /* Delete content and then add content. */
                             search_content[0].innerHTML = '';
                             loader.style.visibility = "hidden";
                             for (var i = 0, l = res.length; i < l; i++) {
-                                console.log(res[i])
+                                //console.log(res[i])
                                 for (var j = 0, m = res[i].length; j < m; j++) {
-                                    console.log(res[i][j].identifier)
-                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&source=" + res[i][j].source + "&object=reference'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=reference'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                };
+                            };
+                        };
+                    });
+                } else if ($scope.searchQuery && $scope.searchType == "symptom") {
+                    client.invoke("search", $scope.searchDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            var search_content = document.getElementsByClassName("result-set");
+
+                            /* Delete content and then add content. */
+                            search_content[0].innerHTML = '';
+                            loader.style.visibility = "hidden";
+                            for (var i = 0, l = res.length; i < l; i++) {
+                                //console.log(res[i])
+                                for (var j = 0, m = res[i].length; j < m; j++) {
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=symptom'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
                                 };
                             };
                         };
                     });
                 } else if ($scope.searchQuery && $scope.searchType == "taxon") {
-                    console.log("TO DO: NOT COMPLETED.");
                     client.invoke("search", $scope.searchDict, (error, res) => {
                         if (error) {
                            console.error(error);
                         } else {
-                            console.log(res);
+                            //console.log(res);
                             var search_content = document.getElementsByClassName("result-set");
 
                             /* Delete content and then add content. */
                             search_content[0].innerHTML = '';
                             loader.style.visibility = "hidden";
                             for (var i = 0, l = res.length; i < l; i++) {
-                                console.log(res[i])
+                                //console.log(res[i])
                                 for (var j = 0, m = res[i].length; j < m; j++) {
-                                    console.log(res[i][j].identifier)
-                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&source=" + res[i][j].source + "&object=taxon'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=taxon'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                };
+                            };
+                        };
+                    });
+                } else if ($scope.searchQuery && $scope.searchType == "tissue") {
+                    client.invoke("search", $scope.searchDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            var search_content = document.getElementsByClassName("result-set");
+
+                            /* Delete content and then add content. */
+                            search_content[0].innerHTML = '';
+                            loader.style.visibility = "hidden";
+                            for (var i = 0, l = res.length; i < l; i++) {
+                                //console.log(res[i])
+                                for (var j = 0, m = res[i].length; j < m; j++) {
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=tissue'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                };
+                            };
+                        };
+                    });
+                } else if ($scope.searchQuery && $scope.searchType == "transcript") {
+                    client.invoke("search", $scope.searchDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            var search_content = document.getElementsByClassName("result-set");
+
+                            /* Delete content and then add content. */
+                            search_content[0].innerHTML = '';
+                            loader.style.visibility = "hidden";
+                            for (var i = 0, l = res.length; i < l; i++) {
+                                //console.log(res[i])
+                                for (var j = 0, m = res[i].length; j < m; j++) {
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=transcript'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
+                                };
+                            };
+                        };
+                    });
+                } else if ($scope.searchQuery && $scope.searchType == "variation") {
+                    client.invoke("search", $scope.searchDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            var search_content = document.getElementsByClassName("result-set");
+
+                            /* Delete content and then add content. */
+                            search_content[0].innerHTML = '';
+                            loader.style.visibility = "hidden";
+                            for (var i = 0, l = res.length; i < l; i++) {
+                                //console.log(res[i])
+                                for (var j = 0, m = res[i].length; j < m; j++) {
+                                    //console.log(res[i][j].identifier)
+                                    search_content[0].innerHTML += "<div class='panel panel-default'><div class='panel-heading'><a id='result-link' href='#/object?identifier=" + res[i][j].identifier + "&identifier_type=" + res[i][j].identifier_type + "&language=" + res[i][j].language + "&taxon=" + res[i][j].taxon + "&source=" + res[i][j].source + "&object=variation'>" + res[i][j].identifier_type + ": " + res[i][j].identifier + " " + "(" + res[i][j].source + ")" + "</a></div><div class='panel-body'>" + (res[i][j].name == null ? '' : res[i][j].name) + "</div></div>";
                                 };
                             };
                         };
@@ -825,6 +989,7 @@ const remote = require('electron').remote;
             $scope.identifier = $location.search().identifier;
             $scope.identifier_type = $location.search().identifier_type;
             $scope.language = $location.search().language;
+            $scope.taxon = $location.search().taxon;
             $scope.source = $location.search().source;
             $scope.object_type = $location.search().object;
         
@@ -836,7 +1001,8 @@ const remote = require('electron').remote;
                     identifier: $scope.identifier,
                     identifier_type: $scope.identifier_type,
                     source: $scope.source,
-                    language: $scope.language,
+                    language: $scope.language == "null" ? null : $scope.language,
+                    taxon: $scope.taxon == "null" ? null : $scope.taxon,
                     object_type: $scope.object_type,
                     user: SharedProperties.getUserFields()
                 };
@@ -845,7 +1011,8 @@ const remote = require('electron').remote;
                     identifier: $scope.identifier,
                     identifier_type: $scope.identifier_type,
                     source: $scope.source,
-                    language: $scope.language,
+                    language: $scope.language == "null" ? null : $scope.language,
+                    taxon: $scope.taxon == "null" ? null : $scope.taxon,
                     object_type: $scope.object_type,
                     user: null
                 };
@@ -855,7 +1022,7 @@ const remote = require('electron').remote;
             $scope.identifiers = [];
             $scope.properties = [];
             $scope.interaction_objects = [];
-            if ($scope.object_type == "Anatomical%20Structures" || $scope.object_type == "Anatomical Structures" || $scope.object_type == "anatomical structure") {
+            if ($scope.object_type == "Adverse%20Events" || $scope.object_type == "Adverse Events" || $scope.object_type == "adverse event" || $scope.object_type == "adverse%20event") {
                 client.invoke("identifiers", $scope.idenDict, (error, res) => {
                         if (error) {
                            console.error(error);
@@ -866,12 +1033,561 @@ const remote = require('electron').remote;
                         };
                     });
                 
-            } else if ($scope.object_type == "Compounds" || $scope.object_type == "compound") {
-                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                client.invoke("properties", $scope.idenDict, (error, res) => {
                         if (error) {
                            console.error(error);
                         } else {
                             console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+                
+            } else if ($scope.object_type == "Anatomical%20Structures" || $scope.object_type == "Anatomical Structures" || $scope.object_type == "anatomical structure") {
+                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+                
+            } else if ($scope.object_type == "Assays" || $scope.object_type == "assay") {
+                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+                
+            } else if ($scope.object_type == "Biological%20Processes" || $scope.object_type == "Biological Processes" || $scope.object_type == "biological process") {
+                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+                
+            } else if ($scope.object_type == "Cell%20Lines" || $scope.object_type == "Cell Lines" || $scope.object_type == "cell line") {
+                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+                
+            } else if ($scope.object_type == "Cellular%20Components" || $scope.object_type == "Cellular Components" || $scope.object_type == "cellular component") {
+                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+                
+            } else if ($scope.object_type == "Clinical%20Trials" || $scope.object_type == "Clinical Trials" || $scope.object_type == "clinical trial") {
+                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+                
+            } else if ($scope.object_type == "Compounds" || $scope.object_type == "compound") {
+                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                        if (error) {
+                            console.error(error);
+                        } else {
+                            //console.log(res);
                             $scope.identifiers = res;
                             $scope.$apply();
                         };
@@ -885,17 +1601,20 @@ const remote = require('electron').remote;
                             var res_array = []
                             var sorted_keys = Object.keys(res).sort();
                             for (let key of sorted_keys) {
-                                res_array.push({
-                                    property: key,
-                                    value: res[key]
-                                });
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
                             };
                             $scope.properties = res_array;
                             console.log(res_array)
                             $scope.$apply();
                         };
                     });
-                
                 
                 client.invoke("interactions", $scope.idenDict, (error, res) => {
                         if (error) {
@@ -949,6 +1668,29 @@ const remote = require('electron').remote;
                         } else {
                             console.log(res);
                             $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
                             $scope.$apply();
                         };
                     });
@@ -1010,6 +1752,29 @@ const remote = require('electron').remote;
                         };
                     });
                 
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
                 client.invoke("interactions", $scope.idenDict, (error, res) => {
                         if (error) {
                            console.error(error);
@@ -1056,13 +1821,196 @@ const remote = require('electron').remote;
                         };
                     });
                 
-            } else if ($scope.object_type == "Genes" || $scope.object_type == "gene") {
+            } else if ($scope.object_type == "Genes" || $scope.object_type == "gene" || $scope.object_type == "Gene") {
                 client.invoke("identifiers", $scope.idenDict, (error, res) => {
                         if (error) {
                            console.error(error);
                         } else {
                             console.log(res);
                             $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+                
+            } else if ($scope.object_type == "Molecular%20Functions" || $scope.object_type == "Molecular Functions" || $scope.object_type == "molecular function") {
+                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+                
+            } else if ($scope.object_type == "Pathways" || $scope.object_type == "pathway") {
+                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
                             $scope.$apply();
                         };
                     });
@@ -1123,7 +2071,236 @@ const remote = require('electron').remote;
                             $scope.$apply();
                         };
                     });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
             
+            } else if ($scope.object_type == "Procedures" || $scope.object_type == "procedure") {
+                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+                
+            } else if ($scope.object_type == "Protein" || $scope.object_type == "Proteins" || $scope.object_type == "protein") {
+                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+                
             } else if ($scope.object_type == "References" || $scope.object_type == "reference") {
                 client.invoke("identifiers", $scope.idenDict, (error, res) => {
                         if (error) {
@@ -1134,17 +2311,6 @@ const remote = require('electron').remote;
                             $scope.$apply();
                         };
                     });
-            
-            } else if ($scope.object_type == "Taxa" || $scope.object_type == "taxon") {
-                /*client.invoke("identifiers", $scope.idenDict, (error, res) => {
-                        if (error) {
-                           console.error(error);
-                        } else {
-                            console.log(res);
-                            $scope.identifiers = res;
-                            $scope.$apply();
-                        };
-                    }); */
                 
                 client.invoke("properties", $scope.idenDict, (error, res) => {
                         if (error) {
@@ -1154,16 +2320,467 @@ const remote = require('electron').remote;
                             var res_array = []
                             var sorted_keys = Object.keys(res).sort();
                             for (let key of sorted_keys) {
-                                res_array.push({
-                                    property: key,
-                                    value: res[key]
-                                });
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
                             };
                             $scope.properties = res_array;
                             console.log(res_array)
                             $scope.$apply();
                         };
                     });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+            
+            } else if ($scope.object_type == "Symptom" || $scope.object_type == "symptom") {
+                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+                
+            } else if ($scope.object_type == "Taxa" || $scope.object_type == "taxon") {
+                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+                
+            } else if ($scope.object_type == "Tissues" || $scope.object_type == "tissue") {
+                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+                
+            } else if ($scope.object_type == "Transcript" || $scope.object_type == "Transcripts" || $scope.object_type == "transcript") {
+                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+                
+            } else if ($scope.object_type == "Variations" || $scope.object_type == "variation") {
+                client.invoke("identifiers", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            //console.log(res);
+                            $scope.identifiers = res;
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("properties", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                for (var i = 0 ; i < res[key].length; i++) {
+                                    if(res[key][i] !== null) {
+                                        res_array.push({
+                                            property: key,
+                                            value: res[key][i]
+                                        });
+                                    };
+                                };
+                            };
+                            $scope.properties = res_array;
+                            console.log(res_array)
+                            $scope.$apply();
+                        };
+                    });
+                
+                client.invoke("interactions", $scope.idenDict, (error, res) => {
+                        if (error) {
+                           console.error(error);
+                        } else {
+                            console.log(res);
+                            var res_array = []
+                            var sorted_keys = Object.keys(res).sort();
+                            for (let key of sorted_keys) {
+                                var temp_dict = {
+                                    type: key,
+                                    identifier_array: []
+                                };
+                                
+                                for (let iden_obj of res[key]) {
+                                    for (let iden of iden_obj) {
+                                    //    console.log(iden);
+                                        temp_dict.identifier_array.push(iden);
+                                    };
+                                };
+                                
+                                console.log(temp_dict.identifier_array);
+                                
+                                res_array.push(temp_dict);
+                                
+                                $scope.interaction_obj_sort_dict[key] = {
+                                    propertyName: 'identifier_type',
+                                    reverse: false,
+                                    sortBy: function(propertyName) {
+                                        $scope.interaction_obj_sort_dict[key].reverse = ($scope.interaction_obj_sort_dict[key].propertyName === propertyName) ? !$scope.interaction_obj_sort_dict[key].reverse : false;
+                                        $scope.interaction_obj_sort_dict[key].propertyName = propertyName;
+                                    },
+                                    currentPage: 1,
+                                    pageSize: 25,
+                                    q: ""
+                                };
+                            };
+                            
+                            console.log($scope.interaction_obj_sort_dict);
+                            
+                            console.log("FULL ARRAY:");
+                            console.log(res_array);
+                            $scope.interaction_objects = res_array;
+                            $scope.$apply();
+                        };
+                    });
+                
             } else {
                 console.log($scope.object_type)
                 console.log("Object type not yet supported.");

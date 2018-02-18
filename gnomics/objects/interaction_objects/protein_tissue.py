@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,7 @@
 
 #
 #   IMPORT SOURCES:
+#
 #
 
 #
@@ -31,6 +34,7 @@ import gnomics.objects.tissue
 #   Other imports.
 import json
 import requests
+import timeit
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -51,28 +55,38 @@ def main():
 #   - _format
 #   - _callback
 #   - _metadata
-def get_tissues(protein, user = None):
+def get_tissues(protein, user=None):
+    tiss_array = []
+    
     for ident in protein.identifiers:
-        if ident["identifier_type"].lower() == "uniprot acc" or ident["identifier_type"].lower() == "uniprot accession" or ident["identifier_type"].lower() == "uniprot uri":
-            base = "https://beta.openphacts.org/2.1/"
-            ext = "tissue/byProtein?uri=http%3A%2F%2Fpurl.uniprot.org%2Funiprot%2F" + ident["identifier"] + "&app_id=" + user.openphacts_app_id + "&app_key=" + user.openphacts_app_key + "&_format=json"
-            r = requests.get(base+ext, headers={"Content-Type": "application/json"})
-            if not r.ok:
-                r.raise_for_status()
-                sys.exit()
-            decoded = json.loads(r.text)
-            tiss_array = []
-            for item in decoded["result"]["items"]:
-                temp_tiss = gnomics.objects.tissue.Tissue(identifier = item["tissue"]["_about"].split("caloha.obo#")[1], identifier_type = "CALOHA ID", source = "OpenPHACTS", name = item["tissue"]["label"])
-                tiss_array.append(temp_tiss)
-            return tiss_array
+        if ident["identifier_type"].lower() in ["uniprot acc", "uniprot accession", "uniprot uri"]:
+            if user is not None:
+                if user.openphacts_app_id and user.openphacts_app_key:
+                    base = "https://beta.openphacts.org/2.1/"
+                    ext = "tissue/byProtein?uri=http%3A%2F%2Fpurl.uniprot.org%2Funiprot%2F" + ident["identifier"] + "&app_id=" + user.openphacts_app_id + "&app_key=" + user.openphacts_app_key + "&_format=json"
+                    r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
+                    if not r.ok:
+                        r.raise_for_status()
+                        sys.exit()
+
+                    decoded = json.loads(r.text)
+                    for item in decoded["result"]["items"]:
+                        temp_tiss = gnomics.objects.tissue.Tissue(identifier = item["tissue"]["_about"].split("caloha.obo#")[1], identifier_type = "CALOHA ID", source = "OpenPHACTS", name = item["tissue"]["label"])
+                        tiss_array.append(temp_tiss)
+            
+            else:
+                print("This function requires a valid user object with associated OpenPHACTS App ID and OpenPHACTS App Key.")
+
+    return tiss_array
         
 #   Get tissue expression.
 def get_tissue_expression(protein):
     tiss_array = []
     tiss_dict = {}
+    
     for ident in protein.identifiers:
-        if ident["identifier_type"].lower() == "uniprot acc" or ident["identifier_type"].lower() == "uniprot accession" or ident["identifier_type"].lower() == "uniprot uri":
+        if ident["identifier_type"].lower() in ["uniprot acc", "uniprot accession", "uniprot uri"]:
             url = "http://www.uniprot.org/uploadlists/"
             params = {
                 "from": "ACC",
@@ -80,6 +94,7 @@ def get_tissue_expression(protein):
                 "format": "tab",
                 "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -87,17 +102,21 @@ def get_tissue_expression(protein):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
             orig_id = newline_sp[1].split("\t")[0].strip()
             new_id = newline_sp[1].split("\t")[1].strip()
+            
             server = "https://www.proteinatlas.org/"
             ext = new_id + ".xml"
             r = requests.get(server+ext)
+            
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+                
             tree = ET.ElementTree(ET.fromstring(r.text))
             root = tree.getroot()
             for child in root:
@@ -146,16 +165,19 @@ def get_tissue_expression(protein):
                                         'assay_type': exp_assay_type,
                                         'cells': tissue_cells
                                     }
+            
     return tiss_dict
     
 #   UNIT TESTS
 def protein_tissue_unit_tests(uniprot_acc, openphacts_app_id, openphacts_app_key):
     user = User(openphacts_app_id = openphacts_app_id, openphacts_app_key = openphacts_app_key)
+    
     uniprot_prot = gnomics.objects.protein.Protein(identifier = uniprot_acc, identifier_type = "UniProt Accession", source = "OpenPHACTS")
     print("\nGetting tissue identifiers from UniProt Accession (%s):" % uniprot_acc)
     for tiss in get_tissues(uniprot_prot, user = user):
         for iden in tiss.identifiers:
             print("- %s (%s) [%s]" % (iden["name"], str(iden["identifier"]), iden["identifier_type"]))
+            
     print("\nGetting tissue expression from UniProt Accession (%s):" % uniprot_acc)
     for key, val in get_tissue_expression(uniprot_prot).items():
         print("- %s" % key)

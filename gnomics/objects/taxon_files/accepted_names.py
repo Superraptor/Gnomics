@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -31,13 +33,11 @@ import gnomics.objects.taxon
 
 #   Other imports.
 import json
+import pytaxize
 import requests
 import urllib.error
 import urllib.parse
 import urllib.request
-
-#   Other imports.
-import pytaxize
 
 #   MAIN
 def main():
@@ -47,16 +47,21 @@ def main():
 def get_accepted_names(taxon):
     accepted_array = []
     for ident in taxon.identifiers:
-        if ident["identifier_type"].lower() == "accepted name":
+        if ident["identifier_type"].lower() in ["accepted name"] and ident["identifier"] not in accepted_array:
             accepted_array.append(ident["identifier"])
+            
     if accepted_array:
         return accepted_array
+    
+    ids_completed = []
     for ident in taxon.identifiers:
-        if ident["identifier_type"].lower() == "tsn" or ident["identifier_type"].lower() == "itis tsn" or ident["identifier_type"].lower() == "itis taxonomic serial number" or ident["identifier_type"].lower() == "taxonomic serial number":
+        if ident["identifier_type"].lower() in ["itis", "itis taxonomic serial number", "itis tsn", "taxonomic serial number", "tsn"] and ident["identifier"] not in ids_completed:
+            ids_completed.append(ident["identifier"])
             res = pytaxize.getacceptednamesfromtsn(ident["identifier"])
             if res not in accepted_array:
                 gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier=str(res), identifier_type="Accepted Name", source="ITIS")
                 accepted_array.append(res)
+                
     return accepted_array
 
 #   UNIT TESTS

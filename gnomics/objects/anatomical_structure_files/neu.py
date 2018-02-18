@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -7,7 +9,7 @@
 #
 #   IMPORT SOURCES:
 #
-
+#
 
 #
 #   NEU ID.
@@ -27,21 +29,23 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 #   Import modules.
 from gnomics.objects.user import User
 import gnomics.objects.anatomical_structure
+import gnomics.objects.auxiliary_files.identifier
 
 #   Other imports.
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
     neu_unit_tests()
     
 # Return NEU ID.
-def get_neu_id(anat):
+def get_neu_id(anat, user=None):
     neu_array = []
-    for ident in anat.identifiers:
-        if ident["identifier_type"].lower() == "neu id" or ident["identifier_type"].lower() == "neu identifier":
-            neu_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(anat.identifiers, ["neu", "neu id", "neu identifier"]):
+        if iden["identifier"] not in neu_array:
+            neu_array.append(iden["identifier"])
     return neu_array
     
 #   UNIT TESTS

@@ -11,7 +11,9 @@
                     <li><a href="#" ng-click="searchFunction(searchQuery, 'adverse_event')">Adverse Event</a></li>
                     <li><a href="#" ng-click="searchFunction(searchQuery, 'anatomical_structure')">Anatomical Structure</a></li>
                     <li><a href="#" ng-click="searchFunction(searchQuery, 'assay')">Assay</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'biological_process')">Biological Process</a></li>
                     <li><a href="#" ng-click="searchFunction(searchQuery, 'cell_line')">Cell Line</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'cellular_component')">Cellular Component</a></li>
                     <li><a href="#" ng-click="searchFunction(searchQuery, 'clinical_trial')">Clinical Trial</a></li>
                     <li><a href="#" ng-click="searchFunction(searchQuery, 'compound')">Compound</a></li>
                     <li><a href="#" ng-click="searchFunction(searchQuery, 'disease')">Disease</a></li>
@@ -19,7 +21,7 @@
                     <li><a href="#" ng-click="searchFunction(searchQuery, 'enzyme')">Enzyme</a></li>
                     <li><a href="#" ng-click="searchFunction(searchQuery, 'gene')">Gene</a></li>
                     <li><a href="#" ng-click="searchFunction(searchQuery, 'genotype')">Genotype</a></li>
-                    <li><a href="#" ng-click="searchFunction(searchQuery, 'mutation')">Mutation</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'molecular_function')">Molecular Function</a></li>
                     <li><a href="#" ng-click="searchFunction(searchQuery, 'patent')">Patent</a></li>
                     <li><a href="#" ng-click="searchFunction(searchQuery, 'pathway')">Pathway</a></li>
                     <li><a href="#" ng-click="searchFunction(searchQuery, 'phenotype')">Phenotype</a></li>
@@ -30,9 +32,11 @@
                     <li><a href="#" ng-click="searchFunction(searchQuery, 'taxon')">Taxon</a></li>
                     <li><a href="#" ng-click="searchFunction(searchQuery, 'tissue')">Tissue</a></li>
                     <li><a href="#" ng-click="searchFunction(searchQuery, 'transcript')">Transcript</a></li>
+                    <li><a href="#" ng-click="searchFunction(searchQuery, 'variation')">Variation</a></li>
                 </ul>
             </div>
             
+            <!-- ADD SOME SORT OF PAGINATION FOR EACH RESULT TYPE!!! -->
             <input type="text" class="form-control" id="search-bar" placeholder="Search..." aria-describedby="basic-addon1" ng-model="searchQuery" ng-keyup="$event.keyCode == 13 ? searchFunction(searchQuery, searchType = 'all') : null">
         </div>
         

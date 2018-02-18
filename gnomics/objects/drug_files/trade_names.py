@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,8 @@
 
 #
 #   IMPORT SOURCES:
+#       PUBCHEMPY
+#           https://pypi.python.org/pypi/PubChemPy/1.0
 #
 
 #
@@ -28,6 +32,7 @@ from gnomics.objects.user import User
 import gnomics.objects.drug
 
 #   Other imports.
+import pubchempy as pubchem
 
 #   MAIN
 def main():
@@ -36,9 +41,9 @@ def main():
 #   Get trade names.
 def get_trade_names(drug):
     trade_name_array = []
-    for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "trade name":
-            trade_name_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(drug.identifiers, ["trade name"]):
+        if iden["identifier"] not in trade_name_array:
+            trade_name_array.append(iden["identifier"])
     return trade_name_array
 
 #   UNIT TESTS

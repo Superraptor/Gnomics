@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,7 @@
 
 #
 #   IMPORT SOURCES:
+#
 #
 
 #
@@ -34,9 +37,9 @@ def main():
 #   Get JAN.
 def get_jan(drug):
     jan_array = []
-    for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "jan":
-            jan_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(drug.identifiers, ["jan", "japanese accepted name"]):
+        if iden["identifier"] not in jan_array:
+            jan_array.append(iden["identifier"])
     return jan_array
 
 #   UNIT TESTS

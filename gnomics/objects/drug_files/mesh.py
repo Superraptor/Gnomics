@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,12 +8,11 @@
 
 #
 #   IMPORT SOURCES:
-#       PUBCHEMPY
-#           https://pypi.python.org/pypi/PubChemPy/1.0
+#
 #
 
 #
-#   Get MeSH term.
+#   Get MeSH terms, unique identifiers.
 #
 
 #   PRE-CODE
@@ -30,10 +31,8 @@ from gnomics.objects.user import User
 import gnomics.objects.drug
 
 #   Other imports.
-from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
-import pubchempy as pubchem
 import re
 import requests
 
@@ -44,23 +43,25 @@ def main():
 #	Get MeSH UID.
 def get_mesh_uid(drug):
     mesh_uid_array = []
-    for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "mesh uid" or ident["identifier_type"].lower() == "mesh unique identifier":
-            mesh_uid_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(drug.identifiers, ["mesh", "mesh uid", "mesh unique id", "mesh unique id", "mesh unique identifier", "msh", "msh uid", "msh unique id", "msh unique identifier"]):
+        if iden["identifier"] not in mesh_uid_array:
+            mesh_uid_array.append(iden["identifier"])
     return mesh_uid_array
         
 def get_mesh_name(drug):
     mesh_name_array = []
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "mesh name" or ident["identifier_type"].lower() == "mesh term":
+        if ident["identifier_type"].lower() in ["mesh name", "mesh term"]:
             mesh_name_array.append(ident["identifier"])
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "mesh id" or ident["identifier_type"].lower() == "mesh identifier":
+        if ident["identifier_type"].lower() in ["mesh id", "mesh identifier"]:
             url = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=mesh&retmode=xml&id="
             r = requests.get(url + str(ident["identifier"]), headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 r.raise_for_status()
                 sys.exit()
+            
             matches = re.findall(r'(?:[0-9]{1,}: )(?P<name>[A-Za-z0-9]{1,})(?:\n)', r.text, re.DOTALL)
             for match in matches:
                 if match not in mesh_name_array:
@@ -71,6 +72,7 @@ def get_mesh_name(drug):
                         'source': "PubMed"
                     })
                     mesh_name_array.append(match)
+                    
     return mesh_name_array
 
 #   UNIT TESTS

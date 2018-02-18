@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,12 +8,8 @@
 
 #
 #   IMPORT SOURCES:
-#       EUTILS
-#           https://pypi.python.org/pypi/eutils/0.3.2
-#       ISBNLIB
-#           https://pypi.python.org/pypi/isbnlib/3.7.2
 #
-
+#
 
 #
 #   Search for references.
@@ -30,16 +28,19 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 
 #   Import modules.
 from gnomics.objects.user import User
+import gnomics.objects.disease
+import gnomics.objects.pathway
 import gnomics.objects.reference
 
 #   Other imports.
+from bioservices import *
 import eutils
 import isbnlib
 import json
 import os
 import re
 import requests
-import scholarly
+import timeit
 import urllib
 import urllib.parse
 
@@ -48,69 +49,74 @@ def main():
     search_unit_tests()
 
 #   Get search.
-    # Get PubMed IDs from query string with
-    # auto-tagging where indicated.
-    #
-    # Field descriptors and tags are located here:
-    # https://www.ncbi.nlm.nih.gov/books/NBK3827/#pubmedhelp.Search_Field_Descriptions_and
-    #
-    # "unlabeled_string" here refers to any string not
-    # attached to any of these tags.
-    #
-    # The following tags are covered here:
-    #   ad      = Affiliation
-    #   aid     = Article Identifier
-    #   all     = All Fields
-    #   au      = Author
-    #   auid    = Author Identifier
-    #   book    = Book
-    #   cn      = Corporate Author
-    #   crdt    = Create Date
-    #   dcom    = Completion Date
-    #   cois    = Conflict of Interest
-    #   rn      = EC/RN Number
-    #   ed      = Editor
-    #   edat    = Entrez Date
-    #   filter  = Filter
-    #   iau     = First Author Name
-    #   fau     = Full Author Name
-    #   fir     = Full Investigator Name
-    #   gr      = Grant Number
-    #   ir      = Investigator
-    #   isbn    = ISBN
-    #   ip      = Issue
-    #   ta      = Journal
-    #   la      = Language
-    #   lastau  = Last Author
-    #   lid     = Location ID
-    #   mhda    = MeSH Date
-    #   majr    = MeSH Major Topic
-    #   sh      = MeSH Subheadings
-    #   mh      = MeSH Terms
-    #   lr      = Modification Date
-    #   jid     = NLM Unique ID
-    #   ot      = Other Term
-    #   pg      = Pagination
-    #   ps      = Personal Name as Subject
-    #   pa      = Pharmacological Action
-    #   pl      = Place of Publication
-    #   pmid    = PMID / UID
-    #   pubn    = Publisher
-    #   dp      = Publication Date
-    #   pt      = Publication Type
-    #   si      = Secondary Source ID
-    #   sb      = Subset
-    #   nm      = Supplementary Concept
-    #   tw      = Text Words
-    #   ti      = Title
-    #   tiab    = Title/Abstract
-    #   tt      = Transliterated Title
-    #   vi      = Volume
+#
+#   Get PubMed IDs from query string with
+#   auto-tagging where indicated.
+#
+#   Field descriptors and tags are located here:
+#   https://www.ncbi.nlm.nih.gov/books/NBK3827/#pubmedhelp.Search_Field_Descriptions_and
+#
+#   "unlabeled_string" here refers to any string not
+#   attached to any of these tags.
+#
+#   The following tags are covered here:
+#   ad      = Affiliation
+#   aid     = Article Identifier
+#   all     = All Fields
+#   au      = Author
+#   auid    = Author Identifier
+#   book    = Book
+#   cn      = Corporate Author
+#   crdt    = Create Date
+#   dcom    = Completion Date
+#   cois    = Conflict of Interest
+#   rn      = EC/RN Number
+#   ed      = Editor
+#   edat    = Entrez Date
+#   filter  = Filter
+#   iau     = First Author Name
+#   fau     = Full Author Name
+#   fir     = Full Investigator Name
+#   gr      = Grant Number
+#   ir      = Investigator
+#   isbn    = ISBN
+#   ip      = Issue
+#   ta      = Journal
+#   la      = Language
+#   lastau  = Last Author
+#   lid     = Location ID
+#   mhda    = MeSH Date
+#   majr    = MeSH Major Topic
+#   sh      = MeSH Subheadings
+#   mh      = MeSH Terms
+#   lr      = Modification Date
+#   jid     = NLM Unique ID
+#   ot      = Other Term
+#   pg      = Pagination
+#   ps      = Personal Name as Subject
+#   pa      = Pharmacological Action
+#   pl      = Place of Publication
+#   pmid    = PMID / UID
+#   pubn    = Publisher
+#   dp      = Publication Date
+#   pt      = Publication Type
+#   si      = Secondary Source ID
+#   sb      = Subset
+#   nm      = Supplementary Concept
+#   tw      = Text Words
+#   ti      = Title
+#   tiab    = Title/Abstract
+#   tt      = Transliterated Title
+#   vi      = Volume
 def eutils_search(db = "PubMed", exact = False, raw = False, retmode = None, retmax = None, sort = None, unlabeled_string = None, affiliation = None, article_identifier = None, all_fields = None, author = None, author_identifier = None, book = None, corporate_author = None, create_date = None, completion_date = None, conflict_of_interest = None, ec_rn_number = None, editor = None, entrez_date = None, filter_citations = None, first_author_name = None, full_author_name = None, full_investigator_name = None, grant_number = None, investigator = None, isbn = None, issue = None, journal = None, language = None, last_author = None, location_id = None, mesh_date = None, mesh_major_topic = None, mesh_subheadings = None, mesh_terms = None, modification_date = None, nlm_unique_id = None, other_term = None, owner = None, pagination = None, personal_name_as_subject = None, pharmacological_action = None, place_of_publication = None, pmid = None, publisher = None, publication_date = None, publication_type = None, secondary_source_id = None, subset = None, supplementary_concept = None, text_words = None, title = None, title_abstract = None, transliterated_title = None, uid = None, volume = None):
+    
     ref_set = []
     result_set = []
+    
     if not exact:
+    
         base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?"
+
         if db is not None:
             base_url = base_url + "db=" + str(db) + "&"
         if retmode is not None:
@@ -121,6 +127,7 @@ def eutils_search(db = "PubMed", exact = False, raw = False, retmode = None, ret
             base_url = base_url + "retmax=" + str(100000) + "&"
         if sort is not None:
             base_url = base_url + "sort=" + str(sort) + "&"
+
         term_url = "term="
         if unlabeled_string is not None:
             term_url = eutils_param_process(unlabeled_string)
@@ -224,33 +231,51 @@ def eutils_search(db = "PubMed", exact = False, raw = False, retmode = None, ret
             term_url = term_url + eutils_param_process(uid, "pmid")
         if volume is not None:
             term_url = term_url + eutils_param_process(volume, "vi")
+            
         if term_url[-1] == "+":
             term_url = term_url[:-1]
         if term_url[-1] == "&":
             term_url = term_url[:-1]
-        r = requests.get(base_url + term_url, headers={"Content-Type": "application/json"})
+
+        print(base_url+term_url)
+        print(base_url + "term=" + term_url)
+        
+        r = requests.get(base_url + "term=" + term_url, headers={"Content-Type": "application/json"})
+
         if not r.ok:
             r.raise_for_status()
             sys.exit()
+
         decoded = r.json()
         result_set.append(decoded)
+
         if retmax is None:
-            count_set = int(decoded['esearchresult']['count']) - 100000
-            while count_set > 0:
-                retstart = int(decoded['esearchresult']['retstart']) + 1
-                r = requests.get(base_url + term_url + "&" + "retstart=" + str(retstart), headers={"Content-Type": "application/json"})
-                if not r.ok:
-                    r.raise_for_status()
-                    sys.exit()
-                decoded = r.json()
-                result_set.append(decoded)
-                count_set = count_set - 100000
+            if "count" in decoded["esearchresult"]:
+                count_set = int(decoded['esearchresult']['count']) - 100000
+
+                while count_set > 0:
+                    retstart = int(decoded['esearchresult']['retstart']) + 1
+
+                    r = requests.get(base_url + "term=" + term_url + "&" + "retstart=" + str(retstart), headers={"Content-Type": "application/json"})
+
+                    if not r.ok:
+                        r.raise_for_status()
+                        sys.exit()
+
+                    decoded = r.json()
+                    result_set.append(decoded)
+                    count_set = count_set - 100000
+            else:
+                print("An error occurred")
+                return []
+
         ec = eutils.Client()
         ref_set = []
         id_set = []
         for dec_set in result_set:
             for pmid in dec_set["esearchresult"]["idlist"]:
                 id_set.append(pmid)
+
         pmset = ec.efetch(db="pubmed", id=id_set)
         for pm in pmset:
             title = pm.title
@@ -263,26 +288,37 @@ def eutils_search(db = "PubMed", exact = False, raw = False, retmode = None, ret
             pmid = pm.pmid
             doi = pm.doi
             pmc = pm.pmc
+
             temp_ref = gnomics.objects.reference.Reference(identifier = pmid, identifier_type = "PubMed ID", source = "Entrez Programming Utilities", language = None, name = title)
+
             if doi is not None: 
                 gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier = doi, identifier_type = "DOI", source = "Entrez Programming Utilities", language = None, name = title)
+
             if pmc is not None:
                 gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier = pmc, identifier_type = "PMC ID", source = "Entrez Programming Utilities", language = None, name = title)
+
             ref_set.append(temp_ref)
+            
     else:
         base_url = "https://www.ncbi.nlm.nih.gov/pubmed/?"
+        
         ext_url = ""
         if unlabeled_string: 
             ext_url = ext_url + unlabeled_string
         elif all_fields:
             ext_url = ext_url + all_fields
+            
         ext_url = "term=" + str(urllib.parse.quote_plus('("' + ext_url.replace('"', "'")))
         r = requests.get(base_url + ext_url, headers={"Content-Type": "application/json"})
+        
         if "PMID:" in r.text:
             pmid_html = re.findall('<dt>PMID:</dt>.{1,}?[\d].{1,}?</dd>', r.text)
             pmid = re.findall('\d+', pmid_html[0])
+            
             temp_ref = gnomics.objects.reference.Reference(identifier = pmid[0], identifier_type = "PubMed ID", source = "PubMed", language = None)
+            
             ref_set.append(temp_ref)
+
     return ref_set
 
 def eutils_param_process(term, iden = None, raw = False):
@@ -335,7 +371,9 @@ def eutils_param_process(term, iden = None, raw = False):
             else:
                 paren_array.append(x)
         term = '+'.join(paren_array)
+            
         return str(term + "+")
+    
     elif not raw:
         # Add double quotes to all terms.
         quoted_tm = []
@@ -367,6 +405,7 @@ def eutils_param_process(term, iden = None, raw = False):
 #   Scholarly does not currently function, due to
 #   restrictions of bots crawling the Google Scholar catalogue.
 def google_scholar_search(query):
+    # search_query = scholarly.search_pubs_custom_url('/scholar?q=' + urllib.parse.quote_plus(query))
     print("NOT FUNCTIONAL.")
     
 #   ISBN search.
@@ -375,7 +414,90 @@ def isbn_search(query):
     
 #   Search OpenLibrary.
 def openlibrary_search(query):
-    print("NOT FUNCTIONAL.")
+    results_array = []
+    
+    base = "https://openlibrary.org/"
+    ext = "search.json?q=" + str(query)
+    r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
+    if not r.ok:
+        r.raise_for_status()
+        sys.exit()
+    else:
+        for key, val in r.json().items():
+            if key == "docs":
+                for doc in val:
+                    if "edition_key" in doc:
+                        for olid in doc["edition_key"]:
+                            temp_ref = gnomics.objects.reference.Reference(identifier=olid, identifier_type="OpenLibrary ID", source="OpenLibrary", language=None)
+
+                            for obj in gnomics.objects.reference.Reference.openlibrary(temp_ref, jscmd=True):
+                                if obj["isbn_10"]:
+                                    gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["isbn_10"][0], identifier_type="ISBN-10", source="OpenLibrary", language=None, name=obj["title"])
+
+                                if obj["isbn_13"]:
+                                    gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["isbn_13"][0], identifier_type="ISBN-13", source="OpenLibrary", language=None, name=obj["title"])
+
+                                if obj["amazon"]:
+                                    gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["amazon"][0], identifier_type="ASIN", source="OpenLibrary", language=None, name=obj["title"])
+
+                                if obj["google"]:
+                                    gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["google"][0], identifier_type="Google Books ID", source="OpenLibrary", language=None, name=obj["title"])
+
+                                if obj["oclc"]:
+                                    gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["oclc"][0], identifier_type="OCLC Control Number", source="OpenLibrary", language=None, name=obj["title"])
+
+                                if obj["project_gutenberg"]:
+                                    gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["project_gutenberg"][0], identifier_type="Project Gutenberg ID", source="OpenLibrary", language=None, name=obj["title"])
+
+                                if obj["librarything"]:
+                                    gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["librarything"][0], identifier_type="LibraryThing ID", source="OpenLibrary", language=None, name=obj["title"])
+
+                                if obj["lccn"]:
+                                    gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["lccn"][0], identifier_type="LCCN", source="OpenLibrary", language=None, name=obj["title"])
+
+                                if obj["goodreads"]:
+                                    gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["goodreads"][0], identifier_type="Goodreads ID", source="OpenLibrary", language=None, name=obj["title"])
+
+                            results_array.append(temp_ref)
+                            
+                    else:
+                        
+                        olid = doc["key"].split("/works/")[1]
+                        
+                        temp_ref = gnomics.objects.reference.Reference(identifier=olid, identifier_type="OpenLibrary ID", source="OpenLibrary", language=None)
+
+                        for obj in gnomics.objects.reference.Reference.openlibrary(temp_ref, jscmd=True):
+                            if obj["isbn_10"]:
+                                gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["isbn_10"][0], identifier_type="ISBN-10", source="OpenLibrary", language=None, name=obj["title"])
+
+                            if obj["isbn_13"]:
+                                gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["isbn_13"][0], identifier_type="ISBN-13", source="OpenLibrary", language=None, name=obj["title"])
+
+                            if obj["amazon"]:
+                                gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["amazon"][0], identifier_type="ASIN", source="OpenLibrary", language=None, name=obj["title"])
+
+                            if obj["google"]:
+                                gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["google"][0], identifier_type="Google Books ID", source="OpenLibrary", language=None, name=obj["title"])
+
+                            if obj["oclc"]:
+                                gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["oclc"][0], identifier_type="OCLC Control Number", source="OpenLibrary", language=None, name=obj["title"])
+
+                            if obj["project_gutenberg"]:
+                                gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["project_gutenberg"][0], identifier_type="Project Gutenberg ID", source="OpenLibrary", language=None, name=obj["title"])
+
+                            if obj["librarything"]:
+                                gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["librarything"][0], identifier_type="LibraryThing ID", source="OpenLibrary", language=None, name=obj["title"])
+
+                            if obj["lccn"]:
+                                gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["lccn"][0], identifier_type="LCCN", source="OpenLibrary", language=None, name=obj["title"])
+
+                            if obj["goodreads"]:
+                                gnomics.objects.reference.Reference.add_identifier(temp_ref, identifier=obj["goodreads"][0], identifier_type="Goodreads ID", source="OpenLibrary", language=None, name=obj["title"])
+
+                        results_array.append(temp_ref)
+    
+    return results_array
     
 #   Search Elsevier.
 #
@@ -392,16 +514,33 @@ def springer_search(query, user = None):
 
 #   Search Google Books.
 def google_books_search(query, user = None):
+    print("NOT FUNCTIONAL.")
     base = "https://www.googleapis.com/books/"
     ext = "v1/volumes?q=" + query + "&key=" + user.google_books_api_key
     
 #   UNIT TESTS
 def search_unit_tests():
+    query = "Harry Potter"
+    print("\nBeginning basic search for '%s'..." % query)
+    for ref in openlibrary_search(query):
+        for iden in ref.identifiers:
+            if iden["name"]:
+                title = iden["name"].encode('ascii',errors='ignore')
+            else:
+                title = None
+            
+            print("- %s [%s] (%s)" % (iden["identifier"], iden["identifier_type"], title))
+
+    start = timeit.timeit()
     basic_search_results = eutils_search(db = "PubMed", unlabeled_string = "cystic fibrosis and (neuron or (not nerve))", retmode = "JSON")
+    end = timeit.timeit()
+    
     print("\nSearch returned %s result(s) with the following reference IDs:" % str(len(basic_search_results)))
     for ref in basic_search_results:
         for iden in ref.identifiers:
             print("- %s: %s (%s)" % ((iden["identifier"]), str(iden["name"]).encode('utf8'), (iden["identifier_type"])))
+            
+    print("\n\nTIME ELAPSED: %s seconds." % str(end - start))
 
 #   MAIN
 if __name__ == "__main__": main()

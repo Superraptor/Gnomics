@@ -1,3 +1,16 @@
+#!/usr/bin/env python
+
+#
+#
+#
+#
+#
+
+#
+#   IMPORT SOURCES:
+#
+#
+
 # Based on this:
 # https://github.com/fyears/electron-python-example
 
@@ -7,6 +20,7 @@ import master_ctrl
 import sys
 import threading
 import time
+import timeit
 import zerorpc
 import zmq
 
@@ -24,17 +38,15 @@ class GnomicsApi(object):
         return search_results
     
     def identifiers(self, text):
-        identifier_results = master_ctrl.identifiers(text['identifier'], text['identifier_type'], text['object_type'], text['language'], text['source'], user = text['user'])
-        #print(identifier_results)
+        identifier_results = master_ctrl.identifiers(text['identifier'], text['identifier_type'], text['object_type'], text['language'], text['source'], text['taxon'], user = text['user'])
         return identifier_results
     
     def interactions(self, text):
-        interaction_results = master_ctrl.interaction_objects(text['identifier'], text['identifier_type'], text['object_type'], user = text['user'])
-        print(interaction_results)
+        interaction_results = master_ctrl.interaction_objects(text['identifier'], text['identifier_type'], text['object_type'], text['language'], text['source'], text['taxon'], user = text['user'])
         return interaction_results
         
     def properties(self, text):
-        property_results = master_ctrl.properties(text['identifier'], text['identifier_type'], text['object_type'], user = text['user'])
+        property_results = master_ctrl.properties(text['identifier'], text['identifier_type'], text['object_type'], text['language'], text['source'], text['taxon'], user = text['user'])
         return property_results        
     
 def parse_port():

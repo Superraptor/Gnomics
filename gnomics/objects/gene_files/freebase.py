@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -40,32 +42,42 @@ def main():
 def get_freebase_id(gene):
     gene_array = []
     for ident in gene.identifiers:
-        if ident["identifier_type"].lower() == "freebase" or ident["identifier_type"].lower() == "freebase id" or ident["identifier_type"].lower() == "freebase identifier":
+        if ident["identifier_type"].lower() in ["freebase", "freebase id", "freebase identifier"]:
             if ident["identifier"] not in gene_array:
                 gene_array.append(ident["identifier"])
+    
     if gene_array:
         return gene_array
+    
     for ident in gene.identifiers:
-        if ident["identifier_type"].lower() == "wikidata" or ident["identifier_type"].lower() == "wikidata id" or ident["identifier_type"].lower() == "wikidata identifier" or ident["identifier_type"].lower() == "wikidata accession":
+        if ident["identifier_type"].lower() in ["wikidata", "wikidata accession", "wikidata id", "wikidata identifier"]:
             for stuff in gnomics.objects.gene.Gene.wikidata(gene):
                 for prop_id, prop_dict in stuff["claims"].items():
+
                     base = "https://www.wikidata.org/w/api.php"
                     ext = "?action=wbgetentities&ids=" + prop_id + "&format=json"
+                    
                     r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
                     if not r.ok:
                         r.raise_for_status()
                         sys.exit()
+
                     decoded = json.loads(r.text)
                     en_prop_name = decoded["entities"][prop_id]["labels"]["en"]["value"]
+
                     if en_prop_name.lower() == "freebase id":
                         for x in prop_dict:
                             gnomics.objects.gene.Gene.add_identifier(gene, identifier = x["mainsnak"]["datavalue"]["value"], identifier_type = "Freebase ID", language = None, source = "Wikidata")
                             gene_array.append(x["mainsnak"]["datavalue"]["value"])
+                            
             return gene_array
+                
     if gene_array:
         return gene_array
+    
     for ident in gene.identifiers:
-        if ident["identifier_type"].lower() == "ensembl" or ident["identifier_type"].lower() == "ensembl gene" or ident["identifier_type"].lower() == "ensembl gene id" or ident["identifier_type"].lower() == "ensembl gene identifier":
+        if ident["identifier_type"].lower() in ["ensembl gene", "ensembl gene id", "ensembl gene identifier", "ensembl"]:
             gnomics.objects.gene.Gene.wikidata_accession(gene)
             return get_freebase_id(gene)
 

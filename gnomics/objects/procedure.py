@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -19,19 +21,34 @@ faulthandler.enable()
 
 #   IMPORTS
 
-# Import sub-methods.
+#   Other imports.
+import timeit
+
+#   Import sub-methods.
+from gnomics.objects.procedure_files.cpt import get_cpt_id
 from gnomics.objects.procedure_files.search import search
 
 #   MAIN
 def main():
-    print("NOT FUNCTIONAL.")
+    procedure_unit_tests()
 
 #   PROCEDURE CLASS
 class Procedure:
     """
         Procedure class:
         
+        A procedure is a course of action intended to 
+        achieve a result in the delivery of healthcare.
     """
+    
+    # CPT BioPortal PURL.
+    cpt_bioportal_purl = "http://purl.bioontology.org/ontology/CPT"
+    
+    # HCPCS BioPortal PURL.
+    hcpcs_bioportal_purl = "http://purl.bioontology.org/ontology/HCPCS"
+    
+    # ICD10PCS BioPortal PURL.
+    icd10pcs_bioportal_purl = "http://purl.bioontology.org/ontology/ICD10PCS"
     
     """
         Procedure attributes:
@@ -49,18 +66,18 @@ class Procedure:
     """
     
     # Initialize the procedure.
-    def __init__(self, identifier = None, identifier_type = None, language = None, source = None, name = None):
+    def __init__(self, identifier=None, identifier_type=None, language=None, source=None, name=None):
         
         # Initialize dictionary of identifiers.
-        self.identifiers = [
-            {
+        self.identifiers = []
+        if identifier is not None:
+            self.identifiers = [{
                 'identifier': str(identifier),
                 'language': language,
                 'identifier_type': identifier_type,
                 'source': source,
                 'name': name
-            }
-        ]
+            }]
         
         # Initialize dictionary of procedure objects.
         self.procedure_objects = []
@@ -69,7 +86,7 @@ class Procedure:
         self.related_objects = []
         
     # Add an identifier to a procedure.
-    def add_identifier(symptom, identifier = None, identifier_type = None, language = None, source = None, name = None):
+    def add_identifier(procedure, identifier=None, identifier_type=None, language=None, source=None, name=None):
         procedure.identifiers.append({
             'identifier': str(identifier),
             'language': language,
@@ -79,7 +96,7 @@ class Procedure:
         })
         
     # Add an object to a procedure.
-    def add_object(procedure, obj = None, object_type = None):
+    def add_object(procedure, obj=None, object_type=None):
         procedure.procedure_objects.append({
             'object': obj,
             'object_type': object_type
@@ -95,9 +112,18 @@ class Procedure:
     """
         Procedure identifiers:
         
+        CPT ID
         
     """
     
+    # Return all identifiers.
+    def all_identifiers(procedure, user=None):
+        Procedure.cpt_id(procedure, user=user)
+        return procedure.identifiers
+    
+    # Return CPT ID.
+    def cpt_id(procedure, user=None):
+        return get_cpt_id(procedure, user=user)
     
     """
         Interaction objects:
@@ -111,7 +137,7 @@ class Procedure:
         
     """
     
-    def all_properties(phenotype, user = None):
+    def all_properties(procedure, user=None):
         property_dict = {}
         return property_dict
     
@@ -120,7 +146,10 @@ class Procedure:
         
     """
     
-    
+    # Return links.
+    def all_urls(procedure, user=None):
+        url_dict = {}
+        return url_dict
     
     """
         Auxiliary functions:
@@ -141,6 +170,8 @@ class Procedure:
     """
 
 #   UNIT TESTS
+def procedure_unit_tests():
+    print("NOT FUNCTIONAL.")
 
 #   MAIN
 if __name__ == "__main__": main()

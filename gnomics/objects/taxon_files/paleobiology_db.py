@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -27,17 +29,16 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 
 #   Import modules.
 from gnomics.objects.user import User
+import gnomics.objects.gene
 import gnomics.objects.taxon
 
 #   Other imports.
 import json
+import pytaxize
 import requests
 import urllib.error
 import urllib.parse
 import urllib.request
-
-#   Other imports.
-import pytaxize
 
 #   MAIN
 def main():
@@ -46,19 +47,23 @@ def main():
 #   Get Paleobiology Database identifiers.
 def get_paleobiology_db_id(taxon):
     paleo_array = []
+    
     for ident in taxon.identifiers:
-        if ident["identifier_type"].lower() == "paleobiology database" or ident["identifier_type"].lower() == "paleobiology database id" or ident["identifier_type"].lower() == "paleobiology database identifier":
+        if ident["identifier_type"].lower() in ["paleobiology database", "paleobiology database id", "paleobiology database identifier"] and ident["identifier"] not in paleo_array:
             paleo_array.append(ident["identifier"])
+            
     if paleo_array:
         return paleo_array
+    
     for ident in taxon.identifiers:
-        if ident["identifier_type"].lower() == "eol" or ident["identifier_type"].lower() == "eol id" or ident["identifier_type"].lower() == "eol identifier":
-            tax_obj = gnomics.objects.taxon.Taxon.eol_page(taxon)
-            for iden2 in tax_obj["taxonConcepts"]:
-                if iden2["sourceIdentifier"].isdigit() and iden2["nameAccordingTo"] == "Paleobiology Database":
-                    if iden2["sourceIdentifier"] not in paleo_array:
-                        gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier=iden2["sourceIdentifier"], identifier_type="Paleobiology Database ID", language=None, source="EOL")
-                        paleo_array.append(iden2["sourceIdentifier"])
+        if ident["identifier_type"].lower() in ["eol", "eol id", "eol identifier"]:
+            for tax_obj in gnomics.objects.taxon.Taxon.eol_page(taxon):
+                for iden2 in tax_obj["taxonConcepts"]:
+                    if iden2["sourceIdentifier"].isdigit() and iden2["nameAccordingTo"] == "Paleobiology Database":
+                        if iden2["sourceIdentifier"] not in paleo_array:
+                            gnomics.objects.taxon.Taxon.add_identifier(taxon, identifier=iden2["sourceIdentifier"], identifier_type="Paleobiology Database ID", language=None, source="EOL")
+                            paleo_array.append(iden2["sourceIdentifier"])
+
     return paleo_array
 
 #   UNIT TESTS

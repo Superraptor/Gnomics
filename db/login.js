@@ -68,3 +68,9 @@ async function login(user_supplied_email_or_username, user_supplied_password, ca
         });
     };
 };
+
+// TODO: Figure this out!
+var user_supplied_email_or_username = "yo@yahoo.com";
+var user_supplied_password = "passwd";
+
+login(user_supplied_email_or_username, user_supplied_password);

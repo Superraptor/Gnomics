@@ -25,13 +25,13 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 
 #   Import modules.
-import gnomics.objects.gene
-import gnomics.objects.protein
+import gnomics.objects.compound
 
 #   Other imports.
 import json
 import pubchempy as pubchem
 import requests
+import timeit
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -41,10 +41,18 @@ def main():
     gene_unit_tests("P13368", "INSR_HUMAN")
     
 #   Get gene from protein.
+#
+#   Others to add:
+#   - RefSeq Nucleotide (REFSEQ_NT_ID)
+#   - UniGene (UNIGENE_ID)
 def get_gene(prot):
+    
     gene_array = []
+    gene_obj_array = []
+            
     for ident in prot.identifiers:
         if ident["identifier_type"].lower() == "uniprotkb id" or ident["identifier_type"].lower() == "uniprotkb identifier" or ident["identifier_type"].lower() == "uniprot id" or ident["identifier_type"].lower() == "uniprot identifier":
+    
             url = "http://www.uniprot.org/uploadlists/"
             params = {
                 "from": "ID",
@@ -52,6 +60,7 @@ def get_gene(prot):
                 "format": "tab",
                 "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -59,6 +68,7 @@ def get_gene(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -66,6 +76,9 @@ def get_gene(prot):
             new_id = newline_sp[1].split("\t")[1].strip()
             if new_id not in gene_array:
                 gene_array.append(new_id)
+                temp_gene = gnomics.objects.gene.Gene(identifier=new_id, identifier_type="Entrez Gene ID", source="UniProt", language=None)
+                gene_obj_array.append(temp_gene)
+                
             url = "http://www.uniprot.org/uploadlists/"
             params = {
                 "from": "ID",
@@ -73,6 +86,7 @@ def get_gene(prot):
                 "format": "tab",
                 "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -80,6 +94,7 @@ def get_gene(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -87,7 +102,11 @@ def get_gene(prot):
             new_id = newline_sp[1].split("\t")[1].strip()
             if new_id not in gene_array:
                 gene_array.append(new_id)
+                temp_gene = gnomics.objects.gene.Gene(identifier=new_id, identifier_type="GI Number", source="UniProt", language=None)
+                gene_obj_array.append(temp_gene)
+            
         elif ident["identifier_type"].lower() == "uniprotkb ac" or ident["identifier_type"].lower() == "uniprotkb acc" or ident["identifier_type"].lower() == "uniprotkb accession" or ident["identifier_type"].lower() == "uniprot accession":
+    
             url = "http://www.uniprot.org/uploadlists/"
             params = {
                 "from": "ACC",
@@ -95,6 +114,7 @@ def get_gene(prot):
                 "format": "tab",
                 "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -102,6 +122,7 @@ def get_gene(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -109,6 +130,9 @@ def get_gene(prot):
             new_id = newline_sp[1].split("\t")[1].strip()
             if new_id not in gene_array:
                 gene_array.append(new_id)
+                temp_gene = gnomics.objects.gene.Gene(identifier=new_id, identifier_type="Entrez Gene ID", source="UniProt", language=None)
+                gene_obj_array.append(temp_gene)
+                
             url = "http://www.uniprot.org/uploadlists/"
             params = {
                 "from": "ACC",
@@ -116,6 +140,7 @@ def get_gene(prot):
                 "format": "tab",
                 "query": ident["identifier"],
             }
+            
             data = urllib.parse.urlencode(params)
             data = data.encode("utf-8")
             request = urllib.request.Request(url, data)
@@ -123,6 +148,7 @@ def get_gene(prot):
             request.add_header("User-Agent", "Python %s" % contact)
             response = urllib.request.urlopen(request)
             page = response.read(200000).decode("utf-8")
+            
             newline_sp = page.split("\n")
             id_from = newline_sp[0].split("\t")[0].strip()
             id_to = newline_sp[0].split("\t")[1].strip()
@@ -130,15 +156,25 @@ def get_gene(prot):
             new_id = newline_sp[1].split("\t")[1].strip()
             if new_id not in gene_array:
                 gene_array.append(new_id)
-    return gene_array
+                temp_gene = gnomics.objects.gene.Gene(identifier=new_id, identifier_type="GI Number", source="UniProt", language=None)
+                gene_obj_array.append(temp_gene)
+            
+    return gene_obj_array
     
 #   UNIT TESTS
 def gene_unit_tests(uniprot_kb_ac, uniprot_kb_id):
+    print("NOT FUNCTIONAL.")
+    
+    # TODO: Update these unit tests!
+
     uniprot_kb_ac_prot = gnomics.objects.protein.Protein(identifier = uniprot_kb_ac, language = None, identifier_type = "UniProt accession", source = "UniProt", species = "Homo sapiens")
+    
     print("Getting NCBI Entrez Gene ID from UniProtKB accession (%s):" % uniprot_kb_ac)
     for iden in get_gene(uniprot_kb_ac_prot):
         print("- " + str(iden))
+    
     uniprot_kb_id_prot = gnomics.objects.protein.Protein(identifier = uniprot_kb_id, language = None, identifier_type = "UniProt identifier", source = "UniProt", species = "Homo sapiens")
+    
     print("\nGetting NCBI Entrez Gene ID from UniProtKB identifier (%s):" % uniprot_kb_id)
     for iden in get_gene(uniprot_kb_id_prot):
         print("- " + str(iden))

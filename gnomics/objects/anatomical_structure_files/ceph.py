@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -7,7 +9,7 @@
 #
 #   IMPORT SOURCES:
 #
-
+#
 
 #
 #   Cephalopod Ontology (CEPH).
@@ -27,21 +29,23 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 #   Import modules.
 from gnomics.objects.user import User
 import gnomics.objects.anatomical_structure
+import gnomics.objects.auxiliary_files.identifier
 
 #   Other imports.
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
     ceph_unit_tests()
     
 # Return CEPH ID.
-def get_ceph_id(anat):
+def get_ceph_id(anat, user=None):
     ceph_array = []
-    for ident in anat.identifiers:
-        if ident["identifier_type"].lower() == "ceph id" or ident["identifier_type"].lower() == "ceph identifier":
-            ceph_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(anat.identifiers, ["ceph", "ceph id", "ceph identifier"]):
+        if iden["identifier"] not in ceph_array:
+            ceph_array.append(iden["identifier"])
     return ceph_array
     
 #   UNIT TESTS

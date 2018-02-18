@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -29,11 +31,13 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 from gnomics.objects.user import User
 import gnomics.objects.compound
 import gnomics.objects.disease
+import gnomics.objects.reference
 
 #   Other imports.
 import pubchempy as pubchem
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
@@ -45,7 +49,7 @@ def get_diseases(com):
     dis_id_array = []
     for related_obj in com.related_objects:
         if 'object_type' in related_obj:
-            if related_obj['object_type'].lower() == "disease":
+            if related_obj['object_type'].lower() in ["disease"]:
                 any_in = 0
                 for iden in related_obj['object'].identifiers:
                     if iden not in dis_array:
@@ -55,21 +59,26 @@ def get_diseases(com):
                         any_in = any_in + 1
                 if any_in == 0:
                     gen_array.append(related_obj["object"])
+                        
     for ident in com.identifiers:
-        if ident["identifier_type"].lower() == "pubchem cid":
+        if ident["identifier_type"].lower() in ["pubchem cid"]:
             server = "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
             ext = "/compound/cid/" + str(gnomics.objects.compound.Compound.pubchem_cid(com)) + "/xrefs/MIMID/JSONP"
+
             r = requests.get(server+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 print("URL not found.")
             else:
                 str_r = r.text
+
                 try:
                     l_index = str_r.index("(") + 1
                     r_index = str_r.index(")")
                 except ValueError:
                     print("Input is not in a JSONP format.")
                     exit()
+
                 res = str_r[l_index:r_index]
                 decoded = json.loads(res)
                 for result in decoded["InformationList"]["Information"]:
@@ -85,13 +94,20 @@ def get_diseases(com):
                                 "source": "OMIM"
                             })
                             dis_id_array.append(dis)
+
     return dis_array
 
 #   UNIT TESTS
 def disease_unit_tests(pubchem_cid):
     pubchem_com = gnomics.objects.compound.Compound(identifier = str(pubchem_cid), identifier_type = "PubChem CID", source = "PubChem")
     print("Getting diseases from PubChem CID (%s):" % pubchem_cid)
-    for dis in get_diseases(pubchem_com):
+    
+    start = timeit.timeit()
+    all_dis = get_diseases(pubchem_com)
+    end = timeit.timeit()
+    print("TIME ELAPSED: %s seconds." % str(end - start))
+    
+    for dis in all_dis:
         for iden in dis.identifiers:
             print("- %s, %s, %s, %s" % (str(iden["identifier"]), str(iden["identifier_type"]), str(iden["language"]), str(iden["source"])))
     

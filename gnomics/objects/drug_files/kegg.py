@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -6,6 +8,7 @@
 
 #
 #   IMPORT SOURCES:
+#
 #
 
 #
@@ -32,10 +35,12 @@ def main():
     kegg_unit_tests()
 
 #	Get KEGG drug identifier.
-def get_kegg_drug_id(com):
-    for ident in com.identifiers:
-        if ident["identifier_type"].lower() == "kegg drug" or ident["identifier_type"].lower() == "kegg drug id" or ident["identifier_type"].lower() == "kegg drug accession":
-            return ident["identifier"]
+def get_kegg_drug_id(drug):
+    kegg_array = []
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(drug.identifiers, ["kegg", "kegg id", "kegg identifier", "kegg accession", "kegg drug", "kegg drug id", "kegg drug identifier", "kegg drug accession"]):
+        if iden["identifier"] not in kegg_array:
+            kegg_array.append(iden["identifier"])  
+    return kegg_array
 
 #   UNIT TESTS
 def kegg_unit_tests():

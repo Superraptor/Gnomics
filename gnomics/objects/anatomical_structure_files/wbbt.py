@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -7,7 +9,7 @@
 #
 #   IMPORT SOURCES:
 #
-
+#
 
 #
 #   WBBT ID.
@@ -27,21 +29,23 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 #   Import modules.
 from gnomics.objects.user import User
 import gnomics.objects.anatomical_structure
+import gnomics.objects.auxiliary_files.identifier
 
 #   Other imports.
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
     wbbt_unit_tests()
     
 # Return WBBT ID.
-def get_wbbt_id(anat):
+def get_wbbt_id(anat, user=None):
     wbbt_array = []
-    for ident in anat.identifiers:
-        if ident["identifier_type"].lower() == "wbbt id" or ident["identifier_type"].lower() == "wbbt identifier":
-            wbbt_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(anat.identifiers, ["wb-bt", "wb-bt id", "wb-bt identifier", "wbbt", "wbbt id", "wbbt identifier"]):
+        if iden["identifier"] not in wbbt_array:
+            wbbt_array.append(iden["identifier"])
     return wbbt_array
     
 #   UNIT TESTS

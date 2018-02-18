@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #
 #
 #
@@ -7,7 +9,7 @@
 #
 #   IMPORT SOURCES:
 #
-
+#
 
 #
 #   HAO ID.
@@ -27,21 +29,23 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "../../.."))
 #   Import modules.
 from gnomics.objects.user import User
 import gnomics.objects.anatomical_structure
+import gnomics.objects.auxiliary_files.identifier
 
 #   Other imports.
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
     hao_unit_tests()
     
 # Return HAO ID.
-def get_hao_id(anat):
+def get_hao_id(anat, user=None):
     hao_array = []
-    for ident in anat.identifiers:
-        if ident["identifier_type"].lower() == "hao id" or ident["identifier_type"].lower() == "hao identifier":
-            hao_array.append(ident["identifier"])
+    for iden in gnomics.objects.auxiliary_files.identifier.filter_identifiers(anat.identifiers, ["hao", "hao id", "hao identifier"]):
+        if iden["identifier"] not in hao_array:
+            hao_array.append(iden["identifier"])
     return hao_array
     
 #   UNIT TESTS

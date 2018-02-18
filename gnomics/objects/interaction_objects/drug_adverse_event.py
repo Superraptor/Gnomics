@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+
+#
+#   DISCLAIMERS:
+#   Do not rely on openFDA to make decisions regarding 
+#   medical care. Always speak to your health provider 
+#   about the risks and benefits of FDA-regulated products.
+#
+
 #
 #
 #
@@ -6,6 +15,7 @@
 
 #
 #   IMPORT SOURCES:
+#
 #
 
 #
@@ -31,30 +41,37 @@ import gnomics.objects.drug
 #   Other imports.
 import json
 import requests
+import timeit
 
 #   MAIN
 def main():
     drug_adverse_event_unit_tests("88014", "")
 
 # Get drug adverse events.
-def get_adverse_events(drug, user = None, counts = False, exact = True, limit = 100, all_results = True, details = False):
+def get_adverse_events(drug, user=None, counts=False, exact=True, limit=100, all_results=True, details=False):
     ae_array = []
     ae_obj_array = []
     ae_count_dict = {}
+    
     rx_array = []
     bad_result = False
     for ident in drug.identifiers:
-        if (ident["identifier_type"].lower() == "rxcui" or ident["identifier_type"].lower() == "rxnorm id" or ident["identifier_type"].lower() == "rxnorm concept unique identifier") and user is not None:
+        if (ident["identifier_type"].lower() in ["rxcui", "rxnorm id", "rxnorm concept unique identifier"]) and user is not None:
             bad_result = False
+            
             base = "https://api.fda.gov/drug/event.json?"
             ext = "api_key=" + user.fda_api_key + "&limit=" + str(limit) + "&skip=0&search=rxcui:" + ident["identifier"]
+            
             if details == False:
                 ext += "&count=patient.reaction.reactionmeddrapt.exact"
+
             r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
             if not r.ok:
                 bad_result = True
             else:
                 decoded = json.loads(r.text)
+
                 for result in decoded["results"]:
                     if details:
                         for rxn in result["patient"]["reaction"]:
@@ -76,21 +93,28 @@ def get_adverse_events(drug, user = None, counts = False, exact = True, limit = 
                             ae_count_dict[proc_term] = result["count"]
                         else:
                             ae_count_dict[proc_term] += result["count"]
+            
                 if details:
                     total = decoded["meta"]["results"]["total"] - limit
                     skip = 1
                 while True and all_results and details:
                     if skip % 10 == 0:
                         print("Page: %s / %s" % (str(skip), str(total)))
+
                     base = "https://api.fda.gov/drug/event.json?"
                     ext = "api_key=" + user.fda_api_key + "&limit=" + str(limit) + "&skip=" + str(skip) + "&search=rxcui:" + ident["identifier"]
+                    
                     if details == False:
                         ext += "&count=patient.reaction.reactionmeddrapt.exact"
+
                     r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
                     if not r.ok:
                         r.raise_for_status()
                         sys.exit()
+                        
                     decoded = json.loads(r.text)
+
                     for result in decoded["results"]:
                         if details:
                             for rxn in result["patient"]["reaction"]:
@@ -112,10 +136,12 @@ def get_adverse_events(drug, user = None, counts = False, exact = True, limit = 
                                 ae_count_dict[proc_term] = result["count"]
                             else:
                                 ae_count_dict[proc_term] += result["count"]
+
                     skip = skip + 1
                     total = total - limit
                     if total <= 0:
                         break
+                
             if bad_result and exact == False:
                 # This includes concepts of term types "IN", "MIN", "PIN", "BN", "SBD", "SBDC", "SBDF", "SBDG", "SCD", "SCDC", "SCDF", "SCDG", "DF", "DFG", "BPCK" and "GPCK".
                 
@@ -134,33 +160,47 @@ def get_adverse_events(drug, user = None, counts = False, exact = True, limit = 
                 # SCDC = clinical drug component
                 # SCDF = clinical dose form
                 # SCDG = clinical dose form group
+                
                 print("Exact RxCUI mapping provided no results...\n")
                 print("Continuing with all related RxCUIs.")
+                
                 base = "https://rxnav.nlm.nih.gov/REST/"
                 ext = "rxcui/" + ident["identifier"] + "/allrelated.json"
+
                 r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
                 if not r.ok:
                     r.raise_for_status()
                     sys.exit()
+
                 decoded = json.loads(r.text)
+                
                 rxcui_array = []
                 for x in decoded["allRelatedGroup"]["conceptGroup"]:
                     if "conceptProperties" in x:
                         for obj in x["conceptProperties"]:
                             if obj["rxcui"] not in rxcui_array:
                                 rxcui_array.append(obj["rxcui"])
+                
                 no_not_found = 0
                 for rxcui in rxcui_array:
                     if rxcui not in rx_array:
+                        print(rxcui)
+                        
                         base = "https://api.fda.gov/drug/event.json?"
                         ext = "api_key=" + user.fda_api_key + "&limit=" + str(limit) + "&skip=0&search=rxcui:" + str(rxcui)
+                        
                         if details == False:
                             ext += "&count=patient.reaction.reactionmeddrapt.exact"
+
                         r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
                         if not r.ok:
+                            # r.raise_for_status()
                             no_not_found = no_not_found + 1
                         else:
                             decoded = json.loads(r.text)
+
                             for result in decoded["results"]:
                                 if details:
                                     for rxn in result["patient"]["reaction"]:
@@ -183,19 +223,26 @@ def get_adverse_events(drug, user = None, counts = False, exact = True, limit = 
                                         ae_count_dict[proc_term] = result["count"]
                                     else:
                                         ae_count_dict[proc_term] += result["count"]
+
                             if details:
                                 total = decoded["meta"]["results"]["total"] - limit
                                 skip = 1
                             while True and details:
+
                                 base = "https://api.fda.gov/drug/event.json?"
                                 ext = "api_key=" + user.fda_api_key + "&limit=" + str(limit) + "&skip=" + str(skip) + "&search=rxcui:" + str(rxcui)
+                                
                                 if details == False:
                                     ext += "&count=patient.reaction.reactionmeddrapt.exact"
+
                                 r = requests.get(base+ext, headers={"Content-Type": "application/json"})
+
                                 if not r.ok:
                                     r.raise_for_status()
                                     sys.exit()
+
                                 decoded = json.loads(r.text)
+
                                 for result in decoded["results"]:
                                     if details:
                                         for rxn in result["patient"]["reaction"]:
@@ -217,11 +264,14 @@ def get_adverse_events(drug, user = None, counts = False, exact = True, limit = 
                                             ae_count_dict[proc_term] = result["count"]
                                         else:
                                             ae_count_dict[proc_term] += result["count"]
+
                                 skip = skip + 1
                                 total = total - limit
                                 if total <= 0:
                                     break
+                        
                         rx_array.append(rxcui)
+
     if ae_array and counts == False:
         return ae_obj_array
     elif ae_array and counts == True:
@@ -232,16 +282,19 @@ def get_adverse_events(drug, user = None, counts = False, exact = True, limit = 
         return ae_count_dict
     elif not ae_array and user is None:
         return []
+                    
     rxcui_mesh = False
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "mesh unique identifier" or ident["identifier_type"].lower() == "mesh uid":
+        if ident["identifier_type"].lower() in ["mesh unique identifier", "mesh uid"]:
             gnomics.objects.drug.Drug.rxcui(drug)
             rxcui_mesh = True
             break
+            
     if rxcui_mesh:
         return get_adverse_events(drug)
+    
     for ident in drug.identifiers:
-        if ident["identifier_type"].lower() == "drugbank" or ident["identifier_type"].lower() == "drugbank id" or ident["identifier_type"].lower() == "drugbank identifier" or ident["identifier_type"].lower() == "drugbank accession":
+        if ident["identifier_type"].lower() in ["drugbank", "drugbank id", "drugbank identifier", "drugbank accession"]:
             gnomics.objects.drug.Drug.rxcui(drug)
             return get_adverse_events(drug)
     
@@ -252,10 +305,15 @@ def get_side_effects(drug):
 
 #   UNIT TESTS
 def drug_adverse_event_unit_tests(rxcui, fda_api_key):
-    user = User(fda_api_key = fda_api_key)
+    user = User(fda_api_key=fda_api_key)
+    
     rx_com = gnomics.objects.compound.Compound(identifier = str(rxcui), identifier_type = "RxCUI", source = "RxNorm")
     print("Getting adverse events from RxCUI (%s):" % rxcui)
-    for ae_name, ae_count in get_adverse_events(rx_com, user = user, exact = False, counts = True, details = False).items():
+    start = timeit.timeit()
+    all_aes = get_adverse_events(rx_com, user = user, exact = False, counts = True, details = False)
+    end = timeit.timeit()
+    print("TIME ELAPSED: %s seconds." % str(end - start))
+    for ae_name, ae_count in all_aes.items():
         print("- %s: %s" % (ae_name, str(ae_count)))
     
 #   MAIN
