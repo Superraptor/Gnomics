@@ -178,7 +178,7 @@ The executable interface is still in development.
 Created by Charles Kronk.
 
 ## License
-Copyright (c) 2017, Charles Kronk
+Copyright (c) 2017-2018, Charles Kronk
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
